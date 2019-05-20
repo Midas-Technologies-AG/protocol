@@ -40,7 +40,3 @@ deployments/development-*.json
 
 # API key
 tests/system/.coinapi.json
-
-# For Test-Branch Only
-package.json
-yarn.lock
