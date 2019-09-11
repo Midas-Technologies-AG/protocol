@@ -7,7 +7,7 @@
     "chain": 42
   },
   "melonContracts": {
-    "priceSource": "0xCBeEE6cD5eD88cf00E7832D650d1197e03Da7594",
+    "priceSource": "0x385a59e848f6456ADf19C367c8cf03FD39c23FAB",
     "adapters": {
       "ethfinexAdapter": "0xB79133a2c7905F035ae237326EFACfE0BB00DC90",
       "kyberAdapter": "0xA1A4aD89C376Cab1731d06b4680B13d3B9340278",
@@ -124,7 +124,7 @@
     },
     "ZeroEx": {
       "adapter": "0xA28e3301222B9cb9C54910F0620Fbf92bbE38be3",
-      "exchange": "0x35dd2932454449b14cee11a94d3674a936d5d7b2",
+      "exchange": "0x35dD2932454449b14Cee11A94d3674a936d5d7b2",
       "takesCustody": false
     },
     "Ethfinex": {
