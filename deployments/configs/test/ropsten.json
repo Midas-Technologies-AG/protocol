@@ -1,0 +1,131 @@
+{
+  "melonContracts": {
+    "priceSource": "DEPLOY",
+    "adapters": {
+      "ethfinexAdapter": "DEPLOY",
+      "kyberAdapter": "DEPLOY",
+      "matchingMarketAdapter": "DEPLOY",
+      "matchingMarketAccessor": "DEPLOY",
+      "zeroExAdapter": "DEPLOY",
+      "engineAdapter": "DEPLOY"
+      },
+      "policies": {
+        "priceTolerance": "DEPLOY",
+        "userWhitelist": "DEPLOY"
+      },
+      "fees": {
+        "managementFee": "DEPLOY",
+        "performanceFee": "DEPLOY"
+      },
+      "factories": {
+        "accountingFactory": "DEPLOY",
+        "feeManagerFactory": "DEPLOY",
+        "participationFactory": "DEPLOY",
+        "policyManagerFactory": "DEPLOY",
+        "sharesFactory": "DEPLOY",
+        "tradingFactory": "DEPLOY",
+        "vaultFactory": "DEPLOY"
+      },
+      "engine": "DEPLOY",
+      "registry": "DEPLOY",
+      "version": "DEPLOY",
+      "ranking": "DEPLOY"
+    },
+    "thirdPartyContracts": {
+      "exchanges": {
+      "kyber": {
+        "conversionRates": "0x6B2e614977F893baddf3AA704698BD71BEf9CeFF",
+        "kyberNetwork": "0x118A7b23B7a2e6A57963d017A7E76A4E2636F075",
+        "kyberNetworkProxy": "0x692f391bCc85cefCe8C237C01e1f636BbD70EA4D"
+      },
+      "matchingMarket": "0xf3a41E6f9bD20c3894A69bcAc2B561ce99251180",
+      "zeroEx": "0x4530c0483a1633c7a1c97d2c53721caff2caaaaf",
+      "ethfinex": {
+        "exchange": "0x1d8643aae25841322ecde826862a9fa922770981",
+        "wrapperRegistryEFX": "0x77F47686Fceaf9F074667d167497338e7D504C66",
+        "wrapperPairs": [],
+        "erc20proxy": ""
+      }
+    },
+    "tokens": [{
+        "address": "0xDb0040451F373949A4Be60dcd7b6B8D6E42658B6",
+        "name": "Basic Attention Token",
+        "symbol": "BAT",
+        "decimals": 18
+      },{
+        "address": "0xaD6D458402F60fD3Bd25163575031ACDce07538D",
+        "name": "Dai",
+        "symbol": "DAI",
+        "decimals": 18
+      },{
+        "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+        "name": "Wrapped ETH",
+        "symbol": "WETH",
+        "decimals": 18
+      },
+      {
+        "address": "0x3a5c69414eb35346307913744d9cbc4d9109a61e",
+        "name": "Melon Token",
+        "symbol": "MLN",
+        "decimals": 18
+      },
+      {
+        "address": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
+        "name": "0X Protocol Token",
+        "symbol": "ZRX",
+        "decimals": 18
+      },
+      {
+        "address": "0x4BFBa4a8F28755Cb2061c413459EE562c6B9c51b",
+        "name": "OmiseGo",
+        "symbol": "OMG",
+        "decimals": 18
+      },
+      {
+        "address": "0xa5f54084b5f178831461d138de7687e8456f1dcb",
+        "name": "Maker",
+        "symbol": "MKR",
+        "decimals": 18
+      },
+      {
+        "address": "0x4E470dc7321E84CA96FcAEDD0C8aBCebbAEB68C6",
+        "name": "Kyber Network",
+        "symbol": "KNC",
+        "decimals": 18
+      },
+      {
+        "address": "0xf2ab12e5d0ee31ba01f16acda854107d8c2bc62d",
+        "name": "Decantraland",
+        "symbol": "MANA",
+        "decimals": 18
+      }
+    ]
+  },
+  "exchangeConfigs": {
+    "MatchingMarket": {
+      "adapter": "DEPLOY",
+      "exchange": "0xf3a41E6f9bD20c3894A69bcAc2B561ce99251180",
+      "takesCustody": true
+    },
+    "Ethfinex": {
+      "adapter": "DEPLOY",
+      "exchange": "0x1d8643aae25841322ecde826862a9fa922770981",
+      "takesCustody": true
+    },
+    "KyberNetwork": {
+      "adapter": "DEPLOY",
+      "exchange": "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
+      "takesCustody": false
+    },
+    "ZeroEx": {
+      "adapter:": "DEPLOY",
+      "exchange": "0x4530c0483a1633c7a1c97d2c53721caff2caaaaf",
+      "takesCustody": false
+    },
+    "MelonEngine": {
+      "adapter": "DEPLOY",
+      "exchange": "DEPLOY",
+      "takesCustody": false
+    }
+  }
+}

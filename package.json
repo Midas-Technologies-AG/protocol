@@ -1,19 +1,19 @@
 {
-  "name": "@melonproject/protocol",
+  "name": "@MidasTechnologiesAG/protocol",
   "version": "1.0.6",
   "description": "Technology Regulated and Operated Investment Funds",
   "main": "lib/index.umd.js",
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "author": "Melonport AG <team@melonport.com>",
+  "author": "Midas Technologies AG <willie@m1d4s.tech>",
   "license": "GPL-3.0",
-  "homepage": "https://github.com/melonproject/protocol#readme",
+  "homepage": "https://github.com/Midas-Technologies-AG/protocol#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/melonproject/protocol.git"
+    "url": "git+https://github.com/Midas-Technologies-AG/protocol.git"
   },
   "bugs": {
-    "url": "https://github.com/melonproject/protocol/issues"
+    "url": "https://github.com/Midas-Technologies-AG/protocol/issues"
   },
   "keywords": [
     "Ethereum",
@@ -40,8 +40,11 @@
     "compile": "node bin/melon.js compile",
     "deploy": "node bin/melon.js deploy",
     "deploy:dev": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T testing && yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T kyberPrice",
-    "deploy:kovan": "node bin/melon.js deploy -c kovan-deployment.json",
-    "deploy:mainnet": "node bin/melon.js deploy -c ./deployments/configs/mainnet.json",
+    "dplK" : "sh bin/testDeployKovan.sh",
+    "dplR" : "sh bin/testDeployRopsten.sh",
+    "deploy:kovan": "node bin/melon.js deploy -c ./deployments/configs/test/kovan.json",
+    "deploy:ropsten": "node bin/melon.js deploy -c ./deployments/configs/test/ropsten.json",    
+    "deploy:mainnet": "node bin/melon.js deploy -c ./deployments/configs/mainnet/013-takesCustody-fix.json",
     "dev": "tsc-watch -p tsconfig.json --onSuccess \"sh -c 'tscpaths -p tsconfig.json -s ./src -o ./lib > /dev/null && yarn bundle'\"",
     "devchain": "ganache-cli --gasLimit 0x7a1200 --defaultBalanceEther 10000000000000 -m 'exhibit now news planet fame thank swear reform tilt accident bitter axis'  --networkId 4",
     "format": "prettier --write src/**/*.ts",

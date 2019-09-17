@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "deployer": "0x00dcc3E8378D898F7eDB0C35d69b2E38E02319ba",
+    "timestamp": "2019-09-16T22:38:50.313Z",
+    "track": "testing",
+    "version": "1.0.6",
+    "chain": 3
+  },
+  "melonContracts": {
+    "priceSource": "0x922c51b5B066dc10B8d90eE00bc92a3017D18075",
+    "adapters": {
+      "ethfinexAdapter": "0x792FCE2f7EB00c698E3F9fd40Fd73C1D17d1D352",
+      "kyberAdapter": "0xdCb29eC133BF24d5fd16A917aA75Be3F44DB03cd",
+      "matchingMarketAdapter": "0x04c9dC47eB92bC5f3045D0b52Ea0A21714Ab65E0",
+      "matchingMarketAccessor": "0x99b2C96eC0d81206529332e4a6f45a2bdFf6D3f4",
+      "zeroExAdapter": "0xfA416D466D444AD8F3977E471D342cd5631cDf20",
+      "engineAdapter": "0x3499530e4cA8418CE3aA919aEF629F9f33ceB525"
+    },
+    "policies": {
+      "priceTolerance": "0x906158B4070c1F66678915585580Eb69286A409a",
+      "userWhitelist": "0xe9fF428083cA88af0339A9F533511a9Fa62bCE9b"
+    },
+    "fees": {
+      "managementFee": "0xE562D51232765075415B5c8940984Db68ef2A30B",
+      "performanceFee": "0x8509b04a6356099e89b5c32448dB3c07fE8C0D5a"
+    },
+    "factories": {
+      "accountingFactory": "0xc43E7Df941374a43871282C2b8f8a9Ae0F1dAa0D",
+      "feeManagerFactory": "0x076d8dC473940256091fBd804634adC318800c8F",
+      "participationFactory": "0x3Eb432ec259E469a1731c2AB190726E89139c9d4",
+      "policyManagerFactory": "0x21a48dE2760FDE175EeB678B885De5a54A7A001E",
+      "sharesFactory": "0xc2C5524638b7Ef057c83c6Fdec8035804BaF5Ad4",
+      "tradingFactory": "0x8E309C0376D61e49F07974f4Ade1E9Ddbe277516",
+      "vaultFactory": "0xcD2F4A393260cfB50DCf6Cd16A597774D50EC90E"
+    },
+    "engine": "0x15fdCc0926505e9Ca79FF6663c3471a596D37D0E",
+    "registry": "0xED3809905541d9dC6b47028D06025726370c77ce",
+    "version": "0xE7f871D5C172F006110cbe21A40B99c7E8aC92a4",
+    "ranking": "0x0cA80E5F914fa709872758682B1A52ACC82713b6"
+  },
+  "thirdPartyContracts": {
+    "exchanges": {
+      "kyber": {
+        "conversionRates": "0x6B2e614977F893baddf3AA704698BD71BEf9CeFF",
+        "kyberNetwork": "0x118A7b23B7a2e6A57963d017A7E76A4E2636F075",
+        "kyberNetworkProxy": "0x692f391bCc85cefCe8C237C01e1f636BbD70EA4D"
+      },
+      "matchingMarket": "0xf3a41E6f9bD20c3894A69bcAc2B561ce99251180",
+      "zeroEx": "0x4530c0483a1633c7a1c97d2c53721caff2caaaaf",
+      "ethfinex": {
+        "exchange": "0x1d8643aae25841322ecde826862a9fa922770981",
+        "wrapperRegistryEFX": "0x77F47686Fceaf9F074667d167497338e7D504C66",
+        "wrapperPairs": [],
+        "erc20proxy": ""
+      }
+    },
+    "tokens": [
+      {
+        "address": "0xa1b8a2c7a942963165fe5747d3ea960070ea4dc7",
+        "name": "Dai",
+        "symbol": "DAI",
+        "decimals": 18
+      },
+      {
+        "address": "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+        "name": "Wrapped ETH",
+        "symbol": "WETH",
+        "decimals": 18
+      },
+      {
+        "address": "0x3a5c69414eb35346307913744d9cbc4d9109a61e",
+        "name": "Melon Token",
+        "symbol": "MLN",
+        "decimals": 18
+      },
+      {
+        "address": "0xff67881f8d12f372d91baae9752eb3631ff0ed00",
+        "name": "0X Protocol Token",
+        "symbol": "ZRX",
+        "decimals": 18
+      },
+      {
+        "address": "0xf1512d3694c0f4fcec84951d04517df5a7895dde",
+        "name": "OmiseGo",
+        "symbol": "OMG",
+        "decimals": 18
+      },
+      {
+        "address": "0xa5f54084b5f178831461d138de7687e8456f1dcb",
+        "name": "Maker",
+        "symbol": "MKR",
+        "decimals": 18
+      },
+      {
+        "address": "0xf2ab12e5d0ee31ba01f16acda854107d8c2bc62d",
+        "name": "Decantraland",
+        "symbol": "MANA",
+        "decimals": 18
+      }
+    ]
+  },
+  "exchangeConfigs": {
+    "MatchingMarket": {
+      "adapter": "0x04c9dC47eB92bC5f3045D0b52Ea0A21714Ab65E0",
+      "exchange": "0xf3a41E6f9bD20c3894A69bcAc2B561ce99251180",
+      "takesCustody": true
+    },
+    "KyberNetwork": {
+      "adapter": "0xdCb29eC133BF24d5fd16A917aA75Be3F44DB03cd",
+      "exchange": "0x692f391bCc85cefCe8C237C01e1f636BbD70EA4D",
+      "takesCustody": false
+    },
+    "ZeroEx": {
+      "adapter": "0xfA416D466D444AD8F3977E471D342cd5631cDf20",
+      "exchange": "0x4530c0483a1633c7a1c97d2c53721caff2caaaaf",
+      "takesCustody": false
+    },
+    "Ethfinex": {
+      "adapter": "0x792FCE2f7EB00c698E3F9fd40Fd73C1D17d1D352",
+      "exchange": "0x1d8643aae25841322ecde826862a9fa922770981",
+      "takesCustody": true
+    },
+    "MelonEngine": {
+      "adapter": "0x3499530e4cA8418CE3aA919aEF629F9f33ceB525",
+      "exchange": "0x15fdCc0926505e9Ca79FF6663c3471a596D37D0E",
+      "takesCustody": false
+    }
+  }
+}

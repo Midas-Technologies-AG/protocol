@@ -34,6 +34,7 @@ utils/etherscan/concatenated
 legacy/utils/devchain-snapshot/
 
 deployments/development-*.json
+bin/*.sh
 
 # Keystore
 .keystore*.json
