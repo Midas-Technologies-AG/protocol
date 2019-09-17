@@ -5,11 +5,17 @@
       "kyberAdapter": "DEPLOY",
       "ethfinexAdapter": "DEPLOY",
       "matchingMarketAdapter": "DEPLOY",
-      "zeroExAdapter": "DEPLOY"
+      "matchingMarketAccessor": "DEPLOY",
+      "zeroExAdapter": "DEPLOY",
+      "engineAdapter": "DEPLOY"
     },
     "policies": {
       "priceTolerance": "DEPLOY",
       "userWhitelist": "DEPLOY"
+    },
+    "fees": {
+      "managementFee": "DEPLOY",
+      "performanceFee": "DEPLOY"
     },
     "factories": {
       "accountingFactory": "DEPLOY",
@@ -34,7 +40,12 @@
       },
       "matchingMarket": "0xbED692938E714Da2a1d5407E5D99658F7D4c8079",
       "zeroEx": "0x35dd2932454449b14cee11a94d3674a936d5d7b2",
-      "ethfinex": "0x0c722EA3b6f05d109712dFBfa4421e6b7c5254b9"
+      "ethfinex": {
+        "exchange": "0x77ac83FaA57974CDb6f7a130DF50de3fe0792673",
+        "wrapperRegistryEFX": "0x0c722EA3b6f05d109712dFBfa4421e6b7c5254b9",
+        "wrapperPairs": [],
+        "erc20proxy": ""
+      }
     },
     "tokens": [
       {

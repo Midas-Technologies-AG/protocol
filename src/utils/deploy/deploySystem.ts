@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 
 import { Exchanges, Contracts } from '~/Contracts';
-
 import { deployMatchingMarketAdapter } from '~/contracts/exchanges/transactions/deployMatchingMarketAdapter';
 import { deployMatchingMarketAccessor } from '~/contracts/exchanges/transactions/deployMatchingMarketAccessor';
 import { deployEngine } from '~/contracts/engine/transactions/deployEngine';
@@ -343,11 +342,7 @@ export const deploySystem = async (
           address: control.MGM || environment.wallet.address,
         });
         if (
-          R.pathOr(
-            '',
-            ['ethfinexWrapperRegistry'],
-            previousInfo,
-          ).toLowerCase() !==
+          R.pathOr('', ['ethfinexWrapperRegistry'], previousInfo).toLowerCase() !==
           thirdPartyContracts.exchanges.ethfinex.wrapperRegistryEFX.toLowerCase()
         ) {
           getLog(environment).info('Setting ethfinex wrapper registry');
@@ -465,6 +460,11 @@ export const deploySystem = async (
       exchange: thirdPartyContracts.exchanges.ethfinex.exchange,
       takesCustody: true,
     },
+    [Exchanges.MelonEngine]: {
+      adapter: melonContracts.adapters.engineAdapter,
+      exchange: melonContracts.engine,
+      takesCustody: false,
+    },
   };
 
   for (const [exchangeName, exchangeConfig] of R.toPairs(exchangeConfigs)) {
@@ -531,7 +531,7 @@ export const deploySystem = async (
     );
     await testingPriceFeed.methods
       .update(Object.keys(prices), Object.values(prices).map(e => e.toString()))
-      .send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
+      //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
   }
 
   const track = environment.track;
