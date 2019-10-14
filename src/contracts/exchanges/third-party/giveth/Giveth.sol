@@ -63,4 +63,14 @@ contract Giveth {
         donations[_makerAsset][sender] += _makerQuantity;
         emit donated(sender, address(_makerAsset), _makerQuantity);
     }
+
+    //@notice This function shows the donated value of _asset from donator _from.
+    function showDonations (
+    	address _from,
+    	address _asset
+    	) 
+    public view returns(uint value){
+    	return donations[_asset][_from];
+    }
+    
 }
