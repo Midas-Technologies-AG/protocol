@@ -53,6 +53,8 @@ import { deployManagementFee } from '~/contracts/fund/fees/transactions/deployMa
 import { deployPerformanceFee } from '~/contracts/fund/fees/transactions/deployPerformanceFee';
 import { setEthfinexWrapperRegistry } from '~/contracts/version/transactions/setEthfinexWrapperRegistry';
 import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deployEngineAdapter';
+import { deployGiveth } from '~/contracts/exchanges/transactions/deployGiveth';
+import { deployGivethAdapter } from '~/contracts/exchanges/transactions/deployGivethAdapter';
 
 const pkg = require('~/../package.json');
 
@@ -69,6 +71,7 @@ export interface Factories {
 export interface MelonContracts {
   priceSource: Address;
   engine: Address;
+  giveth: Address;
   version: Address;
   ranking: Address;
   registry: Address;
@@ -78,6 +81,7 @@ export interface MelonContracts {
     matchingMarketAdapter: Address;
     matchingMarketAccessor: Address;
     ethfinexAdapter: Address;
+    givethAdapter: Address;
   };
   policies: {
     priceTolerance: Address;
@@ -106,7 +110,8 @@ export const deployAllContractsConfig = JSON.parse(`{
     "matchingMarketAdapter": "DEPLOY",
     "matchingMarketAccessor": "DEPLOY",
     "zeroExAdapter": "DEPLOY",
-    "engineAdapter": "DEPLOY"
+    "engineAdapter": "DEPLOY",
+    "givethAdapter": "DEPLOY"
   },
   "policies": {
     "priceTolerance": "DEPLOY",
@@ -126,6 +131,7 @@ export const deployAllContractsConfig = JSON.parse(`{
     "vaultFactory": "DEPLOY"
   },
   "engine": "DEPLOY",
+  "giveth": "DEPLOY",
   "registry": "DEPLOY",
   "version": "DEPLOY",
   "ranking": "DEPLOY"
@@ -227,6 +233,9 @@ export const deploySystem = async (
     maybeDeploy(['adapters', 'engineAdapter'], environment =>
       deployEngineAdapter(environment),
     ),
+    maybeDeploy(['adapters', 'givethAdapter'], environment =>
+      deployGivethAdapter(environment),
+    ),
     maybeDeploy(['policies', 'priceTolerance'], environment =>
       deployPriceTolerance(environment, 10),
     ),
@@ -272,6 +281,7 @@ export const deploySystem = async (
         registry: environment.deployment.melonContracts.registry,
       }),
     ),
+    maybeDeploy(['giveth'], environment => deployGiveth(environment)),
     maybeDeploy(['priceSource'], environment =>
       environment.track === Tracks.KYBER_PRICE
         ? deployKyberPriceFeed(environment, {
@@ -342,7 +352,11 @@ export const deploySystem = async (
           address: control.MGM || environment.wallet.address,
         });
         if (
-          R.pathOr('', ['ethfinexWrapperRegistry'], previousInfo).toLowerCase() !==
+          R.pathOr(
+            '',
+            ['ethfinexWrapperRegistry'],
+            previousInfo,
+          ).toLowerCase() !==
           thirdPartyContracts.exchanges.ethfinex.wrapperRegistryEFX.toLowerCase()
         ) {
           getLog(environment).info('Setting ethfinex wrapper registry');
@@ -465,6 +479,11 @@ export const deploySystem = async (
       exchange: melonContracts.engine,
       takesCustody: false,
     },
+    [Exchanges.Giveth]: {
+      adapter: melonContracts.adapters.givethAdapter,
+      exchange: melonContracts.giveth,
+      takesCustody: false,
+    },
   };
 
   for (const [exchangeName, exchangeConfig] of R.toPairs(exchangeConfigs)) {
@@ -529,9 +548,11 @@ export const deploySystem = async (
       Contracts.TestingPriceFeed,
       environmentWithDeployment.deployment.melonContracts.priceSource,
     );
-    await testingPriceFeed.methods
-      .update(Object.keys(prices), Object.values(prices).map(e => e.toString()))
-      //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
+    await testingPriceFeed.methods.update(
+      Object.keys(prices),
+      Object.values(prices).map(e => e.toString()),
+    );
+    //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
   }
 
   const track = environment.track;

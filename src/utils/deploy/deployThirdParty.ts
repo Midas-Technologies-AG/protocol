@@ -19,6 +19,7 @@ import {
   KyberEnvironment,
 } from '~/contracts/exchanges/transactions/deployKyberEnvironment';
 import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy0xExchange';
+//import { deployGiveth } from '~/contracts/exchanges/transactions/deployGiveth';
 import {
   deployEthfinex,
   EthfinexEnvironment,
@@ -33,6 +34,7 @@ export interface ThirdPartyContracts {
     matchingMarket: Address;
     zeroEx: Address;
     ethfinex: EthfinexEnvironment;
+    //giveth: Address;
   };
   tokens: TokenInterface[];
 }
@@ -106,6 +108,7 @@ const deployThirdParty = async (
     zeroExExchangeAddress: zeroEx,
     tokens: deployedTokens,
   });
+  //const giveth = await deployGiveth(environment);
 
   return {
     exchanges: {
@@ -113,6 +116,7 @@ const deployThirdParty = async (
       kyber,
       matchingMarket,
       zeroEx,
+      //giveth,
     },
     tokens: deployedTokens.map(token => ({
       ...token,

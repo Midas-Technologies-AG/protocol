@@ -7,7 +7,8 @@
       "matchingMarketAdapter": "DEPLOY",
       "matchingMarketAccessor": "DEPLOY",
       "zeroExAdapter": "DEPLOY",
-      "engineAdapter": "DEPLOY"
+      "engineAdapter": "DEPLOY",
+      "givethAdapter": "DEPLOY"
       },
       "policies": {
         "priceTolerance": "DEPLOY",
@@ -27,6 +28,7 @@
         "vaultFactory": "DEPLOY"
       },
       "engine": "DEPLOY",
+      "giveth": "DEPLOY",
       "registry": "DEPLOY",
       "version": "DEPLOY",
       "ranking": "DEPLOY"
@@ -123,6 +125,11 @@
       "takesCustody": false
     },
     "MelonEngine": {
+      "adapter": "DEPLOY",
+      "exchange": "DEPLOY",
+      "takesCustody": false
+    },
+    "Giveth": {
       "adapter": "DEPLOY",
       "exchange": "DEPLOY",
       "takesCustody": false
