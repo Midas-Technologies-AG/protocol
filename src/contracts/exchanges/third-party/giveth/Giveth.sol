@@ -40,6 +40,7 @@ contract Giveth {
             )),
         "Donation wasn't successfull. Please try again.");
         giverIDs[sender] = uint64(sender);
+        donations[address(0x0)][sender] += val;
         emit donated(sender,address(0x0), val);
     }
 
@@ -48,7 +49,7 @@ contract Giveth {
     	address _makerAsset,
         uint _makerQuantity
         )
-    public returns(uint64) {
+    public {
     	address sender = msg.sender;
         require(_targetExchange.delegatecall.gas(30000)(abi.encodeWithSignature(
             "donateAndCreateGiver(address,uint64,address,uint)",
@@ -58,7 +59,8 @@ contract Giveth {
             _makerQuantity
             )),
         "Donation wasn't successfull. Please try again.");
+        giverIDs[sender] = uint64(sender);
+        donations[_makerAsset][sender] += _makerQuantity;
         emit donated(sender, address(_makerAsset), _makerQuantity);
-        return uint64(sender);
     }
 }
