@@ -179,6 +179,7 @@ program
       'ZRX',
       'EUR',
       'DGX',
+      'DAI',
       ...providedTokens,
     ];
     const tokenInterfaces = tokens.map(token => {
