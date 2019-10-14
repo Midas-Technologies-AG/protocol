@@ -28,13 +28,13 @@
       "vaultFactory": "DEPLOY"
     },
     "engine": "DEPLOY",
-    "giveth": "DEPLOY",
     "registry": "DEPLOY",
     "version": "DEPLOY",
     "ranking": "DEPLOY"
   },
   "thirdPartyContracts": {
-    "exchanges": {
+    "exchanges": {    
+      "giveth": "DEPLOY",
       "kyber": {
         "conversionRates": "0xEddEeC7f5da5df29722D3252FC542E77D115a378",
         "kyberNetwork": "0xF27dbBeA1856f18142cDD3B575146199f7f3a7eA",

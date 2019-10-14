@@ -22,7 +22,6 @@
       "vaultFactory": "DEPLOY"
     },
     "engine": "DEPLOY",
-    "giveth": "DEPLOY",
     "registry": "DEPLOY",
     "version": "DEPLOY",
     "ranking": "DEPLOY"
