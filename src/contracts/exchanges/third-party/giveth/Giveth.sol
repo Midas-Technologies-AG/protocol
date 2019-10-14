@@ -72,5 +72,4 @@ contract Giveth {
     public view returns(uint value){
     	return donations[_asset][_from];
     }
-    
 }

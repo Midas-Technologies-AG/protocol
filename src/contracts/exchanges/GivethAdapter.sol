@@ -4,14 +4,29 @@ import "Trading.sol";
 import "Hub.sol";
 import "Accounting.sol";
 import "ExchangeAdapter.sol";
+import "Giveth.sol";
 
 contract GivethAdapter is ExchangeAdapter {
+    //@notice Global used values.
+	uint public orderId;
+	address public targetExchange;
 
-    //  METHODS
+	constructor () public {
+		orderId = 0;
+		targetExchange = 0x279277482F13aeF92914317a0417DD591145aDc9;
+	}
 
-    //  PUBLIC METHODS
+	//@notice Make sure if this Contract gets ETH that it will also be donated.
+	function () public payable {
+		Giveth(targetExchange).donateETH();
+	}
 
-    /// @notice Mock make order
+	//@notice This function donates ETH to the giveth DAC.
+	function donateEther() public payable {
+		Giveth(targetExchange).donateETH();
+	}
+
+    /// @notice Mock make order to donate ERC20 tokens.
     function makeOrder(
         address targetExchange,
         address[6] orderAddresses,
@@ -20,21 +35,32 @@ contract GivethAdapter is ExchangeAdapter {
         bytes makerAssetData,
         bytes takerAssetData,
         bytes signature
-    ) public {
-        Hub hub = getHub();
-        address makerAsset = orderAddresses[2];
+    ) public onlyManager notShutDown {
+        address _makerAsset = orderAddresses[2];
         address takerAsset = orderAddresses[3];
         uint makerQuantity = orderValues[0];
         uint takerQuantity = orderValues[1];
 
+        // Order parameter checks
+        Hub hub = getHub();
+		ensureCanMakeOrder(_makerAsset);
+        ERC20 makerAsset = ERC20(_makerAsset);
+        getTrading().updateAndGetQuantityBeingTraded(makerAsset);
+        ensureNotInOpenMakeOrder(makerAsset);
+
+        Vault(Hub(getHub()).vault()).withdraw(makerAsset, makerQuantity);
+
+        Giveth(targetExchange).donateAsset(makerAsset, makerQuantity);
+
+        orderId += 1;
         getTrading().orderUpdateHook(
             targetExchange,
-            identifier,
+            bytes32(orderId),
             Trading.UpdateType.make,
-            [address(makerAsset), address(takerAsset)],
-            [makerQuantity, takerQuantity, uint(0)]
+            [address(makerAsset), address(0)],
+            [makerQuantity, uint(0), uint(0)]
         );
-        Trading(address(this)).addOpenMakeOrder(targetExchange, makerAsset, takerAsset, uint(identifier), 0);
+        getAccounting().updateOwnedAssets();
     }
 
     /// @notice Mock take order
