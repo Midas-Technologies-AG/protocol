@@ -5,7 +5,7 @@
   "main": "lib/index.umd.js",
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "author": "Midas Technologies AG <willie@m1d4s.tech>",
+  "author": "Willie Laubenheimer, forked from @melonproject/protocol",
   "license": "GPL-3.0",
   "homepage": "https://github.com/Midas-Technologies-AG/protocol#readme",
   "repository": {
