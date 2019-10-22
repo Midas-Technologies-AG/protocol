@@ -37,7 +37,7 @@ contract GivethAdapter is ExchangeAdapter {
         bytes signature
     ) public onlyManager notShutDown {
         address _makerAssetAddress = orderAddresses[2];
-        uint makerQuantity = orderValues[0];
+        uint makerAssetQuantity = orderValues[0];
 
         // Order parameter checks
         Hub hub = getHub();
@@ -46,9 +46,9 @@ contract GivethAdapter is ExchangeAdapter {
         getTrading().updateAndGetQuantityBeingTraded(makerAssetToken);
         ensureNotInOpenMakeOrder(makerAssetToken);
 
-        Vault(Hub(getHub()).vault()).withdraw(makerAssetToken, makerQuantity);
+        Vault(Hub(getHub()).vault()).withdraw(makerAssetToken, makerAssetQuantity);
 
-        Giveth(targetExchange).donateAsset(makerAssetToken, makerQuantity);
+        Giveth(targetExchange).donateAsset(makerAssetToken, makerAssetQuantity);
 
         orderId += 1;
         getTrading().orderUpdateHook(
@@ -56,7 +56,7 @@ contract GivethAdapter is ExchangeAdapter {
             bytes32(orderId),
             Trading.UpdateType.make,
             [address(makerAssetToken), address(0)],
-            [makerQuantity, uint(0), uint(0)]
+            [makerAssetQuantity, uint(0), uint(0)]
         );
         getAccounting().updateOwnedAssets();
     }
