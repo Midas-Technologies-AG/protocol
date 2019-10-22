@@ -42,7 +42,7 @@ contract GivethAdapter is ExchangeAdapter {
         // Order parameter checks
         Hub hub = getHub();
 		ensureCanMakeOrder(_makerAssetAddress);
-        ERC20 makerAssetToken = ERC20(_makerAssetTokenAddress);
+        ERC20 makerAssetToken = ERC20(_makerAssetAddress);
         getTrading().updateAndGetQuantityBeingTraded(makerAssetToken);
         ensureNotInOpenMakeOrder(makerAssetToken);
 
