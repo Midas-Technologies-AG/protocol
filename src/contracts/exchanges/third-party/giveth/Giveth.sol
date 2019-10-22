@@ -44,8 +44,8 @@ contract Giveth {
 
     //@notice This function makes it possible to send ERC20 token to the implemented Giveth DAC.
     function donateAsset (
-    	address _makerAsset,
-        uint _makerQuantity
+    	address AssetAddress,
+        uint AssetQuantity
         )
     public {
     	address sender = msg.sender;
@@ -53,12 +53,12 @@ contract Giveth {
             "donateAndCreateGiver(address,uint64,address,uint)",
             sender,
             receiverDAC,
-            _makerAsset,
-            _makerQuantity
+            AssetAddress,
+            AssetQuantity
             )),
         "Donation wasn't successfull. Please try again.");
-        donations[_makerAsset][sender] += _makerQuantity;
-        emit donated(sender, address(_makerAsset), _makerQuantity);
+        donations[AssetAddress][sender] += AssetQuantity;
+        emit donated(sender, address(AssetAddress), AssetQuantity);
     }
 
     //@notice This function shows the donated value of _asset from donator _from.
