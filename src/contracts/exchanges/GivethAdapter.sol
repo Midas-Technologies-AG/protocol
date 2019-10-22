@@ -36,28 +36,26 @@ contract GivethAdapter is ExchangeAdapter {
         bytes takerAssetData,
         bytes signature
     ) public onlyManager notShutDown {
-        address _makerAsset = orderAddresses[2];
-        address takerAsset = orderAddresses[3];
+        address _makerAssetAddress = orderAddresses[2];
         uint makerQuantity = orderValues[0];
-        uint takerQuantity = orderValues[1];
 
         // Order parameter checks
         Hub hub = getHub();
-		ensureCanMakeOrder(_makerAsset);
-        ERC20 makerAsset = ERC20(_makerAsset);
-        getTrading().updateAndGetQuantityBeingTraded(makerAsset);
-        ensureNotInOpenMakeOrder(makerAsset);
+		ensureCanMakeOrder(_makerAssetAddress);
+        ERC20 makerAssetToken = ERC20(_makerAssetTokenAddress);
+        getTrading().updateAndGetQuantityBeingTraded(makerAssetToken);
+        ensureNotInOpenMakeOrder(makerAssetToken);
 
-        Vault(Hub(getHub()).vault()).withdraw(makerAsset, makerQuantity);
+        Vault(Hub(getHub()).vault()).withdraw(makerAssetToken, makerQuantity);
 
-        Giveth(targetExchange).donateAsset(makerAsset, makerQuantity);
+        Giveth(targetExchange).donateAsset(makerAssetToken, makerQuantity);
 
         orderId += 1;
         getTrading().orderUpdateHook(
             targetExchange,
             bytes32(orderId),
             Trading.UpdateType.make,
-            [address(makerAsset), address(0)],
+            [address(makerAssetToken), address(0)],
             [makerQuantity, uint(0), uint(0)]
         );
         getAccounting().updateOwnedAssets();
