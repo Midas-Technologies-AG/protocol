@@ -4,7 +4,7 @@ contract Giveth {
 
   // @notice Just some global used stuff.
 	mapping (address => mapping (address => uint)) public donations;
-	address public _targetExchange;
+	address public givethBridge;
 	uint64 public _receiverDAC;
 
 
@@ -13,7 +13,7 @@ contract Giveth {
 
 	// @notice These values are for the Testnet-Setup.(Ropsten) 
 	constructor () public {
-		_targetExchange = 0x279277482F13aeF92914317a0417DD591145aDc9;
+		givethBridge = 0x279277482F13aeF92914317a0417DD591145aDc9;
 		_receiverDAC = uint64(127);
 	}
 	
@@ -32,7 +32,7 @@ contract Giveth {
     	require (val > 0,
     		"There is nothing to donate.");
     	
-        require(_targetExchange.call.value(address(this).balance).gas(30000)(abi.encodeWithSignature(
+        require(givethBridge.call.value(address(this).balance).gas(30000)(abi.encodeWithSignature(
             "donateAndCreateGiver(address,uint64)",
             sender,
             _receiverDAC
@@ -49,7 +49,7 @@ contract Giveth {
         )
     public {
     	address sender = msg.sender;
-        require(_targetExchange.delegatecall.gas(30000)(abi.encodeWithSignature(
+        require(givethBridge.delegatecall.gas(30000)(abi.encodeWithSignature(
             "donateAndCreateGiver(address,uint64,address,uint)",
             sender,
             _receiverDAC,
