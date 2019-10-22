@@ -26,10 +26,10 @@ contract Giveth {
     //@notice This function sends Ethereum to the implemented Giveth DAC.
     function donateETH ()
     public payable {
-    	uint val = msg.value;
+    	uint value = msg.value;
     	address sender = msg.sender;
 
-    	require (val > 0,
+    	require (value > 0,
     		"There is nothing to donate.");
     	
         require(givethBridge.call.value(address(this).balance).gas(30000)(abi.encodeWithSignature(
@@ -38,8 +38,8 @@ contract Giveth {
             receiverDAC
             )),
         "Donation wasn't successfull. Please try again.");
-        donations[address(0x0)][sender] += val;
-        emit donated(sender,address(0x0), val);
+        donations[address(0x0)][sender] += value;
+        emit donated(sender,address(0x0), value);
     }
 
     //@notice This function makes it possible to send ERC20 token to the implemented Giveth DAC.
