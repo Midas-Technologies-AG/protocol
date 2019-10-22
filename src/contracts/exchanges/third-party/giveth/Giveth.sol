@@ -4,7 +4,6 @@ contract Giveth {
 
   // @notice Just some global used stuff.
 	mapping (address => mapping (address => uint)) public donations;
-	mapping (address => uint64) public giverIDs;
 	address public _targetExchange;
 	uint64 public _receiverID;
 
@@ -39,7 +38,6 @@ contract Giveth {
             _receiverID
             )),
         "Donation wasn't successfull. Please try again.");
-        giverIDs[sender] = uint64(sender);
         donations[address(0x0)][sender] += val;
         emit donated(sender,address(0x0), val);
     }
@@ -59,7 +57,6 @@ contract Giveth {
             _makerQuantity
             )),
         "Donation wasn't successfull. Please try again.");
-        giverIDs[sender] = uint64(sender);
         donations[_makerAsset][sender] += _makerQuantity;
         emit donated(sender, address(_makerAsset), _makerQuantity);
     }
