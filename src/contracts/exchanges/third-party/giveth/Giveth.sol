@@ -63,10 +63,10 @@ contract Giveth {
 
     //@notice This function shows the donated value of _asset from donator _from.
     function showDonations (
-    	address _from,
-    	address _asset
+    	address from,
+    	address asset
     	) 
     public view returns(uint value){
-    	return donations[_asset][_from];
+    	return donations[asset][from];
     }
 }
