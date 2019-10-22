@@ -5,7 +5,7 @@ contract Giveth {
   // @notice Just some global used stuff.
 	mapping (address => mapping (address => uint)) public donations;
 	address public givethBridge;
-	uint64 public _receiverDAC;
+	uint64 public receiverDAC;
 
 
 	// @notice If _token = address(0), this means the token is ether itself.
@@ -14,7 +14,7 @@ contract Giveth {
 	// @notice These values are for the Testnet-Setup.(Ropsten) 
 	constructor () public {
 		givethBridge = 0x279277482F13aeF92914317a0417DD591145aDc9;
-		_receiverDAC = uint64(127);
+		receiverDAC = uint64(127);
 	}
 	
 	//@notice Just sending Ether to this Contract forwards the sended Amount to the givethDAC.
@@ -35,7 +35,7 @@ contract Giveth {
         require(givethBridge.call.value(address(this).balance).gas(30000)(abi.encodeWithSignature(
             "donateAndCreateGiver(address,uint64)",
             sender,
-            _receiverDAC
+            receiverDAC
             )),
         "Donation wasn't successfull. Please try again.");
         donations[address(0x0)][sender] += val;
@@ -52,7 +52,7 @@ contract Giveth {
         require(givethBridge.delegatecall.gas(30000)(abi.encodeWithSignature(
             "donateAndCreateGiver(address,uint64,address,uint)",
             sender,
-            _receiverDAC,
+            receiverDAC,
             _makerAsset,
             _makerQuantity
             )),
