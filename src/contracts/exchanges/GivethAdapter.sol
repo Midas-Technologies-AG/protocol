@@ -9,21 +9,21 @@ import "Giveth.sol";
 contract GivethAdapter is ExchangeAdapter {
     //@notice Global used values.
 	uint public orderId;
-	address public targetExchange;
+	address public _targetExchange;
 
 	constructor () public {
 		orderId = 0;
-		targetExchange = 0x279277482F13aeF92914317a0417DD591145aDc9;
+		_targetExchange = 0x279277482F13aeF92914317a0417DD591145aDc9;
 	}
 
 	//@notice Make sure if this Contract gets ETH that it will also be donated.
 	function () public payable {
-		Giveth(targetExchange).donateETH();
+		Giveth(_targetExchange).donateETH();
 	}
 
 	//@notice This function donates ETH to the giveth DAC.
 	function donateEther() public payable {
-		Giveth(targetExchange).donateETH();
+		Giveth(_targetExchange).donateETH();
 	}
 
     /// @notice Mock make order to donate ERC20 tokens.
@@ -48,11 +48,11 @@ contract GivethAdapter is ExchangeAdapter {
 
         Vault(Hub(getHub()).vault()).withdraw(makerAssetToken, makerAssetQuantity);
 
-        Giveth(targetExchange).donateAsset(makerAssetToken, makerAssetQuantity);
+        Giveth(_targetExchange).donateAsset(makerAssetToken, makerAssetQuantity);
 
         orderId += 1;
         getTrading().orderUpdateHook(
-            targetExchange,
+            _targetExchange,
             bytes32(orderId),
             Trading.UpdateType.make,
             [address(makerAssetToken), address(0)],
@@ -78,7 +78,7 @@ contract GivethAdapter is ExchangeAdapter {
         uint fillTakerQuantity = orderValues[6];
 
         getTrading().orderUpdateHook(
-            targetExchange,
+            _targetExchange,
             bytes32(identifier),
             Trading.UpdateType.take,
             [address(makerAsset), address(takerAsset)],
@@ -99,9 +99,9 @@ contract GivethAdapter is ExchangeAdapter {
         Hub hub = getHub();
         address makerAsset = orderAddresses[2];
 
-        getTrading().removeOpenMakeOrder(targetExchange, makerAsset);
+        getTrading().removeOpenMakeOrder(_targetExchange, makerAsset);
         getTrading().orderUpdateHook(
-            targetExchange,
+            _targetExchange,
             bytes32(identifier),
             Trading.UpdateType.cancel,
             [address(0), address(0)],

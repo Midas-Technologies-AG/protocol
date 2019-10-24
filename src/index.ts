@@ -188,3 +188,6 @@ export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
 export {
   donateGivethETH,
 } from '~/contracts/exchanges/transactions/donateGivethETH';
+export {
+  donateGivethERC20,
+} from '~/contracts/exchanges/transactions/donateGivethERC20';
