@@ -185,3 +185,6 @@ export {
   getPerformanceFee,
 } from '~/contracts/fund/fees/calls/getPerformanceFee';
 export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
+export {
+  donateGivethETH,
+} from '~/contracts/exchanges/transactions/donateGivethETH';
