@@ -5,11 +5,18 @@
       "kyberAdapter": "DEPLOY",
       "ethfinexAdapter": "DEPLOY",
       "matchingMarketAdapter": "DEPLOY",
-      "zeroExAdapter": "DEPLOY"
+      "matchingMarketAccessor": "DEPLOY",
+      "zeroExAdapter": "DEPLOY",
+      "engineAdapter": "DEPLOY",
+      "givethAdapter": "DEPLOY"
     },
     "policies": {
       "priceTolerance": "DEPLOY",
       "userWhitelist": "DEPLOY"
+    },
+    "fees": {
+      "managementFee": "DEPLOY",
+      "performanceFee": "DEPLOY"
     },
     "factories": {
       "accountingFactory": "DEPLOY",
