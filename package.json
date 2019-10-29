@@ -1,5 +1,5 @@
 {
-  "name": "@iemwill/protocol",
+  "name": "@Midas-Technologies-AG/protocol",
   "version": "1.0.7",
   "description": "Technology Regulated and Operated Investment Funds",
   "main": "lib/index.umd.js",
@@ -10,10 +10,10 @@
   "homepage": "https://github.com/Midas-Technologies-AG/protocol#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://iemwill/protocol.git"
+    "url": "git+https://Midas-Technologies-AG/protocol.git"
   },
   "bugs": {
-    "url": "https://github.com/iemwill/protocol/issues"
+    "url": "https://github.com/Midas-Technologies-AG/protocol/issues"
   },
   "keywords": [
     "Ethereum",

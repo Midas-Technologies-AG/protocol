@@ -7,11 +7,12 @@ import {
 } from '@melonproject/token-math';
 
 import { Environment } from '../environment/Environment';
-import { getContract } from '~/utils/solidity/getContract';
+// import { getContract } from '~/utils/solidity/getContract';
 import {
   deployToken,
   deployWeth,
 } from '~/contracts/dependencies/token/transactions/deploy';
+import { deposit } from '~/contracts/dependencies/token/transactions/deposit';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deployMatchingMarket';
 import {
@@ -25,7 +26,7 @@ import {
   EthfinexEnvironment,
 } from '~/contracts/exchanges/transactions/deployEthfinex';
 import { ensure } from '../guards/ensure';
-import { Contracts } from '~/Contracts';
+import { getChainName } from '~/utils/environment/chainName';
 import { deployBurnableToken } from '~/contracts/dependencies/token/transactions/deployBurnableToken';
 
 export interface ThirdPartyContracts {
@@ -80,17 +81,20 @@ const deployThirdParty = async (
   );
 
   // Deposit WETH
-  const depositAmount = power(new BigInteger(10), new BigInteger(24));
-  await getContract(
+
+  const chainName = await getChainName(environment);
+  let depositAmount;
+  if (chainName == 'development') {
+    depositAmount = power(new BigInteger(10), new BigInteger(24));
+  } else {
+    depositAmount = power(new BigInteger(10), new BigInteger(1)); // NB: adjust as needed
+  }
+  await deposit(
     environment,
-    Contracts.Weth,
     deployedTokens.find(t => t.symbol === 'WETH').address,
-  )
-    .methods.deposit()
-    .send({
-      from: environment.wallet.address,
-      value: `${depositAmount}`,
-    });
+    undefined,
+    { value: `${depositAmount}` },
+  );
 
   const zrxToken = deployedTokens.find(t => t.symbol === 'ZRX');
 
@@ -101,6 +105,7 @@ const deployThirdParty = async (
   const kyber = await deployKyberEnvironment(environment, [
     deployedTokens.find(t => t.symbol === 'MLN'),
     deployedTokens.find(t => t.symbol === 'EUR'),
+    deployedTokens.find(t => t.symbol === 'WETH'),
   ]);
 
   const zeroEx = await deploy0xExchange(environment, { zrxToken });

@@ -7,7 +7,7 @@
     "chain": 42
   },
   "melonContracts": {
-    "priceSource": "0xCBeEE6cD5eD88cf00E7832D650d1197e03Da7594",
+    "priceSource": "0x385a59e848f6456ADf19C367c8cf03FD39c23FAB",
     "adapters": {
       "ethfinexAdapter": "0xB79133a2c7905F035ae237326EFACfE0BB00DC90",
       "kyberAdapter": "0xA1A4aD89C376Cab1731d06b4680B13d3B9340278",
