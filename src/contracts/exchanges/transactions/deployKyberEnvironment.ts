@@ -240,7 +240,7 @@ export const deployKyberEnvironment = async (
 
   let ethSendAmount;
   if (chainName == 'development') {
-    ethSendAmount = 10000;
+    ethSendAmount = 1; // NB: for testnet...
   } else {
     ethSendAmount = 1; // NB: adjust as necessary
   }

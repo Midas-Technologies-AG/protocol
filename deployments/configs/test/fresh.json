@@ -1,9 +1,4 @@
 {
-  "meta": {
-    "deployer": "0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E",
-    "track": "add-GivethModule",
-    "chain": 3
-  },
   "melonContracts": {
     "priceSource": "DEPLOY",
     "adapters": {

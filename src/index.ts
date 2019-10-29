@@ -215,3 +215,4 @@ export {
 export {
   donateGivethERC20,
 } from '~/contracts/exchanges/transactions/donateGivethERC20';
+export { setupFund } from '~/contracts/fund/hub/transactions/setupFund';

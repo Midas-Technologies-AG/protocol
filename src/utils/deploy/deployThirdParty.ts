@@ -85,9 +85,9 @@ const deployThirdParty = async (
   const chainName = await getChainName(environment);
   let depositAmount;
   if (chainName == 'development') {
-    depositAmount = power(new BigInteger(10), new BigInteger(24));
+    depositAmount = power(new BigInteger(10), new BigInteger(18)); // NB: for testnets...
   } else {
-    depositAmount = power(new BigInteger(10), new BigInteger(1)); // NB: adjust as needed
+    depositAmount = power(new BigInteger(10), new BigInteger(24)); // NB: adjust as needed
   }
   await deposit(
     environment,
