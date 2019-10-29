@@ -4,7 +4,6 @@ node_modules/
 *.swp
 
 .env
-.key
 
 # manual backup files
 *.bak
@@ -35,7 +34,6 @@ utils/etherscan/concatenated
 legacy/utils/devchain-snapshot/
 
 deployments/development-*.json
-bin/*.sh
 
 # Keystore
 .keystore*.json
