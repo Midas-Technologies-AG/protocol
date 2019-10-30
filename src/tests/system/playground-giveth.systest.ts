@@ -42,15 +42,13 @@ describe('playground', () => {
     );
 
     //Prepare wallet attributes
-    const address = web3Accounts.privateKeyToAccount(account.privateKey);
+    const { address } = web3Accounts.privateKeyToAccount(account.privateKey);
     const signTransaction = unsignedTransaction =>
       web3Accounts
         .signTransaction(unsignedTransaction, account.privateKey)
         .then(t => t.rawTransaction);
     const signMessage = message =>
       web3Accounts.sign(message, account.privateKey);
-
-    console.log('This here is a BUG: address is::', address);
 
     //Create wallet
     const _wallet = {
@@ -60,7 +58,7 @@ describe('playground', () => {
     };
 
     //Create Environment
-    const environment: Environment = constructEnvironment({
+    const environment: Environment = await constructEnvironment({
       endpoint: process.env.JSON_RPC_ENDPOINT,
       provider: _provider,
       logger: cliLogger,
@@ -83,7 +81,7 @@ describe('playground', () => {
       info('setup Fund was successfull');
       return fund;
     };
-    const testFund = createTestFund(environment);
+    const testFund = await createTestFund(environment);
 
     //Using testFund
     info('Hub address is:', testFund);
