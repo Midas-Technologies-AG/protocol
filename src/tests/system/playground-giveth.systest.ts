@@ -28,7 +28,7 @@ describe('playground', () => {
     const fs = require('fs');
     const _deployment: Deployment = JSON.parse(
       fs.readFileSync(
-        'deployments/configs/ropsten-kyberPrice/001-givethModuleBeta-1.0.7.json',
+        'deployments/configs/kovan-kyberPrice/025-more-open-fundfactory.json',
         'utf8',
       ),
     );
@@ -46,13 +46,15 @@ describe('playground', () => {
     info('Prepared Web3 with:', account.address);
 
     //Prepare wallet attributes
-    const { address } = web3Accounts.privateKeyToAccount(account.privateKey);
+    const { address } = web3Accounts.privateKeyToAccount(
+      process.env.PRIVATE_KEY,
+    );
     const signTransaction = unsignedTransaction =>
       web3Accounts
-        .signTransaction(unsignedTransaction, account.privateKey)
+        .signTransaction(unsignedTransaction, process.env.PRIVATE_KEY)
         .then(t => t.rawTransaction);
     const signMessage = message =>
-      web3Accounts.sign(message, account.privateKey);
+      web3Accounts.sign(message, process.env.PRIVATE_KEY);
     info('Prepared wallet.');
 
     //Create wallet
@@ -76,7 +78,7 @@ describe('playground', () => {
       deployment: _deployment,
       options: customOptions, // does not work...
       wallet: _wallet,
-      track: Tracks.KYBER_PRICE,
+      track: Tracks.GIVETH,
     };
 
     //Create Environment
@@ -85,7 +87,7 @@ describe('playground', () => {
     info('construct Environment was successfull.');
 
     //Create testFund
-    const fund = await setupFund(environment, 'GOGO');
+    const fund = await setupFund(environment, 'GO');
     info('setup Fund was successfull', fund);
 
     //Using testFund
