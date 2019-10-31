@@ -3,12 +3,10 @@ import {
   LogLevels,
   Tracks,
   Deployment,
+  Options,
 } from '~/utils/environment/Environment';
 import { toBeTrueWith } from '../utils/toBeTrueWith';
-import {
-  constructEnvironment,
-  defaultOptions,
-} from '~/utils/environment/constructEnvironment';
+import { constructEnvironment } from '~/utils/environment/constructEnvironment';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
@@ -20,16 +18,21 @@ expect.extend({ toBeTrueWith });
 
 describe('playground', () => {
   test('Happy path', async () => {
+    //Logger Settings
     const { cliLogger } = require('~/utils/environment/cliLogger');
-    const fs = require('fs');
-
+    const info = cliLogger(
+      'Midas-Technologies-AG/protocol:test-giveth',
+      LogLevels.INFO,
+    );
     //Load deployment
+    const fs = require('fs');
     const _deployment: Deployment = JSON.parse(
       fs.readFileSync(
-        'deployments/configs/ropsten-testing/001-givethModuleBeta-1.0.7.json',
+        'deployments/configs/ropsten-kyberPrice/001-givethModuleBeta-1.0.7.json',
         'utf8',
       ),
     );
+    info('Loaded deployment');
 
     //Create Web3 provider and account with private Key from keystore file.
     const _provider = new Web3Eth.providers.WebsocketProvider(
@@ -40,6 +43,7 @@ describe('playground', () => {
       JSON.parse(fs.readFileSync(process.env.KEYSTORE_FILE, 'utf8')),
       process.env.KEYSTORE_PASSWORD,
     );
+    info('Prepared Web3 with:', account.address);
 
     //Prepare wallet attributes
     const { address } = web3Accounts.privateKeyToAccount(account.privateKey);
@@ -49,6 +53,7 @@ describe('playground', () => {
         .then(t => t.rawTransaction);
     const signMessage = message =>
       web3Accounts.sign(message, account.privateKey);
+    info('Prepared wallet.');
 
     //Create wallet
     const _wallet = {
@@ -56,35 +61,40 @@ describe('playground', () => {
       signMessage,
       signTransaction,
     };
+    //TXoptions
+    const customOptions: Options = {
+      gasLimit: '8500000',
+      gasPrice: '3000000000',
+    };
+    info('Created wallet.');
 
-    //Create Environment
-    const environment: Environment = await constructEnvironment({
+    //constructEnvironment(param) Result
+    const param = {
       endpoint: process.env.JSON_RPC_ENDPOINT,
       provider: _provider,
       logger: cliLogger,
       deployment: _deployment,
-      options: defaultOptions,
+      options: customOptions, // does not work...
       wallet: _wallet,
-      track: Tracks.TESTING,
-    });
+      track: Tracks.KYBER_PRICE,
+    };
 
-    //Logger Settings
-    const info = environment.logger(
-      'Midas-Technologies-AG/protocol:test-giveth',
-      LogLevels.INFO,
-    );
-    info('construct Environment was successfull');
+    //Create Environment
+    const environment: Environment = await constructEnvironment(param);
 
-    //Create test Fund
+    info('construct Environment was successfull.');
+
+    //Create testFund
     const createTestFund = async (environment: Environment) => {
-      const fund = await setupFund(environment, 'test-giveth');
-      info('setup Fund was successfull');
+      const fund = await setupFund(environment, 'newFund');
       return fund;
     };
     const testFund = await createTestFund(environment);
+    info('setup Fund was successfull', testFund);
 
     //Using testFund
-    info('Hub address is:', testFund);
+    const hubAddress = { testFund };
+    info('Hub Address is:', hubAddress);
 
     expect(5 == 5);
     /*    expect(subtract(preFundMln, postFundMln).quantity).toEqual(
