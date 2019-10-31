@@ -1,5 +1,5 @@
 yarn deploy \
-  -T kyberPrice \
+  -T giveth \
   --config deployments/configs/test/fresh.json \
   --gas-price 2000000000 \
   --keystore .keystore-midasAG.json \
