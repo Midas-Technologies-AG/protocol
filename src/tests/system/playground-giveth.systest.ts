@@ -85,15 +85,11 @@ describe('playground', () => {
     info('construct Environment was successfull.');
 
     //Create testFund
-    const createTestFund = async (environment: Environment) => {
-      const fund = await setupFund(environment, 'newFund');
-      return fund;
-    };
-    const testFund = await createTestFund(environment);
-    info('setup Fund was successfull', testFund);
+    const fund = await setupFund(environment, 'GOGO');
+    info('setup Fund was successfull', fund);
 
     //Using testFund
-    const hubAddress = { testFund };
+    const hubAddress = { fund };
     info('Hub Address is:', hubAddress);
 
     expect(5 == 5);
