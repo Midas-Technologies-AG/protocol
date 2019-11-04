@@ -14,7 +14,7 @@ contract Giveth {
 	// @notice These values are for the Testnet-Setup.(Ropsten) 
 	constructor () public {
 		givethBridge = 0x279277482F13aeF92914317a0417DD591145aDc9;
-		receiverDAC = uint64(51); //FreshFruitForFun
+		receiverDAC = uint64(121); //develop.giveth.io "One thing ..."
 	}
 	
 	//@notice Just sending Ether to this Contract forwards the sended Amount to the givethDAC.
