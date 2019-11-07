@@ -2,8 +2,8 @@
   "melonContracts": {
     "priceSource": "DEPLOY",
     "adapters": {
-      "ethfinexAdapter": "DEPLOY",
       "kyberAdapter": "DEPLOY",
+      "ethfinexAdapter": "DEPLOY",
       "matchingMarketAdapter": "DEPLOY",
       "matchingMarketAccessor": "DEPLOY",
       "zeroExAdapter": "DEPLOY",
@@ -15,8 +15,8 @@
       "userWhitelist": "DEPLOY"
     },
     "fees": {
-        "managementFee": "DEPLOY",
-        "performanceFee": "DEPLOY"
+      "managementFee": "DEPLOY",
+      "performanceFee": "DEPLOY"
     },
     "factories": {
       "accountingFactory": "DEPLOY",
