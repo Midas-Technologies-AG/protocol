@@ -1,11 +1,8 @@
 pragma solidity ^0.4.25;
-pragma experimental ABIEncoderV2;
 
 import "GivethBridge.sol";
 import "ExchangeAdapter.sol";
 import "Vault.sol";
-import "Trading.sol";
-
 
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
@@ -17,9 +14,9 @@ contract GivethAdapter is ExchangeAdapter {
     address public bridge;
     uint64 public receiverDAC;
 
-    constructor(address _bridge, uint64 _receiverDAC) public {
-        bridge = _bridge;
-        receiverDAC = _receiverDAC;
+    constructor() public {
+        bridge = address(0x123);
+        receiverDAC = uint64(121);
     }
 
     function makeOrder(
@@ -46,8 +43,14 @@ contract GivethAdapter is ExchangeAdapter {
 
         // Get and approve makerAsset
         approveMakerAsset(bridge, makerAsset,makerQuantity);
+
         // Donate asset
-        GivethBridge(bridge).donateAndCreateGiver(msg.sender, )
+        GivethBridge(bridge).donateAndCreateGiver(
+            msg.sender,
+            receiverDAC,
+            makerAsset,
+            makerQuantity
+        );
         
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
@@ -58,7 +61,7 @@ contract GivethAdapter is ExchangeAdapter {
             bridge,
             _identifier,
             Trading.UpdateType.make,
-            [address(makerAsset), address(takerAsset)],
+            [address(makerAsset), address(0x0)],
             [makerQuantity, uint(0), uint(0)]
         );
     }
@@ -68,15 +71,14 @@ contract GivethAdapter is ExchangeAdapter {
         internal
     {
         Hub hub = getHub();
-        Vault vault = Vault(hub.vault());
-        vault.withdraw(_makerAsset, _makerQuantity);
+        Vault(hub.vault()).withdraw(_makerAsset, _makerQuantity);
         require(
             ERC20(_makerAsset).approve(_targetExchange, _makerQuantity),
             "Maker asset could not be approved"
         );
     }
 
-    function changeBridge (address _newBridge) onlyManager notShutDown returns(bool) public {
+    function changeBridge (address _newBridge) public onlyManager notShutDown returns(bool) {
         bridge = _newBridge;
         return true;
     }

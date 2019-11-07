@@ -1,6 +1,4 @@
-//import { Contracts } from '~/Contracts';
 import { cliLogger } from '~/utils/environment/cliLogger';
-//import { createAccounting } from '~/contracts/factory/transactions/createAccounting';
 import {
   Environment,
   LogLevels,
@@ -13,21 +11,7 @@ import { constructEnvironment } from '~/utils/environment/constructEnvironment';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-//import { isAddress } from '~/utils/checks/isAddress';
-import {
-  donateGivethETH,
-  donateGivethERC20,
-} from '~/contracts/exchanges/third-party/giveth/transactions/donateGiveth';
 import { createQuantity, createToken } from '@melonproject/token-math';
-
-/*import { getHub } from '~/contracts/fund/hub/calls/getHub';
-import { getManager } from '~/contracts/fund/hub/calls/getManager';
-import { getRoutes } from '~/contracts/fund/hub/calls/getRoutes';
-import { getName } from '~/contracts/fund/hub/calls/getName';
-import { getCreationTime } from '~/contracts/fund/hub/calls/getCreationTime';*/
-
-//import { donateGivethETH } from '~/contracts/exchanges/transactions/donateGivethETH';
-//import { donateGivethERC20 } from '~/contracts/exchanges/transactions/donateGivethERC20';
 
 // initialize environment
 export const init = async () => {
@@ -101,29 +85,6 @@ const functionReport = cliLogger(
   'Midas-Technologies-AG/protocol:test-giveth:functionReport',
   LogLevels.INFO,
 );
-/*// create Accounting
-export const createAccounting = async (environment:Environment) => {
-  const { melonContracts } = environment.deployment;
-  const acc = await createAccounting(
-    environment,
-    melonContracts.version
-  );
-  functionReport('created Accounting:', acc);
-  return acc;
-}*/
-
-/*    //Checking the created Fund
-    const hub = await getHub(environment);
-    info('hub is:', hub);
-    const manager = await getManager(environment);
-    info('manager is:', manager);
-    const routes = await getRoutes(environment);
-    info('routes is:', routes);
-    const name = await getName(environment);
-    info('name is:', name);
-    const creationTime = await getCreationTime(environment);
-    info('creationTime is:', creationTime);
-*/
 
 //Create testFund
 export const createFund = async (environment: Environment) => {

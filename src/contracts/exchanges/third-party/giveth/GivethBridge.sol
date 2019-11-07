@@ -1,41 +1,7 @@
 /**
  *Submitted for verification at Etherscan.io on 2018-06-29
 */
-
-///File: giveth-common-contracts/contracts/ERC20.sol
-
-pragma solidity ^0.4.19;
-
-
-/**
- * @title ERC20
- * @dev A standard interface for tokens.
- * @dev https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
- */
-contract ERC20 {
-
-    /// @dev Returns the total token supply
-    function totalSupply() public constant returns (uint256 supply);
-
-    /// @dev Returns the account balance of the account with address _owner
-    function balanceOf(address _owner) public constant returns (uint256 balance);
-
-    /// @dev Transfers _value number of tokens to address _to
-    function transfer(address _to, uint256 _value) public returns (bool success);
-
-    /// @dev Transfers _value number of tokens from address _from to address _to
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);
-
-    /// @dev Allows _spender to withdraw from the msg.sender's account up to the _value amount
-    function approve(address _spender, uint256 _value) public returns (bool success);
-
-    /// @dev Returns the amount which _spender is still allowed to withdraw from _owner
-    function allowance(address _owner, address _spender) public constant returns (uint256 remaining);
-
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-
-}
+import "ERC20.i.sol";
 
 
 ///File: giveth-common-contracts/contracts/Owned.sol
@@ -283,7 +249,7 @@ contract Pausable is Owned {
     }
 }
 
-///File: ./contracts/lib/Vault.sol
+///File: ./contracts/lib/GivethVault.sol
 
 pragma solidity ^0.4.21;
 
@@ -304,7 +270,7 @@ pragma solidity ^0.4.21;
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// @title Vault Contract
+/// @title GivethVault Contract
 /// @author Jordi Baylina, RJ Ewing
 /// @notice This contract holds funds for Campaigns and automates payments. For
 ///  this iteration the funds will come straight from the Giveth Multisig as a
@@ -315,9 +281,9 @@ pragma solidity ^0.4.21;
 
 
 
-/// @dev `Vault` is a higher level contract built off of the `Escapable`
+/// @dev `GivethVault` is a higher level contract built off of the `Escapable`
 ///  contract that holds funds for Campaigns and automates payments.
-contract Vault is Escapable, Pausable {
+contract GivethVault is Escapable, Pausable {
 
     /// @dev `Payment` is a public structure that describes the details of
     ///  each payment making it easy to track the movement of funds
@@ -344,7 +310,7 @@ contract Vault is Escapable, Pausable {
     bool public allowDisbursePaymentWhenPaused;
 
     /// @dev The white list of approved addresses allowed to set up && receive
-    ///  payments from this vault
+    ///  payments from this Givethvault
     mapping (address => bool) public allowedSpenders;
 
     // @dev Events to make the payment movements easy to find on the blockchain
@@ -368,7 +334,7 @@ contract Vault is Escapable, Pausable {
         _;
     }
 
-    /// @notice The Constructor creates the Vault on the blockchain
+    /// @notice The Constructor creates the GivethVault on the blockchain
     /// @param _escapeHatchCaller The address of a trusted account or contract to
     ///  call `escapeHatch()` to send the ether in this contract to the
     ///  `escapeHatchDestination` it would be ideal if `escapeHatchCaller` cannot move
@@ -385,7 +351,7 @@ contract Vault is Escapable, Pausable {
     /// @param _maxSecurityGuardDelay The maximum number of seconds in total
     ///   that `securityGuard` can delay a payment so that the owner can cancel
     ///   the payment if needed
-    function Vault(
+    function GivethVault(
         address _escapeHatchCaller,
         address _escapeHatchDestination,
         uint _absoluteMinTimeLock,
@@ -609,14 +575,14 @@ pragma solidity ^0.4.21;
 
 
 /**
-* @dev `FailClosedVault` is a version of the vault that requires
+* @dev `FailClosedVault` is a version of the Givethvault that requires
 *  the securityGuard to "see" each payment before it can be collected
 */
-contract FailClosedVault is Vault {
+contract FailClosedVault is GivethVault {
     uint public securityGuardLastCheckin;
 
     /**
-    * @param _absoluteMinTimeLock For this version of the vault, it is recommended
+    * @param _absoluteMinTimeLock For this version of the Givethvault, it is recommended
     *   that this value is > 24hrs. If not, it will require the securityGuard to checkIn
     *   multiple times a day. Also consider that `securityGuardLastCheckin >= payment.earliestPayTime - timelock + 30mins);`
     *   is the condition to allow payments to be payed. The additional 30 mins is to reduce (not eliminate)
@@ -629,7 +595,7 @@ contract FailClosedVault is Vault {
         uint _timeLock,
         address _securityGuard,
         uint _maxSecurityGuardDelay
-    ) Vault(
+    ) GivethVault(
         _escapeHatchCaller,
         _escapeHatchDestination, 
         _absoluteMinTimeLock,
