@@ -34,7 +34,7 @@ const setupFund = async (environment: Environment, name?) => {
   const fees = [
     {
       feeAddress: melonContracts.fees.managementFee.toLowerCase(),
-      feePeriod: toBI(0),
+      feePeriod: toBI(DAY_IN_SECONDS * 45),
       feeRate: appendDecimals(weth, 0.02),
     },
     {
@@ -49,6 +49,7 @@ const setupFund = async (environment: Environment, name?) => {
     exchangeConfigs,
     fees,
     fundName,
+    manager: environment.wallet.address,
     quoteToken: weth,
   });
   await createAccounting(environment, melonContracts.version);

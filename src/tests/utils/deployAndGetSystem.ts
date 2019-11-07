@@ -126,7 +126,16 @@ export const deployAndGetSystem = async (environment: Environment) => {
       addresses.thirdPartyContracts.tokens.find(t => t.symbol === 'ZRX')
         .address,
     ),
+    givethAdapter: getContract(
+      environment,
+      Contracts.GivethAdapter,
+      addresses.exchangeConfigs['Giveth'].adapter,
+    ),
+    giveth: getContract(
+      environment,
+      Contracts.Giveth,
+      addresses.exchangeConfigs['Giveth'].exchange,
+    ),
   };
-
   return { addresses, contracts };
 };

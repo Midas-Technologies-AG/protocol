@@ -1,16 +1,16 @@
 {
-  "name": "@MidasTechnologiesAG/protocol",
-  "version": "1.0.6",
+  "name": "midas-protocol",
+  "version": "1.0.7",
   "description": "Technology Regulated and Operated Investment Funds",
   "main": "lib/index.umd.js",
   "module": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "author": "Midas Technologies AG <willie@m1d4s.tech>",
+  "author": "Willie Laubenheimer, forked from @melonproject/protocol",
   "license": "GPL-3.0",
   "homepage": "https://github.com/Midas-Technologies-AG/protocol#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Midas-Technologies-AG/protocol.git"
+    "url": "git+https://Midas-Technologies-AG/protocol.git"
   },
   "bugs": {
     "url": "https://github.com/Midas-Technologies-AG/protocol/issues"
@@ -40,10 +40,11 @@
     "compile": "node bin/melon.js compile",
     "deploy": "node bin/melon.js deploy",
     "deploy:dev": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T testing && yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T kyberPrice",
-    "dplK" : "sh bin/testDeployKovan.sh",
-    "dplR" : "sh bin/testDeployRopsten.sh",
+    "dplK": "sh bin/testDeployKovan.sh",
+    "dplR": "sh bin/testDeployRopsten.sh",
+    "dplD": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T testing --config deployments/configs/test/fresh.json",
     "deploy:kovan": "node bin/melon.js deploy -c ./deployments/configs/test/kovan.json",
-    "deploy:ropsten": "node bin/melon.js deploy -c ./deployments/configs/test/ropsten.json",    
+    "deploy:ropsten": "node bin/melon.js deploy -c ./deployments/configs/test/ropsten.json",
     "deploy:mainnet": "node bin/melon.js deploy -c ./deployments/configs/mainnet/013-takesCustody-fix.json",
     "dev": "tsc-watch -p tsconfig.json --onSuccess \"sh -c 'tscpaths -p tsconfig.json -s ./src -o ./lib > /dev/null && yarn bundle'\"",
     "devchain": "ganache-cli --gasLimit 0x7a1200 --defaultBalanceEther 10000000000000 -m 'exhibit now news planet fame thank swear reform tilt accident bitter axis'  --networkId 4",
@@ -80,6 +81,7 @@
     "husky": "^1.1.2",
     "jest": "^24.1.0",
     "lint-staged": "^7.3.0",
+    "node": "8.16.2",
     "prettier": "^1.14.3",
     "prettier-eslint": "^8.2.2",
     "rimraf": "^2.6.2",
