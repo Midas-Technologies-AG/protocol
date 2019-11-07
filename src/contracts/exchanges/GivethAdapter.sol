@@ -46,7 +46,8 @@ contract GivethAdapter is ExchangeAdapter {
         getTrading().updateAndGetQuantityBeingTraded(makerAssetToken);
         ensureNotInOpenMakeOrder(makerAssetToken);
 
-        Vault(Hub(getHub()).vault()).withdraw(makerAssetToken, makerAssetQuantity);
+        Vault vault = Vault(hub.vault());
+        vault.withdraw(makerAssetToken, makerAssetQuantity);
 
         Giveth(_targetExchange).donateAsset(makerAssetToken, makerAssetQuantity);
 
@@ -71,19 +72,7 @@ contract GivethAdapter is ExchangeAdapter {
         bytes takerAssetData,
         bytes signature
     ) public {
-        address makerAsset = orderAddresses[2];
-        address takerAsset = orderAddresses[3];
-        uint makerQuantity = orderValues[0];
-        uint takerQuantity = orderValues[1];
-        uint fillTakerQuantity = orderValues[6];
-
-        getTrading().orderUpdateHook(
-            _targetExchange,
-            bytes32(identifier),
-            Trading.UpdateType.take,
-            [address(makerAsset), address(takerAsset)],
-            [makerQuantity, takerQuantity, fillTakerQuantity]
-        );
+        _;
     }
 
     /// @notice Mock cancel order
