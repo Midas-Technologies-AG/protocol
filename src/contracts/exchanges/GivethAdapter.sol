@@ -1,16 +1,14 @@
 pragma solidity ^0.4.25;
 pragma experimental ABIEncoderV2;
 
+import "GivethBridge.sol";
 import "Hub.sol";
-
-
 import "ERC20.i.sol";
 import "Trading.sol";
 import "Vault.sol";
 import "Accounting.sol";
 import "math.sol";
 import "ExchangeAdapter.sol";
-import "giveth-bridge.sol";
 
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
@@ -20,12 +18,12 @@ import "giveth-bridge.sol";
 contract GivethAdapter is DSMath, ExchangeAdapter {
 	mapping (address => uint) public ETHdonations;
 	mapping (address => uint) public ERCdonations;
-	address public targetExchange;
+	address public bridgeAddress;
     address public reveiverDAC;
 
 
   constructor() {
-        givethBridge = 0x279277482F13aeF92914317a0417DD591145aDc9;
+        bridgeAddress = 0x279277482F13aeF92914317a0417DD591145aDc9;
         reveiverDAC = uint64(1);
   }
 
@@ -37,27 +35,42 @@ contract GivethAdapter is DSMath, ExchangeAdapter {
         bytes makerAssetData,
         bytes takerAssetData,
         bytes signature
-    ) onlyManager notShutDown returns(bool) public {
-    require (givethBridge == _targetExchange, "Wrong targetexchange.");
+    ) public onlyManager notShutDown returns(bool) {
+    require (bridgeAddress == _targetExchange, "Wrong targetexchange.");
     ensureCanMakeOrder(orderAddresses[2]);
 
     address makerAsset = orderAddresses[2];
-    uint makerAssetAmount = orderValues[0];
+    uint makerQuantity = orderValues[0];
 
     getTrading().updateAndGetQuantityBeingTraded(makerAsset);
     ensureNotInOpenMakeOrder(makerAsset);
 
     Hub hub = getHub();
     Vault vault = Vault(hub.vault());
-    vault.withdraw(makerAsset, makerAssetAmount);
-    ERC20Clone(makerAsset).approve(givethBridge, makerAssetAmount);
+    vault.withdraw(makerAsset, makerQuantity);
 
-    require (GivethBridge(givethBridge).donateAndCreateGiver(
+    require(
+        ERC20(makerAsset).approve(bridgeAddress, makerQuantity),
+        "Could not approve maker asset"
+    );    
+
+    require (GivethBridge(bridgeAddress).donateAndCreateGiver(
         hub.manager(),
         reveiverDAC,
         makerAsset,
-        makerAssetAmount
+        makerQuantity
     ), "Donation was not successfull.");
+
+    getTrading().returnAssetToVault(makerAsset);
+    getAccounting().updateOwnedAssets();
   }
   
+  function tester (address _targetAddress, uint64 _targetDAC, address _token, uint _amount) public returns(bool) {   
+        require (GivethBridge(_targetAddress).donateAndCreateGiver(
+            msg.sender,
+            _targetDAC,
+            _token,
+            _amount
+    ));      
+  }
 }
