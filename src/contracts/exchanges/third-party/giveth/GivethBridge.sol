@@ -283,7 +283,7 @@ contract Pausable is Owned {
     }
 }
 
-///File: ./contracts/lib/GVault.sol
+///File: ./contracts/lib/Vault.sol
 
 pragma solidity ^0.4.21;
 
@@ -304,7 +304,7 @@ pragma solidity ^0.4.21;
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// @title GVault Contract
+/// @title Vault Contract
 /// @author Jordi Baylina, RJ Ewing
 /// @notice This contract holds funds for Campaigns and automates payments. For
 ///  this iteration the funds will come straight from the Giveth Multisig as a
@@ -315,9 +315,9 @@ pragma solidity ^0.4.21;
 
 
 
-/// @dev `GVault` is a higher level contract built off of the `Escapable`
+/// @dev `Vault` is a higher level contract built off of the `Escapable`
 ///  contract that holds funds for Campaigns and automates payments.
-contract GVault is Escapable, Pausable {
+contract Vault is Escapable, Pausable {
 
     /// @dev `Payment` is a public structure that describes the details of
     ///  each payment making it easy to track the movement of funds
@@ -344,7 +344,7 @@ contract GVault is Escapable, Pausable {
     bool public allowDisbursePaymentWhenPaused;
 
     /// @dev The white list of approved addresses allowed to set up && receive
-    ///  payments from this Gvault
+    ///  payments from this vault
     mapping (address => bool) public allowedSpenders;
 
     // @dev Events to make the payment movements easy to find on the blockchain
@@ -368,7 +368,7 @@ contract GVault is Escapable, Pausable {
         _;
     }
 
-    /// @notice The Constructor creates the GVault on the blockchain
+    /// @notice The Constructor creates the Vault on the blockchain
     /// @param _escapeHatchCaller The address of a trusted account or contract to
     ///  call `escapeHatch()` to send the ether in this contract to the
     ///  `escapeHatchDestination` it would be ideal if `escapeHatchCaller` cannot move
@@ -385,7 +385,7 @@ contract GVault is Escapable, Pausable {
     /// @param _maxSecurityGuardDelay The maximum number of seconds in total
     ///   that `securityGuard` can delay a payment so that the owner can cancel
     ///   the payment if needed
-    function GVault(
+    function Vault(
         address _escapeHatchCaller,
         address _escapeHatchDestination,
         uint _absoluteMinTimeLock,
@@ -609,14 +609,14 @@ pragma solidity ^0.4.21;
 
 
 /**
-* @dev `FailClosedVault` is a version of the Gvault that requires
+* @dev `FailClosedVault` is a version of the vault that requires
 *  the securityGuard to "see" each payment before it can be collected
 */
-contract FailClosedVault is GVault {
+contract FailClosedVault is Vault {
     uint public securityGuardLastCheckin;
 
     /**
-    * @param _absoluteMinTimeLock For this version of the Gvault, it is recommended
+    * @param _absoluteMinTimeLock For this version of the vault, it is recommended
     *   that this value is > 24hrs. If not, it will require the securityGuard to checkIn
     *   multiple times a day. Also consider that `securityGuardLastCheckin >= payment.earliestPayTime - timelock + 30mins);`
     *   is the condition to allow payments to be payed. The additional 30 mins is to reduce (not eliminate)
@@ -629,7 +629,7 @@ contract FailClosedVault is GVault {
         uint _timeLock,
         address _securityGuard,
         uint _maxSecurityGuardDelay
-    ) GVault(
+    ) Vault(
         _escapeHatchCaller,
         _escapeHatchDestination, 
         _absoluteMinTimeLock,
@@ -759,10 +759,8 @@ contract GivethBridge is FailClosedVault {
     ) public
     {
         tokenWhitelist[0] = true; // enable eth transfers
-        tokenWhitelist[0xc778417E063141139Fce010982780140Aa0cD5Ab] = true;
     }
-    event messageSender(address _messageSender);
-    event seeThis(address _this);
+
     //== public methods
 
     /**
@@ -794,8 +792,6 @@ contract GivethBridge is FailClosedVault {
     function donateAndCreateGiver(address giver, uint64 receiverId, address token, uint _amount) whenNotPaused payable public {
         require(giver != 0, "giver is 0.");
         require(receiverId != 0, "receiver is 0.");
-        emit messageSender(msg.sender);
-
         uint amount = _receiveDonation(token, _amount);
         emit DonateAndCreateGiver(giver, receiverId, token, amount);
     }
@@ -878,7 +874,6 @@ contract GivethBridge is FailClosedVault {
     function _receiveDonation(address token, uint _amount) internal returns(uint amount) {
         require(tokenWhitelist[token], "token not whitelisted");
         amount = _amount;
-        emit messageSender(msg.sender);
 
         // eth donation
         if (token == 0) {
@@ -887,7 +882,6 @@ contract GivethBridge is FailClosedVault {
 
         require(amount > 0, "amount is 0.");
 
-        emit seeThis(this);
         if (token != 0) {
             require(ERC20(token).transferFrom(msg.sender, this, amount),
                 "ERC20(token).transferFrom(msg.sender, this, amount) failed"

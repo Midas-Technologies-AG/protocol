@@ -17,7 +17,8 @@ contract GivethAdapter {
         uint64 _targetDAC,
         address _token,
         uint _amount
-    ) public payable returns(bool) {        
+    ) public payable returns(bool) {
+        require(ERC20(_token).approve(_bridge, _amount));        
         GivethBridge(_bridge).donateAndCreateGiver(
             msg.sender,
             _targetDAC,
@@ -26,42 +27,4 @@ contract GivethAdapter {
         );
         return true;
     }
-
-/*  function makeOrder (
-        address _targetExchange,
-        address[6] orderAddresses,
-        uint[8] orderValues,
-        bytes32 identifier,
-        bytes makerAssetData,
-        bytes takerAssetData,
-        bytes signature
-    ) public onlyManager notShutDown returns(bool) {
-    require (bridgeAddress == _targetExchange, "Wrong targetexchange.");
-    ensureCanMakeOrder(orderAddresses[2]);
-
-    address makerAsset = orderAddresses[2];
-    uint makerQuantity = orderValues[0];
-
-    getTrading().updateAndGetQuantityBeingTraded(makerAsset);
-    ensureNotInOpenMakeOrder(makerAsset);
-
-    Hub hub = getHub();
-    Vault vault = Vault(hub.vault());
-    vault.withdraw(makerAsset, makerQuantity);
-
-    require(
-        ERC20(makerAsset).approve(bridgeAddress, makerQuantity),
-        "Could not approve maker asset"
-    );    
-
-    require (GivethBridge(bridgeAddress).donateAndCreateGiver(
-        hub.manager(),
-        reveiverDAC,
-        makerAsset,
-        makerQuantity
-    ), "Donation was not successfull.");
-
-    getTrading().returnAssetToVault(makerAsset);
-    getAccounting().updateOwnedAssets();
-  }*/
 }
