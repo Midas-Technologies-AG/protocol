@@ -22,7 +22,7 @@ export enum Contracts {
   FundFactory = 'FundFactory',
   FundRanking = 'FundRanking',
   GivethBridge = 'GivethBridge',
-  GivethAdapter = 'GivethAdapter',
+  GivethBridgeAdapter = 'GivethBridgeAdapter',
   Hub = 'Hub',
   KyberAdapter = 'KyberAdapter',
   KyberNetwork = 'KyberNetwork',
@@ -120,8 +120,8 @@ export const requireMap = {
     require('../out/FundRanking.abi.json'),
   [Contracts.GivethBridge]:
     require(`../out/GivethBridge.abi.json`),
-  [Contracts.GivethAdapter]:
-    require(`../out/GivethAdapter.abi.json`),
+  [Contracts.GivethBridgeAdapter]:
+    require(`../out/GivethBridgeAdapter.abi.json`),
   [Contracts.Hub]:
     require('../out/Hub.abi.json'),
   [Contracts.MockAdapter]:

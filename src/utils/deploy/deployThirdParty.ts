@@ -7,24 +7,23 @@ import {
 } from '@melonproject/token-math';
 
 import { Environment } from '../environment/Environment';
-// import { getContract } from '~/utils/solidity/getContract';
 import {
   deployToken,
   deployWeth,
 } from '~/contracts/dependencies/token/transactions/deploy';
 import { deposit } from '~/contracts/dependencies/token/transactions/deposit';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
-import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deployMatchingMarket';
+import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarket';
 import {
   deployKyberEnvironment,
   KyberEnvironment,
-} from '~/contracts/exchanges/transactions/deployKyberEnvironment';
-import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy0xExchange';
-import { deployGiveth } from '~/contracts/exchanges/transactions/deployGiveth';
+} from '~/contracts/exchanges/transactions/deploy/deployKyberEnvironment';
+import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy/deploy0xExchange';
+import { deployGivethBridge } from '~/contracts/exchanges/transactions/deploy/deployGivethBridge';
 import {
   deployEthfinex,
   EthfinexEnvironment,
-} from '~/contracts/exchanges/transactions/deployEthfinex';
+} from '~/contracts/exchanges/transactions/deploy/deployEthfinex';
 import { ensure } from '../guards/ensure';
 import { getChainName } from '~/utils/environment/chainName';
 import { deployBurnableToken } from '~/contracts/dependencies/token/transactions/deployBurnableToken';
@@ -35,7 +34,7 @@ export interface ThirdPartyContracts {
     matchingMarket: Address;
     zeroEx: Address;
     ethfinex: EthfinexEnvironment;
-    giveth: Address;
+    givethBridge: Address;
   };
   tokens: TokenInterface[];
 }
@@ -113,7 +112,7 @@ const deployThirdParty = async (
     zeroExExchangeAddress: zeroEx,
     tokens: deployedTokens,
   });
-  const giveth = await deployGiveth(environment);
+  const givethBridge = await deployGivethBridge(environment);
 
   return {
     exchanges: {
@@ -121,7 +120,7 @@ const deployThirdParty = async (
       kyber,
       matchingMarket,
       zeroEx,
-      giveth,
+      givethBridge,
     },
     tokens: deployedTokens.map(token => ({
       ...token,

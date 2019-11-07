@@ -7,9 +7,12 @@ import "Vault.sol";
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
 /**
- * The GivethAdapter contract does this and that...
+ * TD:
+
+            FunctionSignatures.withdrawTokens,
+
  */
-contract GivethAdapter is ExchangeAdapter {
+contract GivethBridgeAdapter is ExchangeAdapter {
 
     address public bridge;
     uint64 public receiverDAC;
@@ -43,7 +46,9 @@ contract GivethAdapter is ExchangeAdapter {
 
         // Get and approve makerAsset
         approveMakerAsset(bridge, makerAsset,makerQuantity);
-
+        
+        //check
+        require (address(hub.manager()) == address(msg.sender));
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,

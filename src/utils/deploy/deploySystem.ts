@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 
 import { Exchanges, Contracts } from '~/Contracts';
-import { deployMatchingMarketAdapter } from '~/contracts/exchanges/transactions/deployMatchingMarketAdapter';
-import { deployMatchingMarketAccessor } from '~/contracts/exchanges/transactions/deployMatchingMarketAccessor';
+import { deployMatchingMarketAdapter } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarketAdapter';
+import { deployMatchingMarketAccessor } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarketAccessor';
 import { deployEngine } from '~/contracts/engine/transactions/deployEngine';
 import { deploy as deployPriceTolerance } from '~/contracts/fund/policies/risk-management/transactions/deploy';
 import { deployRegistry } from '~/contracts/version/transactions/deployRegistry';
@@ -20,14 +20,14 @@ import { deploySharesFactory } from '~/contracts/fund/shares/transactions/deploy
 import { deployTradingFactory } from '~/contracts/fund/trading/transactions/deployTradingFactory';
 import { deployVaultFactory } from '~/contracts/fund/vault/transactions/deployVaultFactory';
 import { deployPolicyManagerFactory } from '~/contracts/fund/policies/transactions/deployPolicyManagerFactory';
-import { deploy0xAdapter } from '~/contracts/exchanges/transactions/deploy0xAdapter';
-import { deployEthfinexAdapter } from '~/contracts/exchanges/transactions/deployEthfinexAdapter';
+import { deploy0xAdapter } from '~/contracts/exchanges/transactions/deploy/deploy0xAdapter';
+import { deployEthfinexAdapter } from '~/contracts/exchanges/transactions/deploy/deployEthfinexAdapter';
 import {
   Environment,
   WithDeployment,
   Tracks,
 } from '../environment/Environment';
-import { deployKyberAdapter } from '~/contracts/exchanges/transactions/deployKyberAdapter';
+import { deployKyberAdapter } from '~/contracts/exchanges/transactions/deploy/deployKyberAdapter';
 import { ThirdPartyContracts } from './deployThirdParty';
 import { Address, createQuantity } from '@melonproject/token-math';
 import { setMlnToken } from '~/contracts/version/transactions/setMlnToken';
@@ -52,8 +52,8 @@ import { setDecimals } from '~/contracts/prices/transactions/setDecimals';
 import { deployManagementFee } from '~/contracts/fund/fees/transactions/deployManagementFee';
 import { deployPerformanceFee } from '~/contracts/fund/fees/transactions/deployPerformanceFee';
 import { setEthfinexWrapperRegistry } from '~/contracts/version/transactions/setEthfinexWrapperRegistry';
-import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deployEngineAdapter';
-import { deployGivethAdapter } from '~/contracts/exchanges/transactions/deployGivethAdapter';
+import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deploy/deployEngineAdapter';
+import { deployGivethBridgeAdapter } from '~/contracts/exchanges/third-party/giveth/transactions/deployGivethBridgeAdapter';
 
 const pkg = require('~/../package.json');
 
@@ -79,7 +79,7 @@ export interface MelonContracts {
     matchingMarketAdapter: Address;
     matchingMarketAccessor: Address;
     ethfinexAdapter: Address;
-    givethAdapter: Address;
+    givethBridgeAdapter: Address;
   };
   policies: {
     priceTolerance: Address;
@@ -109,7 +109,7 @@ export const deployAllContractsConfig = JSON.parse(`{
     "matchingMarketAccessor": "DEPLOY",
     "zeroExAdapter": "DEPLOY",
     "engineAdapter": "DEPLOY",
-    "givethAdapter": "DEPLOY"
+    "givethBridgeAdapter": "DEPLOY"
   },
   "policies": {
     "priceTolerance": "DEPLOY",
@@ -230,8 +230,8 @@ export const deploySystem = async (
     maybeDeploy(['adapters', 'engineAdapter'], environment =>
       deployEngineAdapter(environment),
     ),
-    maybeDeploy(['adapters', 'givethAdapter'], environment =>
-      deployGivethAdapter(environment),
+    maybeDeploy(['adapters', 'givethBridgeAdapter'], environment =>
+      deployGivethBridgeAdapter(environment),
     ),
     maybeDeploy(['policies', 'priceTolerance'], environment =>
       deployPriceTolerance(environment, 10),
@@ -483,9 +483,9 @@ export const deploySystem = async (
       exchange: melonContracts.engine,
       takesCustody: false,
     },
-    [Exchanges.Giveth]: {
-      adapter: melonContracts.adapters.givethAdapter,
-      exchange: thirdPartyContracts.exchanges.giveth,
+    [Exchanges.GivethBridge]: {
+      adapter: melonContracts.adapters.givethBridgeAdapter,
+      exchange: thirdPartyContracts.exchanges.givethBridge,
       takesCustody: false,
     },
   };

@@ -211,8 +211,8 @@ export {
 export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
 export {
   donateGivethETH,
-} from '~/contracts/exchanges/transactions/donateGivethETH';
+} from '~/contracts/exchanges/transactions/donateGivethBridgeETH';
 export {
   donateGivethERC20,
-} from '~/contracts/exchanges/transactions/donateGivethERC20';
+} from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
 export { setupFund } from '~/contracts/fund/hub/transactions/setupFund';

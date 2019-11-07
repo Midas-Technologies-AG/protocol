@@ -15,7 +15,7 @@
       "exchange": "0xCA3139e0D64f28202d0b2e40018059B939bE51d1",
       "takesCustody": false
     },
-    "Giveth": {
+    "GivethBridge": {
       "adapter": "0xA6F4eb4cdaA720B146d0C7141b7C3527E9d273c7",
       "exchange": "0xcD5eb2113e4a52149857583AC26c4c82B363829d",
       "takesCustody": false
@@ -29,7 +29,7 @@
       "matchingMarketAccessor": "0x38ed49300335A839B4ea65f47cd8BE1229f2E447",
       "zeroExAdapter": "0x4679FDb64488CABcd3C7b7c14c4577b34E798A97",
       "ethfinexAdapter": "0x4679FDb64488CABcd3C7b7c14c4577b34E798A97",
-      "givethAdapter": "0xA6F4eb4cdaA720B146d0C7141b7C3527E9d273c7"
+      "givethBridgeAdapter": "0xA6F4eb4cdaA720B146d0C7141b7C3527E9d273c7"
     },
     "policies": {
       "priceTolerance": "0x4c98B3438f78F744Fa87F3a3b635504A21a73932",
@@ -66,7 +66,7 @@
         ],
         "erc20proxy": ""
         },
-        "giveth": "0xcD5eb2113e4a52149857583AC26c4c82B363829d"
+        "givethBridge": "0xcD5eb2113e4a52149857583AC26c4c82B363829d"
     },
     "tokens": [
       {

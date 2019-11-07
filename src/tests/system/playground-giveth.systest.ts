@@ -17,7 +17,7 @@ import { createQuantity, createToken } from '@melonproject/token-math';
 export const init = async () => {
   //Logger Settings
   const info = cliLogger(
-    'Midas-Technologies-AG/protocol:test-giveth:init',
+    'Midas-Technologies-AG/protocol:test-givethBridge:init',
     LogLevels.INFO,
   );
   //Load deployment
@@ -72,7 +72,7 @@ export const init = async () => {
     deployment: _deployment,
     options: customOptions, // does not work...
     wallet: _wallet,
-    track: Tracks.GIVETH,
+    track: Tracks.KYBER,
   };
 
   //Create Environment
@@ -82,7 +82,7 @@ export const init = async () => {
 };
 
 const functionReport = cliLogger(
-  'Midas-Technologies-AG/protocol:test-giveth:functionReport',
+  'Midas-Technologies-AG/protocol:test-givethBridge:functionReport',
   LogLevels.INFO,
 );
 
@@ -98,7 +98,7 @@ export const createFund = async (environment: Environment) => {
 export const donate = async (environment: Environment) => {
   //Donate directly through tird-party contract
   const howMuch = await createQuantity('0x0', 0.05);
-  const donateETH = await donateGivethETH(environment, { howMuch });
+  const donateETH = await donateGivethBridgeETH(environment, { howMuch });
   functionReport('Donated ETH: $(howMuch.quantity.toString()).', donateETH);
   return donateETH;
 };
@@ -113,7 +113,7 @@ export const donateAsset = async (environment: Environment) => {
     '0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8',
     0.05,
   );
-  const donateERC = await donateGivethERC20(
+  const donateERC = await donateGivethBridgeERC20(
     environment,
     token.address.toString(),
     { token, howMuch },
@@ -129,17 +129,17 @@ expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
     const testReport = cliLogger(
-      'Midas-Technologies-AG/protocol:test-giveth:testReport',
+      'Midas-Technologies-AG/protocol:test-givethBridge:testReport',
       LogLevels.INFO,
     );
 
-    const environment: Environment = await init();
+    /*const environment: Environment = await init();
 
     const ETHdonator = await donate(environment);
     testReport('Donated ETH.', ETHdonator);
 
     const Assetdonator = await donateAsset(environment);
-    testReport('Donated Asset.', Assetdonator);
+    testReport('Donated Asset.', Assetdonator);*/
 
     /*    const fund = await createFund(environment);
     const hubAddress = fund.hubAddress;
