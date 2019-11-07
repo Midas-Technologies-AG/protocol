@@ -2,32 +2,32 @@ pragma solidity ^0.4.25;
 pragma experimental ABIEncoderV2;
 
 import "GivethBridge.sol";
-import "Hub.sol";
-import "ERC20.i.sol";
-import "Trading.sol";
-import "Vault.sol";
-import "Accounting.sol";
-import "math.sol";
-import "ExchangeAdapter.sol";
 
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
 /**
  * The GivethAdapter contract does this and that...
  */
-contract GivethAdapter is DSMath, ExchangeAdapter {
-	mapping (address => uint) public ETHdonations;
-	mapping (address => uint) public ERCdonations;
-	address public bridgeAddress;
-    address public reveiverDAC;
+contract GivethAdapter {
+    constructor() {
+    }
+  
+    function tester (
+        address _bridge,
+        uint64 _targetDAC,
+        address _token,
+        uint _amount
+    ) public payable returns(bool) {        
+        GivethBridge(_bridge).donateAndCreateGiver(
+            msg.sender,
+            _targetDAC,
+            _token,
+            _amount
+        );
+        return true;
+    }
 
-
-  constructor() {
-        bridgeAddress = 0x279277482F13aeF92914317a0417DD591145aDc9;
-        reveiverDAC = uint64(1);
-  }
-
-  function makeOrder (
+/*  function makeOrder (
         address _targetExchange,
         address[6] orderAddresses,
         uint[8] orderValues,
@@ -63,14 +63,5 @@ contract GivethAdapter is DSMath, ExchangeAdapter {
 
     getTrading().returnAssetToVault(makerAsset);
     getAccounting().updateOwnedAssets();
-  }
-  
-  function tester (address _targetAddress, uint64 _targetDAC, address _token, uint _amount) public returns(bool) {   
-        require (GivethBridge(_targetAddress).donateAndCreateGiver(
-            msg.sender,
-            _targetDAC,
-            _token,
-            _amount
-    ));      
-  }
+  }*/
 }
