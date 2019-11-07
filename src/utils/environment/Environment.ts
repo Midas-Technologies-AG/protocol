@@ -30,6 +30,8 @@ export enum Tracks {
   TESTING = 'testing',
   // Track linked to the kyber price feed
   KYBER_PRICE = 'kyberPrice',
+  //Track using kyber price feed and including giveth Module
+  GIVETH = 'giveth',
 }
 
 // Subset of NPM logging levels without numbers

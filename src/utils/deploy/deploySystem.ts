@@ -53,6 +53,7 @@ import { deployManagementFee } from '~/contracts/fund/fees/transactions/deployMa
 import { deployPerformanceFee } from '~/contracts/fund/fees/transactions/deployPerformanceFee';
 import { setEthfinexWrapperRegistry } from '~/contracts/version/transactions/setEthfinexWrapperRegistry';
 import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deployEngineAdapter';
+import { deployGivethAdapter } from '~/contracts/exchanges/transactions/deployGivethAdapter';
 
 const pkg = require('~/../package.json');
 
@@ -78,6 +79,7 @@ export interface MelonContracts {
     matchingMarketAdapter: Address;
     matchingMarketAccessor: Address;
     ethfinexAdapter: Address;
+    givethAdapter: Address;
   };
   policies: {
     priceTolerance: Address;
@@ -106,7 +108,8 @@ export const deployAllContractsConfig = JSON.parse(`{
     "matchingMarketAdapter": "DEPLOY",
     "matchingMarketAccessor": "DEPLOY",
     "zeroExAdapter": "DEPLOY",
-    "engineAdapter": "DEPLOY"
+    "engineAdapter": "DEPLOY",
+    "givethAdapter": "DEPLOY"
   },
   "policies": {
     "priceTolerance": "DEPLOY",
@@ -227,6 +230,9 @@ export const deploySystem = async (
     maybeDeploy(['adapters', 'engineAdapter'], environment =>
       deployEngineAdapter(environment),
     ),
+    maybeDeploy(['adapters', 'givethAdapter'], environment =>
+      deployGivethAdapter(environment),
+    ),
     maybeDeploy(['policies', 'priceTolerance'], environment =>
       deployPriceTolerance(environment, 10),
     ),
@@ -337,12 +343,21 @@ export const deploySystem = async (
             address: melonContracts.engine,
           });
         }
-        getLog(environment).info('Setting MGM on registry');
-        await setMGM(environment, melonContracts.registry, {
-          address: control.MGM || environment.wallet.address,
-        });
         if (
-          R.pathOr('', ['ethfinexWrapperRegistry'], previousInfo).toLowerCase() !==
+          // only do this not on mainnet (since we don't have direct control of this on mainnet)
+          (await environment.eth.net.getId()) != 1
+        ) {
+          getLog(environment).info('Setting MGM on registry');
+          await setMGM(environment, melonContracts.registry, {
+            address: control.MGM || environment.wallet.address,
+          });
+        }
+        if (
+          R.pathOr(
+            '',
+            ['ethfinexWrapperRegistry'],
+            previousInfo,
+          ).toLowerCase() !==
           thirdPartyContracts.exchanges.ethfinex.wrapperRegistryEFX.toLowerCase()
         ) {
           getLog(environment).info('Setting ethfinex wrapper registry');
@@ -389,34 +404,37 @@ export const deploySystem = async (
         registry: environment.deployment.melonContracts.registry,
       }),
     ),
-    maybeDoSomething(true, async environment => {
-      // TODO: make this conditional
-      await setMGM(
-        environment,
-        environment.deployment.melonContracts.registry,
-        {
-          // used for setting initial amguPrice
-          address: environment.wallet.address,
-        },
-      );
-      const amguToken = await getAmguToken(
-        environment,
-        environment.deployment.melonContracts.version,
-      );
-      await setAmguPrice(
-        environment,
-        environment.deployment.melonContracts.engine,
-        createQuantity(amguToken, 0),
-      );
-      await setMGM(
-        environment,
-        environment.deployment.melonContracts.registry,
-        {
-          // used for setting initial amguPrice
-          address: control.MGM || environment.wallet.address,
-        },
-      );
-    }),
+    maybeDoSomething(
+      (await environment.eth.net.getId()) != 1,
+      async environment => {
+        // we only do this when MGM is directly under our control (e.g. not on mainnet)
+        await setMGM(
+          environment,
+          environment.deployment.melonContracts.registry,
+          {
+            // used for setting initial amguPrice
+            address: environment.wallet.address,
+          },
+        );
+        const amguToken = await getAmguToken(
+          environment,
+          environment.deployment.melonContracts.version,
+        );
+        await setAmguPrice(
+          environment,
+          environment.deployment.melonContracts.engine,
+          createQuantity(amguToken, 0),
+        );
+        await setMGM(
+          environment,
+          environment.deployment.melonContracts.registry,
+          {
+            // used for setting initial amguPrice
+            address: control.MGM || environment.wallet.address,
+          },
+        );
+      },
+    ),
   )(new Promise(resolve => resolve(environment)));
 
   const { melonContracts } = environmentWithDeployment.deployment;
@@ -463,6 +481,11 @@ export const deploySystem = async (
     [Exchanges.MelonEngine]: {
       adapter: melonContracts.adapters.engineAdapter,
       exchange: melonContracts.engine,
+      takesCustody: false,
+    },
+    [Exchanges.Giveth]: {
+      adapter: melonContracts.adapters.givethAdapter,
+      exchange: thirdPartyContracts.exchanges.giveth,
       takesCustody: false,
     },
   };
@@ -529,9 +552,11 @@ export const deploySystem = async (
       Contracts.TestingPriceFeed,
       environmentWithDeployment.deployment.melonContracts.priceSource,
     );
-    await testingPriceFeed.methods
-      .update(Object.keys(prices), Object.values(prices).map(e => e.toString()))
-      //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
+    await testingPriceFeed.methods.update(
+      Object.keys(prices),
+      Object.values(prices).map(e => e.toString()),
+    );
+    //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
   }
 
   const track = environment.track;

@@ -7,11 +7,12 @@ import {
 } from '@melonproject/token-math';
 
 import { Environment } from '../environment/Environment';
-import { getContract } from '~/utils/solidity/getContract';
+// import { getContract } from '~/utils/solidity/getContract';
 import {
   deployToken,
   deployWeth,
 } from '~/contracts/dependencies/token/transactions/deploy';
+import { deposit } from '~/contracts/dependencies/token/transactions/deposit';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deployMatchingMarket';
 import {
@@ -19,12 +20,13 @@ import {
   KyberEnvironment,
 } from '~/contracts/exchanges/transactions/deployKyberEnvironment';
 import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy0xExchange';
+import { deployGiveth } from '~/contracts/exchanges/transactions/deployGiveth';
 import {
   deployEthfinex,
   EthfinexEnvironment,
 } from '~/contracts/exchanges/transactions/deployEthfinex';
 import { ensure } from '../guards/ensure';
-import { Contracts } from '~/Contracts';
+import { getChainName } from '~/utils/environment/chainName';
 import { deployBurnableToken } from '~/contracts/dependencies/token/transactions/deployBurnableToken';
 
 export interface ThirdPartyContracts {
@@ -33,6 +35,7 @@ export interface ThirdPartyContracts {
     matchingMarket: Address;
     zeroEx: Address;
     ethfinex: EthfinexEnvironment;
+    giveth: Address;
   };
   tokens: TokenInterface[];
 }
@@ -78,17 +81,20 @@ const deployThirdParty = async (
   );
 
   // Deposit WETH
-  const depositAmount = power(new BigInteger(10), new BigInteger(24));
-  await getContract(
+
+  const chainName = await getChainName(environment);
+  let depositAmount;
+  if (chainName == 'development') {
+    depositAmount = power(new BigInteger(10), new BigInteger(18)); // NB: for testnets...
+  } else {
+    depositAmount = power(new BigInteger(10), new BigInteger(18)); // NB: adjust as needed
+  }
+  await deposit(
     environment,
-    Contracts.Weth,
     deployedTokens.find(t => t.symbol === 'WETH').address,
-  )
-    .methods.deposit()
-    .send({
-      from: environment.wallet.address,
-      value: `${depositAmount}`,
-    });
+    undefined,
+    { value: `${depositAmount}` },
+  );
 
   const zrxToken = deployedTokens.find(t => t.symbol === 'ZRX');
 
@@ -99,6 +105,7 @@ const deployThirdParty = async (
   const kyber = await deployKyberEnvironment(environment, [
     deployedTokens.find(t => t.symbol === 'MLN'),
     deployedTokens.find(t => t.symbol === 'EUR'),
+    deployedTokens.find(t => t.symbol === 'WETH'),
   ]);
 
   const zeroEx = await deploy0xExchange(environment, { zrxToken });
@@ -106,6 +113,7 @@ const deployThirdParty = async (
     zeroExExchangeAddress: zeroEx,
     tokens: deployedTokens,
   });
+  const giveth = await deployGiveth(environment);
 
   return {
     exchanges: {
@@ -113,6 +121,7 @@ const deployThirdParty = async (
       kyber,
       matchingMarket,
       zeroEx,
+      giveth,
     },
     tokens: deployedTokens.map(token => ({
       ...token,

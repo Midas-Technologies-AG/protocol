@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "deployer": "0x00360d2b7D240Ec0643B6D819ba81A09e40E5bCd",
+    "track": "kyberPrice",
+    "chain": 42
+  },
+  "melonContracts": {
+    "priceSource": "DEPLOY",
+    "adapters": {
+      "ethfinexAdapter": "DEPLOY",
+      "kyberAdapter": "DEPLOY",
+      "matchingMarketAdapter": "DEPLOY",
+      "matchingMarketAccessor": "DEPLOY",
+      "zeroExAdapter": "DEPLOY",
+      "engineAdapter": "DEPLOY",
+      "givethAdapter": "DEPLOY"
+    },
+    "policies": {
+      "priceTolerance": "DEPLOY",
+      "userWhitelist": "DEPLOY"
+    },
+    "fees": {
+        "managementFee": "DEPLOY",
+        "performanceFee": "DEPLOY"
+    },
+    "factories": {
+      "accountingFactory": "DEPLOY",
+      "feeManagerFactory": "DEPLOY",
+      "participationFactory": "DEPLOY",
+      "policyManagerFactory": "DEPLOY",
+      "sharesFactory": "DEPLOY",
+      "tradingFactory": "DEPLOY",
+      "vaultFactory": "DEPLOY"
+    },
+    "engine": "DEPLOY",
+    "registry": "DEPLOY",
+    "version": "DEPLOY",
+    "ranking": "DEPLOY"
+  }
+}

@@ -230,6 +230,7 @@ program
 
       const chainMap = {
         1: 'mainnet',
+        3: 'ropsten',
         42: 'kovan',
       };
 

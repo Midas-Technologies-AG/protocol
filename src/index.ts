@@ -50,20 +50,44 @@ export {
 export { beginSetup } from '~/contracts/factory/transactions/beginSetup';
 export { completeSetup } from '~/contracts/factory/transactions/completeSetup';
 export {
+  completeSetupFor,
+} from '~/contracts/factory/transactions/completeSetupFor';
+export {
   createAccounting,
 } from '~/contracts/factory/transactions/createAccounting';
+export {
+  createAccountingFor,
+} from '~/contracts/factory/transactions/createAccountingFor';
 export {
   createFeeManager,
 } from '~/contracts/factory/transactions/createFeeManager';
 export {
+  createFeeManagerFor,
+} from '~/contracts/factory/transactions/createFeeManagerFor';
+export {
   createParticipation,
 } from '~/contracts/factory/transactions/createParticipation';
 export {
+  createParticipationFor,
+} from '~/contracts/factory/transactions/createParticipationFor';
+export {
   createPolicyManager,
 } from '~/contracts/factory/transactions/createPolicyManager';
+export {
+  createPolicyManagerFor,
+} from '~/contracts/factory/transactions/createPolicyManagerFor';
 export { createShares } from '~/contracts/factory/transactions/createShares';
+export {
+  createSharesFor,
+} from '~/contracts/factory/transactions/createSharesFor';
 export { createTrading } from '~/contracts/factory/transactions/createTrading';
+export {
+  createTradingFor,
+} from '~/contracts/factory/transactions/createTradingFor';
 export { createVault } from '~/contracts/factory/transactions/createVault';
+export {
+  createVaultFor,
+} from '~/contracts/factory/transactions/createVaultFor';
 export { shutDownFund } from '~/contracts/fund/hub/transactions/shutDownFund';
 export { update } from '~/contracts/prices/transactions/update';
 export {
@@ -185,3 +209,10 @@ export {
   getPerformanceFee,
 } from '~/contracts/fund/fees/calls/getPerformanceFee';
 export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
+export {
+  donateGivethETH,
+} from '~/contracts/exchanges/transactions/donateGivethETH';
+export {
+  donateGivethERC20,
+} from '~/contracts/exchanges/transactions/donateGivethERC20';
+export { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
