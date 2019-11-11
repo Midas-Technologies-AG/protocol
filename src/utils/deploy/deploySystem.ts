@@ -53,7 +53,10 @@ import { deployManagementFee } from '~/contracts/fund/fees/transactions/deployMa
 import { deployPerformanceFee } from '~/contracts/fund/fees/transactions/deployPerformanceFee';
 import { setEthfinexWrapperRegistry } from '~/contracts/version/transactions/setEthfinexWrapperRegistry';
 import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deploy/deployEngineAdapter';
-import { deployGivethBridgeAdapter } from '~/contracts/exchanges/transactions/deploy/deployGivethBridgeAdapter';
+import {
+  deployGivethBridgeAdapter,
+  DeployGivethBridgeAdapterArgs,
+} from '~/contracts/exchanges/transactions/deploy/deployGivethBridgeAdapter';
 
 const pkg = require('~/../package.json');
 
@@ -211,9 +214,9 @@ export const deploySystem = async (
 
   const monthInSeconds = 30 * 24 * 60 * 60;
 
-  const givethArgs = {
-    _bridge: thirdPartyContracts.exchanges.givethBridge,
-    _receiverDAC: 121, //HardCoded
+  const givethArgs: DeployGivethBridgeAdapterArgs = {
+    bridge: thirdPartyContracts.exchanges.givethBridge.toString(),
+    receiverDAC: 121, //HardCoded
   };
 
   const environmentWithDeployment = await R.pipe(

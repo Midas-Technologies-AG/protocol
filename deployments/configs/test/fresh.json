@@ -8,7 +8,7 @@
       "matchingMarketAccessor": "DEPLOY",
       "zeroExAdapter": "DEPLOY",
       "engineAdapter": "DEPLOY",
-      "givethAdapter": "DEPLOY"
+      "givethBridgeAdapter": "DEPLOY"
     },
     "policies": {
       "priceTolerance": "DEPLOY",

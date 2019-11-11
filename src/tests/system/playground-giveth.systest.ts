@@ -11,7 +11,11 @@ import { constructEnvironment } from '~/utils/environment/constructEnvironment';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-// import { createQuantity, createToken } from '@melonproject/token-math';
+import { createQuantity, createToken } from '@melonproject/token-math';
+import {
+  donateGivethBridgeETH,
+  donateGivethBridgeERC20,
+} from '~/contracts/exchanges/third-party/giveth/transactions/donateGivethBridgeAdapter';
 
 // initialize environment
 export const init = async () => {
@@ -95,22 +99,22 @@ export const createFund = async (environment: Environment) => {
   return fund;
 };
 
-/*export const donate = async (environment: Environment) => {
+export const donateETH = async (environment: Environment) => {
   //Donate directly through tird-party contract
   const howMuch = await createQuantity('0x0', 0.05);
-  const donateETH = await donateGivethBridgeETH(environment, { howMuch });
-  functionReport('Donated ETH: $(howMuch.quantity.toString()).', donateETH);
-  return donateETH;
-};*/
+  const donate = await donateGivethBridgeETH(environment, { howMuch });
+  functionReport('Donated ETH: $(howMuch.quantity.toString()).', donate);
+  return donate;
+};
 
-/*export const donateAsset = async (environment: Environment) => {
+export const donateAsset = async (environment: Environment) => {
   const token = await createToken(
-    'MLN',
-    '0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8',
+    'WETH',
+    '0x8022703b26aF3Ee4e6A1CE04BF02F27573eE1896',
     18,
   );
   const howMuch = await createQuantity(
-    '0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8',
+    '0x8022703b26aF3Ee4e6A1CE04BF02F27573eE1896',
     0.05,
   );
   const donateERC = await donateGivethBridgeERC20(
@@ -123,7 +127,7 @@ export const createFund = async (environment: Environment) => {
     donateERC,
   );
 };
-*/
+
 // start Tests
 expect.extend({ toBeTrueWith });
 describe('playground', () => {

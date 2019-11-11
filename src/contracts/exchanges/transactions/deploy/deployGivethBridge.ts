@@ -2,18 +2,33 @@ import { deployContract } from '~/utils/solidity/deployContract';
 import { Environment } from '~/utils/environment/Environment';
 import { Contracts } from '~/Contracts';
 
-const args = {
-  absoluteMinTimeLock: 90000,
-  escapeHatchCaller: 0x812ea1c4c193ffa12a3789405e3050a066fcbe25,
-  escapeHatchDestination: 0x812ea1c4c193ffa12a3789405e3050a066fcbe25,
-  maxSecurityGuardDelay: 432000,
-  securityGuard: 0x812ea1c4c193ffa12a3789405e3050a066fcbe25,
-  timeLock: 172800,
-};
+export interface DeployGivethBridgeArgs {
+  escapeHatchCaller: string;
+  escapeHatchDestination: string;
+  absoluteMinTimeLock: number;
+  timeLock: number;
+  securityGuard: string;
+  maxSecurityGuardDelay: number;
+}
 
-export const deployGivethBridge = async (environment: Environment) => {
+export const deployGivethBridge = async (
+  environment: Environment,
+  {
+    escapeHatchCaller,
+    escapeHatchDestination,
+    absoluteMinTimeLock,
+    timeLock,
+    securityGuard,
+    maxSecurityGuardDelay,
+  }: DeployGivethBridgeArgs,
+) => {
   const address = await deployContract(environment, Contracts.GivethBridge, [
-    args,
+    escapeHatchCaller,
+    escapeHatchDestination,
+    absoluteMinTimeLock,
+    timeLock,
+    securityGuard,
+    maxSecurityGuardDelay,
   ]);
 
   return address;

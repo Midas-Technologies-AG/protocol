@@ -19,7 +19,10 @@ import {
   KyberEnvironment,
 } from '~/contracts/exchanges/transactions/deploy/deployKyberEnvironment';
 import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy/deploy0xExchange';
-import { deployGivethBridge } from '~/contracts/exchanges/transactions/deploy/deployGivethBridge';
+import {
+  deployGivethBridge,
+  DeployGivethBridgeArgs,
+} from '~/contracts/exchanges/transactions/deploy/deployGivethBridge';
 import {
   deployEthfinex,
   EthfinexEnvironment,
@@ -112,7 +115,17 @@ const deployThirdParty = async (
     zeroExExchangeAddress: zeroEx,
     tokens: deployedTokens,
   });
-  const givethBridge = await deployGivethBridge(environment);
+
+  const args: DeployGivethBridgeArgs = {
+    absoluteMinTimeLock: 90000,
+    escapeHatchCaller: '0x812ea1c4c193ffa12a3789405e3050a066fcbe25',
+    escapeHatchDestination: '0x812ea1c4c193ffa12a3789405e3050a066fcbe25',
+    maxSecurityGuardDelay: 432000,
+    securityGuard: '0x812ea1c4c193ffa12a3789405e3050a066fcbe25',
+    timeLock: 172800,
+  };
+
+  const givethBridge = await deployGivethBridge(environment, args);
 
   return {
     exchanges: {
