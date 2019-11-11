@@ -24,9 +24,11 @@ contract GivethBridgeAdapter is ExchangeAdapter {
 
     function () public payable {
         require (msg.value > 0);
-        GivethBridge(bridge).call.value(address(this).balance)(bytes8(sha3("donateAndCreateGiver(address,uint)")),
+        require(GivethBridge(bridge).call.value(address(this).balance).gas(30000)(
+            bytes4(keccak256("donateAndCreateGiver(address,uint64)")),
             msg.sender,
-            receiverDAC);
+            receiverDAC)
+        );
     }
 
     function makeOrder(

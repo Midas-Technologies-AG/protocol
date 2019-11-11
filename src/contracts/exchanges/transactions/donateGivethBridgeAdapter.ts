@@ -4,6 +4,7 @@ import {
   isToken,
   hasAddress,
   display,
+  Address,
 } from '@melonproject/token-math';
 
 import { Environment } from '~/utils/environment/Environment';
@@ -15,26 +16,8 @@ import {
   PrepareArgsFunction,
   GuardFunction,
 } from '~/utils/solidity/transactionFactory';
-import { approve } from '~/contracts/dependencies/token/transactions/approve';
 import { sendEth } from '~/utils/evm/sendEth';
-
-/*interface deployGivethBridgeERC20Args {
-  absoluteMinTimeLock: string,
-  escapeHatchCaller: string,
-  escapeHatchDestination: string,
-  maxSecurityGuardDelay:  number,
-  securityGuard: string,
-  timeLock: number
-}
-
-interface deployGivethBridgeERC20Results {
-  absoluteMinTimeLock: string,
-  escapeHatchCaller: string,
-  escapeHatchDestination: string,
-  maxSecurityGuardDelay:  number,
-  securityGuard: string,
-  timeLock: number
-}*/
+import { balanceOf } from '~/contracts/dependencies/token/calls/balanceOf';
 
 interface donateGivethBridgeERC20Args {
   token: TokenInterface;
@@ -49,20 +32,18 @@ const guard: GuardFunction<donateGivethBridgeERC20Args> = async (
     isToken(token) && hasAddress(token),
     `Token ${display(token)} is invalid`,
   );
+  const balance = await balanceOf(environment, token.address);
   ensure(
-    await approve(environment, {
-      howMuch: howMuch,
-      spender: environment.wallet.address,
-    }),
+    balance >= howMuch.quantity,
     'You do not have enough token to spend the given amount.',
   );
 };
 
 const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
-  _,
+  environment: Environment,
   { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
-  token.address.toString(), howMuch.quantity.toString();
+  return [token.address.toString(), howMuch.quantity.toString()];
 };
 
 type donateGivethBridgeERC20Result = boolean;
@@ -78,15 +59,16 @@ export const donateGivethBridgeERC20: EnhancedExecute<
 );
 
 interface DonateGivethBridgeETHArgs {
+  to: Address;
   howMuch: QuantityInterface;
 }
 
 export const donateGivethBridgeETH = async (
   environment: Environment,
-  { howMuch }: DonateGivethBridgeETHArgs,
+  { to, howMuch }: DonateGivethBridgeETHArgs,
 ): Promise<void> => {
   const args = {
-    to: Contracts.GivethBridgeAdapter,
+    to: to,
     howMuch: howMuch,
   };
 

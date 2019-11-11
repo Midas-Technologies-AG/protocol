@@ -1,4 +1,3 @@
-import { cliLogger } from '~/utils/environment/cliLogger';
 import {
   Environment,
   LogLevels,
@@ -6,16 +5,17 @@ import {
   Deployment,
   Options,
 } from '~/utils/environment/Environment';
+import { cliLogger } from '~/utils/environment/cliLogger';
 import { toBeTrueWith } from '../utils/toBeTrueWith';
-import { constructEnvironment } from '~/utils/environment/constructEnvironment';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-import { createQuantity, createToken } from '@melonproject/token-math';
+import { createQuantity, createToken, Address } from '@melonproject/token-math';
 import {
   donateGivethBridgeETH,
   donateGivethBridgeERC20,
-} from '~/contracts/exchanges/third-party/giveth/transactions/donateGivethBridgeAdapter';
+} from '~/contracts/exchanges/transactions/donateGivethBridgeAdapter';
+import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 
 // initialize environment
 export const init = async () => {
@@ -26,19 +26,21 @@ export const init = async () => {
   );
   //Load deployment
   const fs = require('fs');
-  const _deployment: Deployment = JSON.parse(
+  const deployment: Deployment = JSON.parse(
     fs.readFileSync('deployments/ropsten-kyberPrice.json', 'utf8'),
   );
   info('Loaded deployment');
 
   //Create Web3 provider and account with private Key from keystore file.
-  const _provider = new Web3Eth.providers.WebsocketProvider(
+  const provider = new Web3Eth.providers.WebsocketProvider(
     process.env.JSON_RPC_ENDPOINT,
   );
-  const web3Accounts = new Web3Accounts(_provider);
+  const web3Accounts = new Web3Accounts(provider);
   const account = await web3Accounts.privateKeyToAccount(
     process.env.PRIVATE_KEY,
   );
+  const eth = new Web3Eth(provider);
+
   /*    const account = web3Accounts.decrypt(
       JSON.parse(fs.readFileSync(process.env.KEYSTORE_FILE, 'utf8')),
       process.env.KEYSTORE_PASSWORD,
@@ -46,7 +48,7 @@ export const init = async () => {
   info('Prepared Web3 with:', account.address);
 
   //Prepare wallet attributes
-  const { address } = account.address;
+  const { address } = account;
   const signTransaction = unsignedTransaction =>
     web3Accounts
       .signTransaction(unsignedTransaction, process.env.PRIVATE_KEY)
@@ -56,33 +58,28 @@ export const init = async () => {
   info('Prepared wallet.');
 
   //Create wallet
-  const _wallet = {
+  const wallet = {
     address,
     signMessage,
     signTransaction,
   };
   //TXoptions
-  const customOptions: Options = {
-    gasLimit: '8500000',
-    gasPrice: '3000000000',
+  const options: Options = {
+    gasLimit: '500000',
+    gasPrice: '2100000000',
   };
   info('Created wallet.');
 
-  //constructEnvironment(param) Result
-  const param = {
-    endpoint: process.env.JSON_RPC_ENDPOINT,
-    provider: _provider,
+  // Return environment
+  info('Construct Environment was successfull for:', wallet.address);
+  return {
+    deployment,
+    eth,
     logger: cliLogger,
-    deployment: _deployment,
-    options: customOptions, // does not work...
-    wallet: _wallet,
+    options,
     track: Tracks.KYBER_PRICE,
+    wallet,
   };
-
-  //Create Environment
-  const environment: Environment = await constructEnvironment(param);
-  info('construct Environment was successfull.');
-  return environment;
 };
 
 const functionReport = cliLogger(
@@ -100,56 +97,68 @@ export const createFund = async (environment: Environment) => {
 };
 
 export const donateETH = async (environment: Environment) => {
-  //Donate directly through tird-party contract
-  const howMuch = await createQuantity('0x0', 0.05);
-  const donate = await donateGivethBridgeETH(environment, { howMuch });
-  functionReport('Donated ETH: $(howMuch.quantity.toString()).', donate);
-  return donate;
+  //Donate through giveth Bridge Adapter contract.
+  const howMuch = await createQuantity('ETH', 0.05);
+  const to: Address =
+    environment.deployment.melonContracts.adapters.givethBridgeAdapter;
+  await donateGivethBridgeETH(environment, { to, howMuch });
+  functionReport('Donated ETH: $(howMuch.quantity.toString()).');
+  return true;
 };
 
-export const donateAsset = async (environment: Environment) => {
-  const token = await createToken(
-    'WETH',
-    '0x8022703b26aF3Ee4e6A1CE04BF02F27573eE1896',
-    18,
-  );
-  const howMuch = await createQuantity(
-    '0x8022703b26aF3Ee4e6A1CE04BF02F27573eE1896',
-    0.05,
-  );
-  const donateERC = await donateGivethBridgeERC20(
+export const donateAsset = async (
+  environment: Environment,
+  tokenSymbol: string,
+  tokenAddress: string,
+  decimals: number = 18,
+  amount: number,
+) => {
+  const token = await createToken(tokenSymbol, tokenAddress, decimals);
+  const howMuch = await createQuantity(token, amount);
+  // @notice First transfer token to BridgeAdapter, so the BridgeAdapter can approve the Bridge
+  // to make the transferFrom(...)
+  const to: Address =
+    environment.deployment.melonContracts.adapters.givethBridgeAdapter;
+  await transfer(environment, { to, howMuch });
+  await donateGivethBridgeERC20(
     environment,
-    token.address.toString(),
+    environment.deployment.melonContracts.adapters.givethBridgeAdapter,
     { token, howMuch },
   );
   functionReport(
-    'Donated ERC: $(howMuch.quantity.toString()) of $(token.symbol).',
-    donateERC,
+    `Donated ERC: $(howMuch.quantity.toString()) of $(token.symbol).`,
   );
+  return true;
 };
 
 // start Tests
 expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
-    /*    const testReport = cliLogger(
+    const environment = await init();
+    const testReport = environment.logger(
       'Midas-Technologies-AG/protocol:test-givethBridge:testReport',
       LogLevels.INFO,
     );
-*/
-    /*const environment: Environment = await init();
+    testReport('Created environment and init testLogger.');
 
-    const ETHdonator = await donate(environment);
-    testReport('Donated ETH.', ETHdonator);
+    /*    const successETH = await donateETH(environment);
+    testReport('Donated ETH from:', environment.wallet.address);*/
 
-    const Assetdonator = await donateAsset(environment);
-    testReport('Donated Asset.', Assetdonator);*/
+    const successERC = await donateAsset(
+      environment,
+      'WETH',
+      '0x9E61F218d9F29A94F535eC9Cf9bB3BBeE2f769B3',
+      18,
+      0.5,
+    );
+    testReport('Donated Asset from', environment.wallet.address);
 
     /*    const fund = await createFund(environment);
     const hubAddress = fund.hubAddress;
     testReport('hubAddress is', hubAddress);
 
     expect(isAddress(hubAddress);*/
-    expect(5 == 5);
+    expect(/*successETH &&*/ successERC);
   });
 });

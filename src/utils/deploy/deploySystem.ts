@@ -216,7 +216,7 @@ export const deploySystem = async (
 
   const givethArgs: DeployGivethBridgeAdapterArgs = {
     bridge: thirdPartyContracts.exchanges.givethBridge.toString(),
-    receiverDAC: 121, //HardCoded
+    receiverDAC: 1, //HardCoded
   };
 
   const environmentWithDeployment = await R.pipe(
