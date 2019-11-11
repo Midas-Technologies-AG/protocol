@@ -11,7 +11,7 @@ import { constructEnvironment } from '~/utils/environment/constructEnvironment';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-import { createQuantity, createToken } from '@melonproject/token-math';
+// import { createQuantity, createToken } from '@melonproject/token-math';
 
 // initialize environment
 export const init = async () => {
@@ -72,7 +72,7 @@ export const init = async () => {
     deployment: _deployment,
     options: customOptions, // does not work...
     wallet: _wallet,
-    track: Tracks.KYBER,
+    track: Tracks.KYBER_PRICE,
   };
 
   //Create Environment
@@ -95,15 +95,15 @@ export const createFund = async (environment: Environment) => {
   return fund;
 };
 
-export const donate = async (environment: Environment) => {
+/*export const donate = async (environment: Environment) => {
   //Donate directly through tird-party contract
   const howMuch = await createQuantity('0x0', 0.05);
   const donateETH = await donateGivethBridgeETH(environment, { howMuch });
   functionReport('Donated ETH: $(howMuch.quantity.toString()).', donateETH);
   return donateETH;
-};
+};*/
 
-export const donateAsset = async (environment: Environment) => {
+/*export const donateAsset = async (environment: Environment) => {
   const token = await createToken(
     'MLN',
     '0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8',
@@ -123,16 +123,16 @@ export const donateAsset = async (environment: Environment) => {
     donateERC,
   );
 };
-
+*/
 // start Tests
 expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
-    const testReport = cliLogger(
+    /*    const testReport = cliLogger(
       'Midas-Technologies-AG/protocol:test-givethBridge:testReport',
       LogLevels.INFO,
     );
-
+*/
     /*const environment: Environment = await init();
 
     const ETHdonator = await donate(environment);

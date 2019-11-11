@@ -8,8 +8,8 @@ import { Contracts } from '~/Contracts';
 import { deployContract } from '~/utils/solidity/deployContract';
 import { promisesSerial } from '~/utils/helpers/promisesSerial';
 import { ensure } from '~/utils/guards/ensure';
-import { addNewWrapperPair } from '../third-party/ethfinex/transactions/addNewWrapperPair';
-import { getAssetProxy } from '../third-party/0x/calls/getAssetProxy';
+import { addNewWrapperPair } from '../../third-party/ethfinex/transactions/addNewWrapperPair';
+import { getAssetProxy } from '../../third-party/0x/calls/getAssetProxy';
 // tslint:enable:max-line-length
 
 interface DeployEthFinexArgs {

@@ -1,5 +1,5 @@
 import { createQuantity } from '@melonproject/token-math';
-import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy0xExchange';
+import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy/deploy0xExchange';
 import {
   createOrder,
   approveOrder,

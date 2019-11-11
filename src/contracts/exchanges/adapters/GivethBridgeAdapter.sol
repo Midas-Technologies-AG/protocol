@@ -17,9 +17,16 @@ contract GivethBridgeAdapter is ExchangeAdapter {
     address public bridge;
     uint64 public receiverDAC;
 
-    constructor() public {
-        bridge = address(0x123);
-        receiverDAC = uint64(121);
+    constructor(address _bridge, uint64 _receiverDAC) public {
+        bridge = _bridge;
+        receiverDAC = _receiverDAC;
+    }
+
+    function () public payable {
+        require (msg.value > 0);
+        GivethBridge(bridge).call.value(address(this).balance)(bytes8(sha3("donateAndCreateGiver(address,uint)")),
+            msg.sender,
+            receiverDAC);
     }
 
     function makeOrder(
@@ -90,15 +97,13 @@ contract GivethBridgeAdapter is ExchangeAdapter {
     
   
     function tester (
-        address _bridge,
-        uint64 _targetDAC,
         address _token,
         uint _amount
     ) public payable returns(bool) {
-        require(ERC20(_token).approve(_bridge, _amount));        
-        GivethBridge(_bridge).donateAndCreateGiver(
+        require(ERC20(_token).approve(bridge, _amount));        
+        GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,
-            _targetDAC,
+            receiverDAC,
             _token,
             _amount
         );

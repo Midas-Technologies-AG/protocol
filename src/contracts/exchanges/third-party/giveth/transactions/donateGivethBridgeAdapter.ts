@@ -71,8 +71,8 @@ export const donateGivethBridgeERC20: EnhancedExecute<
   donateGivethBridgeERC20Args,
   donateGivethBridgeERC20Result
 > = transactionFactory(
-  'donateAsset',
-  Contracts.GivethBridge,
+  'tester',
+  Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
 );
@@ -83,10 +83,10 @@ interface DonateGivethBridgeETHArgs {
 
 export const donateGivethBridgeETH = async (
   environment: Environment,
-  { howMuch }: DonateGivethNridgeETHArgs,
+  { howMuch }: DonateGivethBridgeETHArgs,
 ): Promise<void> => {
   const args = {
-    to: Contracts.GivethBridge,
+    to: Contracts.GivethBridgeAdapter,
     howMuch: howMuch,
   };
 

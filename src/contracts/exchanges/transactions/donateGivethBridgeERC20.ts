@@ -17,14 +17,14 @@ import {
 } from '~/utils/solidity/transactionFactory';
 import { approve } from '~/contracts/dependencies/token/transactions/approve';
 
-interface donateGivethERC20Args {
+interface donateGivethBridgeERC20Args {
   token: TokenInterface;
   howMuch: QuantityInterface;
 }
 
-const guard: GuardFunction<donateGivethERC20Args> = async (
+const guard: GuardFunction<donateGivethBridgeERC20Args> = async (
   environment: Environment,
-  { token, howMuch }: donateGivethERC20Args,
+  { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
   ensure(
     isToken(token) && hasAddress(token),
@@ -39,9 +39,9 @@ const guard: GuardFunction<donateGivethERC20Args> = async (
   );
 };
 
-const prepareArgs: PrepareArgsFunction<donateGivethERC20Args> = async (
+const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
   _,
-  { token, howMuch }: donateGivethERC20Args,
+  { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
   new String('0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E'),
     [
@@ -59,7 +59,7 @@ const prepareArgs: PrepareArgsFunction<donateGivethERC20Args> = async (
     new ArrayBuffer(5);
 };
 
-/*interface donateGivethERC20makeOrderArgs {
+/*interface donateGivethBridgeERC20makeOrderArgs {
 	targetExchange: Address;
 	orderAddresses: Address[6];
 	orderValues: uint[8];
@@ -70,8 +70,8 @@ const prepareArgs: PrepareArgsFunction<donateGivethERC20Args> = async (
 }
 
 const prepareArgs: PrepareArgsFunction<
-  donateGivethERC20makeOrderArgs
-> = async (_, { token, howMuch }: donateGivethERC20makeOrderArgs) => {
+  donateGivethBridgeERC20makeOrderArgs
+> = async (_, { token, howMuch }: donateGivethBridgeERC20makeOrderArgs) => {
 
   const targetExchange = new Address('0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E');
   const orderAddresses[2] = token.toString();
@@ -92,14 +92,14 @@ const prepareArgs: PrepareArgsFunction<
   ];
 };*/
 
-type donateGivethERC20Result = boolean;
+type donateGivethBridgeERC20Result = boolean;
 
-export const donateGivethERC20: EnhancedExecute<
-  donateGivethERC20Args,
-  donateGivethERC20Result
+export const donateGivethBridgeERC20: EnhancedExecute<
+  donateGivethBridgeERC20Args,
+  donateGivethBridgeERC20Result
 > = transactionFactory(
   'makeOrder',
-  Contracts.GivethAdapter,
+  Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
 );

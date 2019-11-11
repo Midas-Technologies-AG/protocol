@@ -4,7 +4,7 @@ import { initTestEnvironment } from '~/tests/utils/initTestEnvironment';
 import {
   deployKyberEnvironment,
   KyberEnvironment,
-} from '~/contracts/exchanges/transactions/deployKyberEnvironment';
+} from '~/contracts/exchanges/transactions/deploy/deployKyberEnvironment';
 import { getContract } from '~/utils/solidity/getContract';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { deployToken } from '~/contracts/dependencies/token/transactions/deploy';
