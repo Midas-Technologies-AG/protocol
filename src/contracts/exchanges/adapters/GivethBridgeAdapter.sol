@@ -96,7 +96,6 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         bridge = _newBridge;
         return true;
     }
-    
   
     function tester (
         address _token,
