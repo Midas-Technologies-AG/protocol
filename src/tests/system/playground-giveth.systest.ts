@@ -24,7 +24,7 @@ export const init = async () => {
   //Load deployment
   const fs = require('fs');
   const deployment: Deployment = JSON.parse(
-    fs.readFileSync('deployments/ropsten-kyberPrice.json', 'utf8'),
+    fs.readFileSync('deployments/kovan-kyberPrice.json', 'utf8'),
   );
   info('Loaded deployment');
 
@@ -62,7 +62,7 @@ export const init = async () => {
   };
   //TXoptions
   const options: Options = {
-    gasLimit: '5000000',
+    gasLimit: '8000000',
     gasPrice: '2100000000',
   };
   info('Created wallet.');
@@ -85,8 +85,11 @@ const functionReport = cliLogger(
 );
 
 //Create testFund
-export const createFund = async (environment: Environment) => {
-  const fund = await setupFund(environment, 'Giveth Fund2');
+export const createFund = async (
+  environment: Environment,
+  _fundName: string,
+) => {
+  const fund = await setupFund(environment, _fundName);
   const { hubAddress } = fund;
   functionReport('setup Fund was successfull', fund);
   functionReport('hubAddress is:', hubAddress);
@@ -112,7 +115,7 @@ export const donateAsset = async (
     { token, howMuch },
   );
   functionReport('Donated token', tokenSymbol);
-
+  //                                                                                                Henry Theo Laubenheimer
   return true;
 };
 
@@ -129,8 +132,8 @@ describe('playground', () => {
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    const fund = await createFund(environment);
-    testReport('hubAddress is', fund);
+    const fund = await createFund(environment, 'Giveth Fund');
+    testReport('Created new Fund:', fund);
 
     //First fund: (Giveth Fund2)
     /*    const fund = {
@@ -151,7 +154,7 @@ describe('playground', () => {
       environment,
       fund.vaultAddress,
       'WETH',
-      '0x00f92ed24BAadb6Da6CcD54B9525D29Fb1DF49F0',
+      '0xB1D73E70d5a32642ABf9E6e0abFd31cD0513ba97',
       18,
       0.12,
     );

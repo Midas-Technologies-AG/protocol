@@ -40,7 +40,7 @@ const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
 
 type donateGivethBridgeERC20Result = boolean;
 
-/*interface Options {
+interface Options {
   amguPayable?: boolean;
   incentive?: boolean;
   skipGuards?: boolean;
@@ -55,7 +55,7 @@ const defaultOptions: Options = {
   skipGasEstimation: true,
   gas: '8000000',
   gasPrice: '40000000',
-};*/
+};
 
 export const donateGivethBridgeERC20: EnhancedExecute<
   donateGivethBridgeERC20Args,
@@ -65,4 +65,6 @@ export const donateGivethBridgeERC20: EnhancedExecute<
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
+  undefined,
+  defaultOptions,
 );
