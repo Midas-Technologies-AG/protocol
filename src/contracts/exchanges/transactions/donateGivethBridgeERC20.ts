@@ -15,7 +15,6 @@ import {
   PrepareArgsFunction,
   GuardFunction,
 } from '~/utils/solidity/transactionFactory';
-import { approve } from '~/contracts/dependencies/token/transactions/approve';
 
 interface donateGivethBridgeERC20Args {
   token: TokenInterface;
@@ -30,20 +29,14 @@ const guard: GuardFunction<donateGivethBridgeERC20Args> = async (
     isToken(token) && hasAddress(token),
     `Token ${display(token)} is invalid`,
   );
-  ensure(
-    await approve(environment, {
-      howMuch: howMuch,
-      spender: environment.wallet.address,
-    }),
-    'You do not have enough token to spend the given amount.',
-  );
 };
 
 const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
-  _,
+  environment: Environment,
   { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
-  new String('0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E'),
+  return [
+    environment.deployment.thirdPartyContracts.exchanges.givethBridge,
     [
       '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
       '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
@@ -53,46 +46,31 @@ const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
       '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
     ],
     [howMuch.quantity.toString(), 0, 0, 0, 0, 0, 0, 0],
-    new ArrayBuffer(32),
-    new ArrayBuffer(5),
-    new ArrayBuffer(5),
-    new ArrayBuffer(5);
+    '0x6d616b654f726465720000000000000000000000000000000000000000000000',
+    '0xddddd',
+    '0xddddd',
+    '0xddddd',
+  ];
 };
 
-/*interface donateGivethBridgeERC20makeOrderArgs {
-	targetExchange: Address;
-	orderAddresses: Address[6];
-	orderValues: uint[8];
-	identifier: bytes32;
-	makerAssetData: bytes;
-	takerAssetData: bytes;
-	signature: bytes;
+type donateGivethBridgeERC20Result = boolean;
+
+interface Options {
+  amguPayable?: boolean;
+  incentive?: boolean;
+  skipGuards?: boolean;
+  skipGasEstimation?: boolean;
+  from?: string;
+  gas?: string;
+  gasPrice?: string;
+  value?: string;
 }
 
-const prepareArgs: PrepareArgsFunction<
-  donateGivethBridgeERC20makeOrderArgs
-> = async (_, { token, howMuch }: donateGivethBridgeERC20makeOrderArgs) => {
-
-  const targetExchange = new Address('0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E');
-  const orderAddresses[2] = token.toString();
-  const orderValues[0] = howMuch.quantity.toString();
-  const identifier = new bytes32('Test');
-  const makerAssetData = new bytes('One');
-  const takerAssetData = new bytes('Two');
-  const signature = new bytes(':)');
-
-  return [
-  	targetExchange,
-  	orderAddresses,
-  	orderValues,
-  	identifier,
-  	makerAssetData,
-  	takerAssetData,
-  	signature
-  ];
-};*/
-
-type donateGivethBridgeERC20Result = boolean;
+const defaultOptions: Options = {
+  skipGasEstimation: true,
+  gas: '8000000',
+  gasPrice: '40000000',
+};
 
 export const donateGivethBridgeERC20: EnhancedExecute<
   donateGivethBridgeERC20Args,
@@ -102,4 +80,6 @@ export const donateGivethBridgeERC20: EnhancedExecute<
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
+  undefined,
+  defaultOptions,
 );

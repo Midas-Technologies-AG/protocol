@@ -3,15 +3,12 @@ pragma solidity ^0.4.25;
 import "GivethBridge.sol";
 import "ExchangeAdapter.sol";
 import "Vault.sol";
+import "Trading.sol";
+
 
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
-/**
- * TD:
 
-            FunctionSignatures.withdrawTokens,
-
- */
 contract GivethBridgeAdapter is ExchangeAdapter {
 
     address public bridge;
@@ -47,17 +44,14 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         uint makerQuantity = _orderValues[0];
         address bridge = _targetExchange;
 
-        ensureCanMakeOrder(makerAsset);
-
         // Order parameter checks
-        getTrading().updateAndGetQuantityBeingTraded(makerAsset);
         ensureNotInOpenMakeOrder(makerAsset);
+        ensureCanMakeOrder(makerAsset);
+        getTrading().updateAndGetQuantityBeingTraded(makerAsset);
 
         // Get and approve makerAsset
         approveMakerAsset(bridge, makerAsset,makerQuantity);
         
-        //check
-        require (address(hub.manager()) == address(msg.sender));
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,
@@ -65,19 +59,20 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             makerAsset,
             makerQuantity
         );
-        
+
         // Postprocess/Update
+        returnAssetToVault(makerAsset);
         getAccounting().updateOwnedAssets(); 
 
         //Maybe not needed.
 /*      getTrading().returnAssetToVault(makerAsset);
-*/      getTrading().orderUpdateHook(
+        getTrading().orderUpdateHook(
             bridge,
             _identifier,
             Trading.UpdateType.make,
             [address(makerAsset), address(0x0)],
             [makerQuantity, uint(0), uint(0)]
-        );
+        );*/
     }
 
     /// @notice needed to avoid stack too deep error
@@ -92,22 +87,17 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         );
     }
 
+    function returnAssetToVault(address _token) public {
+        Hub hub = getHub();
+        require(
+            msg.sender == address(this) || msg.sender == hub.manager() || hub.isShutDown(),
+            "Sender is not this contract or manager"
+        );
+        ERC20(_token).transfer(hub.vault(), ERC20(_token).balanceOf(this));
+    }
+
     function changeBridge (address _newBridge) public onlyManager notShutDown returns(bool) {
         bridge = _newBridge;
-        return true;
-    }
-  
-    function tester (
-        address _token,
-        uint _amount
-    ) public payable returns(bool) {
-        require(ERC20(_token).approve(bridge, _amount));        
-        GivethBridge(bridge).donateAndCreateGiver(
-            msg.sender,
-            receiverDAC,
-            _token,
-            _amount
-        );
         return true;
     }
 }

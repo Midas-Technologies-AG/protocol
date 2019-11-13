@@ -210,9 +210,6 @@ export {
 } from '~/contracts/fund/fees/calls/getPerformanceFee';
 export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
 export {
-  donateGivethBridgeETH,
-} from '~/contracts/exchanges/transactions/donateGivethBridgeETH';
-export {
   donateGivethBridgeERC20,
 } from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
 export { setupFund } from '~/contracts/fund/hub/transactions/setupFund';

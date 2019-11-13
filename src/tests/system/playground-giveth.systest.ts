@@ -10,16 +10,9 @@ import { toBeTrueWith } from '../utils/toBeTrueWith';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-import {
-  createQuantity,
-  createToken,
-  Address /*, isAddress*/,
-} from '@melonproject/token-math';
-import {
-  donateGivethBridgeETH,
-  donateGivethBridgeERC20,
-} from '~/contracts/exchanges/transactions/donateGivethBridgeAdapter';
-import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
+import { createQuantity, createToken, Address } from '@melonproject/token-math';
+import { donateGivethBridgeERC20 } from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
+// import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 
 // initialize environment
 export const init = async () => {
@@ -31,7 +24,7 @@ export const init = async () => {
   //Load deployment
   const fs = require('fs');
   const deployment: Deployment = JSON.parse(
-    fs.readFileSync('deployments/kovan-kyberPrice.json', 'utf8'),
+    fs.readFileSync('deployments/ropsten-kyberPrice.json', 'utf8'),
   );
   info('Loaded deployment');
 
@@ -69,8 +62,9 @@ export const init = async () => {
   };
   //TXoptions
   const options: Options = {
-    gasLimit: '8000000',
+    gasLimit: '5000000',
     gasPrice: '2100000000',
+    skipGasEstimation: true,
   };
   info('Created wallet.');
 
@@ -93,25 +87,16 @@ const functionReport = cliLogger(
 
 //Create testFund
 export const createFund = async (environment: Environment) => {
-  const fund = await setupFund(environment, 'Giveth Fund');
+  const fund = await setupFund(environment, 'Giveth Fund2');
   const { hubAddress } = fund;
   functionReport('setup Fund was successfull', fund);
   functionReport('hubAddress is:', hubAddress);
   return fund;
 };
 
-export const donateETH = async (environment: Environment) => {
-  //Donate through giveth Bridge Adapter contract.
-  const howMuch = await createQuantity('ETH', 0.002);
-  const to: Address =
-    environment.deployment.melonContracts.adapters.givethBridgeAdapter;
-  await donateGivethBridgeETH(environment, { to, howMuch });
-  functionReport('Donated ETH: $(howMuch.quantity.toString()).');
-  return true;
-};
-
 export const donateAsset = async (
   environment: Environment,
+  vaultAddress: Address,
   tokenSymbol: string,
   tokenAddress: string,
   decimals: number = 18,
@@ -119,19 +104,16 @@ export const donateAsset = async (
 ) => {
   const token = await createToken(tokenSymbol, tokenAddress, decimals);
   const howMuch = await createQuantity(token, amount);
-  // @notice First transfer token to BridgeAdapter, so the BridgeAdapter can approve the Bridge
-  // to make the transferFrom(...)
-  const to: Address =
-    environment.deployment.melonContracts.adapters.givethBridgeAdapter;
-  await transfer(environment, { to, howMuch });
+
+  //  await transfer(environment, { to: vaultAddress, howMuch });
+  functionReport('start donateGivethBridgeERC20...');
   await donateGivethBridgeERC20(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,
     { token, howMuch },
   );
-  functionReport(
-    `Donated ERC: $(howMuch.quantity.toString()) of $(token.symbol).`,
-  );
+  functionReport('Donated token', tokenSymbol);
+
   return true;
 };
 
@@ -150,22 +132,33 @@ describe('playground', () => {
     //Create a fund.
     /*    const fund = await createFund(environment);
     const hubAddress = fund.hubAddress;
-    testReport('hubAddress is', hubAddress);
-*/
-    // Donate Ether.
-    const successETH = await donateETH(environment);
-    testReport('Donated ETH from:', environment.wallet.address);
+    testReport('hubAddress is', fund);*/
 
+    //First fund: (Giveth Fund2)
+    const fund = {
+      accountingAddress: '0x6B083F0bD2D086AEbdbE600fe8fF1Fea1C84eb8E',
+      feeManagerAddress: '0xA4d64974930EF5781F36e5Ce7744Eee554B4d043',
+      participationAddress: '0x8414Da126C9129a0d1DB01865c966F18a5795641',
+      policyManagerAddress: '0xD274850754c52e983Ad46c7689e6AFE546D1444d',
+      priceSourceAddress: '0x0590c7096813510feFc5a93c039EfD2604029C03',
+      registryAddress: '0xECE03E38a99dE84D43F3494158578455E9361772',
+      sharesAddress: '0xdC1cafBd9698740AAF89906c163a116C0807247b',
+      tradingAddress: '0xc5D4162164794402257318c03bd0c5aF43f5864a',
+      vaultAddress: '0x0691d5048ca51C465Fd5240Eed208799EFff0CA1',
+      versionAddress: '0x51478c44E9e81A5363B221C0BC66709d33a9E1E1',
+      hubAddress: '0xaeceB36c2eab99C6Cb91A3887AA6BF6FFA86Aa42',
+    };
     //Donate ERC20 token.
     const successERC = await donateAsset(
       environment,
+      fund.vaultAddress,
       'WETH',
-      '0xD9F54219128F67457E20Ac8bc09897C31C63Dc48',
+      '0x00f92ed24BAadb6Da6CcD54B9525D29Fb1DF49F0',
       18,
       0.12,
     );
-    testReport('Donated Asset from', environment.wallet.address);
+    testReport('Donated Asset.');
 
-    expect(/*isAddress(hubAddress) && */ successETH && successERC);
+    expect(successERC);
   });
 });

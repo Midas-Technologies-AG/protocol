@@ -1,0 +1,116 @@
+{
+  "melonContracts": {
+    "priceSource": "DEPLOY",
+    "adapters": {
+      "kyberAdapter": "DEPLOY",
+      "ethfinexAdapter": "DEPLOY",
+      "matchingMarketAdapter": "DEPLOY",
+      "matchingMarketAccessor": "DEPLOY",
+      "zeroExAdapter": "DEPLOY",
+      "engineAdapter": "DEPLOY",
+      "givethBridgeAdapter": "DEPLOY"
+    },
+    "policies": {
+      "priceTolerance": "DEPLOY",
+      "userWhitelist": "DEPLOY"
+    },
+    "fees": {
+      "managementFee": "DEPLOY",
+      "performanceFee": "DEPLOY"
+    },
+    "factories": {
+      "accountingFactory": "DEPLOY",
+      "feeManagerFactory": "DEPLOY",
+      "participationFactory": "DEPLOY",
+      "policyManagerFactory": "DEPLOY",
+      "sharesFactory": "DEPLOY",
+      "tradingFactory": "DEPLOY",
+      "vaultFactory": "DEPLOY"
+    },
+    "engine": "DEPLOY",
+    "registry": "DEPLOY",
+    "version": "DEPLOY",
+    "ranking": "DEPLOY"
+  },
+"thirdPartyContracts": {
+    "exchanges": {
+      "ethfinex": {
+        "erc20Proxy": "0x0D95783a0BBD64876A941A97ecd73EA2D0AfACd6",
+        "exchange": "0xc752f720b1E4f4d002f7E30Be0D85a39BA6fd405",
+        "wrapperPairs": [
+          {
+            "token": "0x00f92ed24BAadb6Da6CcD54B9525D29Fb1DF49F0",
+            "wrapper": "0x15A540D39e93cDe643d8985e43a64895cf13079E"
+          },
+          {
+            "token": "0x254650dF1480A281b324b52051AEC39E1C9B0C1c",
+            "wrapper": "0x19Ad579E47FB0DD7D0Dbf2dC0A77CFaD5e946e07"
+          },
+          {
+            "token": "0x8FacE705Fe8C0C63ed8F85af4dFc585f709DD8b5",
+            "wrapper": "0x7921900BBe2a975013BE27210774cd0116B23899"
+          },
+          {
+            "token": "0xc452CF1D051F0429A0444b209D66BE1672395Adb",
+            "wrapper": "0x9e285C1BFE3eB10bDc2B48EB474689BAfdb3ccCC"
+          },
+          {
+            "token": "0x07333C9499050354d3048C8Ce3BB58D0e3883865",
+            "wrapper": "0x0f58F57bd0ea5176cB409327199cf43A2591ED5E"
+          },
+          {
+            "token": "0x9d6685cDdaaBeD7B9eCE83C8fd63d382C452d184",
+            "wrapper": "0x98436505C84bd1a6c0Db675433735345b5780CaC"
+          }
+        ],
+        "wrapperRegistryEFX": "0x9855709b484408bE46cdDF17ebf498ADb891bCbD"
+      },
+      "kyber": {
+        "conversionRates": "0xDd3fb7D820b1991a604D7D249D7F8Ad3516Bd4B2",
+        "kyberNetwork": "0xa30808B626F66fb37906f1Fa3E92f1B3fa53B6Ad",
+        "kyberNetworkProxy": "0x34F67E1D17042ABb10520D875EB86946Dc8b43e4"
+      },
+      "matchingMarket": "0x148A1ca9D32b7A4884A541A6353Af3733a8DAcDc",
+      "zeroEx": "0xc752f720b1E4f4d002f7E30Be0D85a39BA6fd405",
+      "givethBridge": "0xFf7283Cd5b0a2477B88C492750D8ea60fADA7f05"
+    },
+    "tokens": [
+      {
+        "address": "0x00f92ed24BAadb6Da6CcD54B9525D29Fb1DF49F0",
+        "decimals": 18,
+        "symbol": "WETH",
+        "reserveMin": 1000000000000000000
+      },
+      {
+        "address": "0x254650dF1480A281b324b52051AEC39E1C9B0C1c",
+        "decimals": 18,
+        "symbol": "MLN",
+        "reserveMin": 1000000000000000000
+      },
+      {
+        "address": "0x8FacE705Fe8C0C63ed8F85af4dFc585f709DD8b5",
+        "decimals": 18,
+        "symbol": "ZRX",
+        "reserveMin": 1000000000000000000
+      },
+      {
+        "address": "0xc452CF1D051F0429A0444b209D66BE1672395Adb",
+        "decimals": 18,
+        "symbol": "EUR",
+        "reserveMin": 1000000000000000000
+      },
+      {
+        "address": "0x07333C9499050354d3048C8Ce3BB58D0e3883865",
+        "decimals": 18,
+        "symbol": "DGX",
+        "reserveMin": 1000000000000000000
+      },
+      {
+        "address": "0x9d6685cDdaaBeD7B9eCE83C8fd63d382C452d184",
+        "decimals": 18,
+        "symbol": "DAI",
+        "reserveMin": 1000000000000000000
+      }
+    ]
+  }
+}
