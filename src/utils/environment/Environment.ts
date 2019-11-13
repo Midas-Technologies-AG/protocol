@@ -65,7 +65,6 @@ export interface Wallet {
 export interface Options {
   readonly gasLimit: string;
   readonly gasPrice: string;
-  readonly skipGasEstimation?: boolean;
 }
 
 export interface DeployMeta {

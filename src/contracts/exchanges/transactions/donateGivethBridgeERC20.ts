@@ -35,27 +35,12 @@ const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
   environment: Environment,
   { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
-  return [
-    environment.deployment.thirdPartyContracts.exchanges.givethBridge,
-    [
-      '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
-      '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
-      token.address.toString(),
-      '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
-      '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
-      '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
-    ],
-    [howMuch.quantity.toString(), 0, 0, 0, 0, 0, 0, 0],
-    '0x6d616b654f726465720000000000000000000000000000000000000000000000',
-    '0xddddd',
-    '0xddddd',
-    '0xddddd',
-  ];
+  return [token.address.toString(), howMuch.quantity.toString()];
 };
 
 type donateGivethBridgeERC20Result = boolean;
 
-interface Options {
+/*interface Options {
   amguPayable?: boolean;
   incentive?: boolean;
   skipGuards?: boolean;
@@ -70,16 +55,14 @@ const defaultOptions: Options = {
   skipGasEstimation: true,
   gas: '8000000',
   gasPrice: '40000000',
-};
+};*/
 
 export const donateGivethBridgeERC20: EnhancedExecute<
   donateGivethBridgeERC20Args,
   donateGivethBridgeERC20Result
 > = transactionFactory(
-  'makeOrder',
+  'donate',
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
-  undefined,
-  defaultOptions,
 );

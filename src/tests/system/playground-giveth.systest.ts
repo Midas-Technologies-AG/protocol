@@ -12,7 +12,7 @@ import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
 import { createQuantity, createToken, Address } from '@melonproject/token-math';
 import { donateGivethBridgeERC20 } from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
-// import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
+import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 
 // initialize environment
 export const init = async () => {
@@ -64,7 +64,6 @@ export const init = async () => {
   const options: Options = {
     gasLimit: '5000000',
     gasPrice: '2100000000',
-    skipGasEstimation: true,
   };
   info('Created wallet.');
 
@@ -105,7 +104,7 @@ export const donateAsset = async (
   const token = await createToken(tokenSymbol, tokenAddress, decimals);
   const howMuch = await createQuantity(token, amount);
 
-  //  await transfer(environment, { to: vaultAddress, howMuch });
+  await transfer(environment, { to: vaultAddress, howMuch });
   functionReport('start donateGivethBridgeERC20...');
   await donateGivethBridgeERC20(
     environment,
@@ -130,12 +129,11 @@ describe('playground', () => {
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    /*    const fund = await createFund(environment);
-    const hubAddress = fund.hubAddress;
-    testReport('hubAddress is', fund);*/
+    const fund = await createFund(environment);
+    testReport('hubAddress is', fund);
 
     //First fund: (Giveth Fund2)
-    const fund = {
+    /*    const fund = {
       accountingAddress: '0x6B083F0bD2D086AEbdbE600fe8fF1Fea1C84eb8E',
       feeManagerAddress: '0xA4d64974930EF5781F36e5Ce7744Eee554B4d043',
       participationAddress: '0x8414Da126C9129a0d1DB01865c966F18a5795641',
@@ -147,7 +145,7 @@ describe('playground', () => {
       vaultAddress: '0x0691d5048ca51C465Fd5240Eed208799EFff0CA1',
       versionAddress: '0x51478c44E9e81A5363B221C0BC66709d33a9E1E1',
       hubAddress: '0xaeceB36c2eab99C6Cb91A3887AA6BF6FFA86Aa42',
-    };
+    };*/
     //Donate ERC20 token.
     const successERC = await donateAsset(
       environment,
