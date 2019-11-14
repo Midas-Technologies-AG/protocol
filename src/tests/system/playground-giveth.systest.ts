@@ -63,7 +63,7 @@ export const init = async (_deploymentPath: string) => {
   //TXoptions
   const options: Options = {
     gasLimit: '8000000',
-    gasPrice: '2100000000',
+    gasPrice: '3300000000',
   };
   info('Created wallet.');
 
@@ -122,7 +122,7 @@ expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
     //Create Environment.
-    const environment = await init('deployments/development-kyberPrice.json');
+    const environment = await init('deployments/kovan-kyberPrice.json');
     const testReport = environment.logger(
       'Midas-Technologies-AG/protocol:test-givethModule:',
       LogLevels.INFO,
@@ -130,10 +130,10 @@ describe('playground', () => {
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    //const fund = await createFund(environment, 'Giveth Fund');
-
+    const fund = await createFund(environment, 'Giveth Fund');
+    /*
     //First fund: (Giveth Fund2) Ropsten
-    /*    const fund = {
+    const fund = {
             "accountingAddress": "0xeEf50ca52b3bc4aC29AfC109a251BA6494A1F4c6",
             "feeManagerAddress": "0xD34EdB9543D70ADfdC0694c61282512684BdC0B6",
             "participationAddress": "0x9BCf8F6581E71b7Dab38Da74B73DE6941a2A968f",
@@ -145,7 +145,7 @@ describe('playground', () => {
             "vaultAddress": "0xc07Bd3883f54b8893236A31dd1653aDBef51Df2e",
             "versionAddress": "0x9A4CC1EcAb29705CdF6f2F1f645e7859985Aa7a4",
             "hubAddress": "0x215857e763BAA133BACF0E8C57c9b13CFA4A18cF"
-}*/
+}
 
     // active fund on kovan-kyberPrice
     const fund = {
@@ -161,13 +161,13 @@ describe('playground', () => {
       versionAddress: '0x313c81277A66BB1B072c2cB6D15588cCa3668E88',
       hubAddress: '0x271baef8F2bbec64Db7a79449bc20A04bFD919f1',
     };
-
+*/
     //Donate ERC20 token.
     const successERC = await donateAsset(
       environment,
       fund.vaultAddress,
       'WETH',
-      '0xf6fF03432121c85E7D48A712A3aE1b5cE2472606',
+      '0x2Fd9AFa4B537629f6F6AB5908dAA70F4Ad0B327b',
       undefined,
       0.15,
     );

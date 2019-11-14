@@ -52,7 +52,7 @@ interface Options {
 }
 
 const defaultOptions: Options = {
-  skipGasEstimation: true,
+  //  skipGasEstimation: true,
   gas: '8000000',
   gasPrice: '8000000000',
 };
