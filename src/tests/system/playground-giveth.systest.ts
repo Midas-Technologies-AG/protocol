@@ -15,7 +15,7 @@ import { donateGivethBridgeERC20 } from '~/contracts/exchanges/transactions/dona
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 
 // initialize environment
-export const init = async () => {
+export const init = async (_deploymentPath: string) => {
   //Logger Settings
   const info = cliLogger(
     'Midas-Technologies-AG/protocol:test-givethBridge:init',
@@ -24,9 +24,9 @@ export const init = async () => {
   //Load deployment
   const fs = require('fs');
   const deployment: Deployment = JSON.parse(
-    fs.readFileSync('deployments/kovan-kyberPrice.json', 'utf8'),
+    fs.readFileSync(_deploymentPath, 'utf8'),
   );
-  info('Loaded deployment');
+  info('Loaded deployment from ');
 
   //Create Web3 provider and account with private Key from keystore file.
   const provider = new Web3Eth.providers.WebsocketProvider(
@@ -90,9 +90,7 @@ export const createFund = async (
   _fundName: string,
 ) => {
   const fund = await setupFund(environment, _fundName);
-  const { hubAddress } = fund;
   functionReport('setup Fund was successfull', fund);
-  functionReport('hubAddress is:', hubAddress);
   return fund;
 };
 
@@ -115,7 +113,7 @@ export const donateAsset = async (
     { token, howMuch },
   );
   functionReport('Donated token', tokenSymbol);
-  //                                                                                                Henry Theo Laubenheimer
+
   return true;
 };
 
@@ -124,39 +122,54 @@ expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
     //Create Environment.
-    const environment = await init();
+    const environment = await init('deployments/development-kyberPrice.json');
     const testReport = environment.logger(
-      'Midas-Technologies-AG/protocol:test-givethBridge:testReport',
+      'Midas-Technologies-AG/protocol:test-givethModule:',
       LogLevels.INFO,
     );
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    const fund = await createFund(environment, 'Giveth Fund');
-    testReport('Created new Fund:', fund);
+    //const fund = await createFund(environment, 'Giveth Fund');
 
-    //First fund: (Giveth Fund2)
+    //First fund: (Giveth Fund2) Ropsten
     /*    const fund = {
-      accountingAddress: '0x6B083F0bD2D086AEbdbE600fe8fF1Fea1C84eb8E',
-      feeManagerAddress: '0xA4d64974930EF5781F36e5Ce7744Eee554B4d043',
-      participationAddress: '0x8414Da126C9129a0d1DB01865c966F18a5795641',
-      policyManagerAddress: '0xD274850754c52e983Ad46c7689e6AFE546D1444d',
-      priceSourceAddress: '0x0590c7096813510feFc5a93c039EfD2604029C03',
-      registryAddress: '0xECE03E38a99dE84D43F3494158578455E9361772',
-      sharesAddress: '0xdC1cafBd9698740AAF89906c163a116C0807247b',
-      tradingAddress: '0xc5D4162164794402257318c03bd0c5aF43f5864a',
-      vaultAddress: '0x0691d5048ca51C465Fd5240Eed208799EFff0CA1',
-      versionAddress: '0x51478c44E9e81A5363B221C0BC66709d33a9E1E1',
-      hubAddress: '0xaeceB36c2eab99C6Cb91A3887AA6BF6FFA86Aa42',
-    };*/
+            "accountingAddress": "0xeEf50ca52b3bc4aC29AfC109a251BA6494A1F4c6",
+            "feeManagerAddress": "0xD34EdB9543D70ADfdC0694c61282512684BdC0B6",
+            "participationAddress": "0x9BCf8F6581E71b7Dab38Da74B73DE6941a2A968f",
+            "policyManagerAddress": "0xcE2A68c25c4562776D2C5154585F88CDc761A236",
+            "priceSourceAddress": "0x4487Bc48C1B81e34b4780E7Ed8aA7Afbb3aaf613",
+            "registryAddress": "0x4eFF83A9e2Fa41D44ADf3AC3c46A4B80b68a1908",
+            "sharesAddress": "0x400c1C0E4f1d6e93c4f0B47dfeE4b0F252802AF1",
+            "tradingAddress": "0x7aCADAc89C041f03dB0E250C1D51C56710F6c1C8",
+            "vaultAddress": "0xc07Bd3883f54b8893236A31dd1653aDBef51Df2e",
+            "versionAddress": "0x9A4CC1EcAb29705CdF6f2F1f645e7859985Aa7a4",
+            "hubAddress": "0x215857e763BAA133BACF0E8C57c9b13CFA4A18cF"
+}*/
+
+    // active fund on kovan-kyberPrice
+    const fund = {
+      accountingAddress: '0xB3f700a32CB71746E9D6ea10b1D890fAfcf0b18d',
+      feeManagerAddress: '0x79EF34dfF40aEa5a42c54e5243e2cA18eE4165d5',
+      participationAddress: '0x878137141754Af82fDA2ef9D8fAFf754257AFC55',
+      policyManagerAddress: '0x48cC092C7BAe923750a1B9A5Fb1b34Df820Dc42A',
+      priceSourceAddress: '0x689a746FeaEdC9333aCCD8691b88CaEB63152d2a',
+      registryAddress: '0xBabe5Cc5758e2896b8c57cc4AA57F519b163d308',
+      sharesAddress: '0x0f85063720be2F222d02AcDC7c95Fd965E060106',
+      tradingAddress: '0x0EAE8FffCf5944f2690935269290e5dD2C2dA4dE',
+      vaultAddress: '0x43eE07986849144ac85b38a76BF86524347f040B',
+      versionAddress: '0x313c81277A66BB1B072c2cB6D15588cCa3668E88',
+      hubAddress: '0x271baef8F2bbec64Db7a79449bc20A04bFD919f1',
+    };
+
     //Donate ERC20 token.
     const successERC = await donateAsset(
       environment,
       fund.vaultAddress,
       'WETH',
-      '0xB1D73E70d5a32642ABf9E6e0abFd31cD0513ba97',
-      18,
-      0.12,
+      '0xf6fF03432121c85E7D48A712A3aE1b5cE2472606',
+      undefined,
+      0.15,
     );
     testReport('Donated Asset.');
 

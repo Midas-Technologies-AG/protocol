@@ -35,7 +35,7 @@ const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
   environment: Environment,
   { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
-  return [token.address.toString(), howMuch.quantity.toString()];
+  return [token.address, howMuch.quantity];
 };
 
 type donateGivethBridgeERC20Result = boolean;
@@ -54,14 +54,14 @@ interface Options {
 const defaultOptions: Options = {
   skipGasEstimation: true,
   gas: '8000000',
-  gasPrice: '40000000',
+  gasPrice: '8000000000',
 };
 
 export const donateGivethBridgeERC20: EnhancedExecute<
   donateGivethBridgeERC20Args,
   donateGivethBridgeERC20Result
 > = transactionFactory(
-  'donate',
+  'donate2',
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,

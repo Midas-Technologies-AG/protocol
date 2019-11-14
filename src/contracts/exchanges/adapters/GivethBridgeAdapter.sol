@@ -39,6 +39,27 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         return true;
     }
 
+    function donate2(
+        address _makerAsset,
+        uint _makerQuantity
+    ) public returns(bool){
+        Hub hub = getHub();
+        Vault(hub.vault()).withdraw(_makerAsset, _makerQuantity);
+        require(
+            ERC20(_makerAsset).approve(bridge, _makerQuantity),
+            "Maker asset could not be approved"
+        );
+        
+        // Donate asset
+        GivethBridge(bridge).donateAndCreateGiver(
+            msg.sender,
+            receiverDAC,
+            _makerAsset,
+            _makerQuantity
+        );
+        return true;
+    }
+
     /// @notice needed to avoid stack too deep error
 
     function returnAssetToVault(address _token) onlyManager public {

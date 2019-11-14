@@ -42,7 +42,7 @@
     "deploy:dev": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T testing && yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T kyberPrice",
     "dplK": "sh bin/testDeployKovan.sh",
     "dplR": "sh bin/testDeployRopsten.sh",
-    "dplD": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T kyberPrice --config deployments/configs/test/fresh.json",
+    "dplD": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T kyberPrice --config deployments/configs/test/all.json",
     "deploy:kovan": "node bin/melon.js deploy -c ./deployments/configs/test/kovan.json",
     "deploy:ropsten": "node bin/melon.js deploy -c ./deployments/configs/test/ropsten.json",
     "deploy:mainnet": "node bin/melon.js deploy -c ./deployments/configs/mainnet/013-takesCustody-fix.json",
@@ -61,7 +61,7 @@
     "test": "JSON_RPC_ENDPOINT=ws://localhost:8545 yarn jest --runInBand --forceExit",
     "test:integration:legacy": "CHAIN_ENV=development ava legacy/tests/integration/fundTrading.js",
     "test:system": "yarn pretest && yarn jest --config ./src/tests/system/jest.config.js --runInBand --forceExit",
-    "test:system:devchain": "PRIVATE_KEY=0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 GAS_PRICE=0 JSON_RPC_ENDPOINT=wss://127.0.0.1 yarn test:system"
+    "test:system:devchain": "PRIVATE_KEY=0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 GAS_PRICE=0 yarn test:system"
   },
   "devDependencies": {
     "@0x/types": "^1.3.0",
