@@ -801,7 +801,7 @@ contract GivethBridge is FailClosedVault {
     * @param token The address of the token to update
     * @param accepted Wether or not to accept this token for donations
     */
-    function whitelistToken(address token, bool accepted) whenNotPaused onlyOwner external {
+    function whitelistToken(address token, bool accepted) external {
         tokenWhitelist[token] = accepted;
     }
 

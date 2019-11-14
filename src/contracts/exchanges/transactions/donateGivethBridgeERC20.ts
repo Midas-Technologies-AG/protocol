@@ -35,12 +35,12 @@ const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
   environment: Environment,
   { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
-  return [token.address, howMuch.quantity];
+  return [token.address.toString(), howMuch.quantity.toString()];
 };
 
 type donateGivethBridgeERC20Result = boolean;
 
-interface Options {
+/*interface Options {
   amguPayable?: boolean;
   incentive?: boolean;
   skipGuards?: boolean;
@@ -52,19 +52,23 @@ interface Options {
 }
 
 const defaultOptions: Options = {
-  //  skipGasEstimation: true,
+  skipGasEstimation: true,
   gas: '8000000',
   gasPrice: '8000000000',
-};
+};*/
+
+// donate
+// whitelistTokenOnBridge
+// testNoMod
+// returnAssetToVault input just token
+// whitelistToken @ Bridge
 
 export const donateGivethBridgeERC20: EnhancedExecute<
   donateGivethBridgeERC20Args,
   donateGivethBridgeERC20Result
 > = transactionFactory(
-  'donate2',
+  'testNoMod',
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
-  undefined,
-  defaultOptions,
 );

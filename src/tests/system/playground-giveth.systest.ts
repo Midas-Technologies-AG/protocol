@@ -12,7 +12,7 @@ import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
 import { createQuantity, createToken, Address } from '@melonproject/token-math';
 import { donateGivethBridgeERC20 } from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
-import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
+//import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 
 // initialize environment
 export const init = async (_deploymentPath: string) => {
@@ -37,11 +37,6 @@ export const init = async (_deploymentPath: string) => {
     process.env.PRIVATE_KEY,
   );
   const eth = new Web3Eth(provider);
-
-  /*    const account = web3Accounts.decrypt(
-      JSON.parse(fs.readFileSync(process.env.KEYSTORE_FILE, 'utf8')),
-      process.env.KEYSTORE_PASSWORD,
-    );*/
   info('Prepared Web3 with:', account.address);
 
   //Prepare wallet attributes
@@ -105,14 +100,15 @@ export const donateAsset = async (
   const token = await createToken(tokenSymbol, tokenAddress, decimals);
   const howMuch = await createQuantity(token, amount);
 
-  await transfer(environment, { to: vaultAddress, howMuch });
+  //await transfer(environment, { to: vaultAddress, howMuch });
+
   functionReport('start donateGivethBridgeERC20...');
-  await donateGivethBridgeERC20(
+  const manager = await donateGivethBridgeERC20(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,
     { token, howMuch },
   );
-  functionReport('Donated token', tokenSymbol);
+  functionReport('Donated token', tokenSymbol, manager);
 
   return true;
 };
@@ -122,7 +118,7 @@ expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
     //Create Environment.
-    const environment = await init('deployments/kovan-kyberPrice.json');
+    const environment = await init('deployments/development-kyberPrice.json');
     const testReport = environment.logger(
       'Midas-Technologies-AG/protocol:test-givethModule:',
       LogLevels.INFO,
@@ -130,8 +126,35 @@ describe('playground', () => {
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    const fund = await createFund(environment, 'Giveth Fund');
-    /*
+    //const fund = await createFund(environment, 'Test Fund');
+
+    const fund = {
+      accountingAddress: '0x7DCBf2Fd249d6C3Ea31E1503B3A1069E1087cf1B',
+      feeManagerAddress: '0x45222A446de652EF2f82c52d16C9C09a2FaF387e',
+      participationAddress: '0x22cC2D132888AfeF0dc3Ae9f143B99155c172c37',
+      policyManagerAddress: '0x26F8cf7bB17df2805f0F7977f33f3b41098Dab7a',
+      priceSourceAddress: '0x669A6CF6E6613313125df40D739004e58dc4220E',
+      registryAddress: '0x8A3B221eb1aafe27A47c93fa22b2415e5eeF14E2',
+      sharesAddress: '0xbA6B4ADfC4b99BcfB1D6e7fB42624B38bA7e233B',
+      tradingAddress: '0x4410b85aDd0fb034AcA7D237D65439d3e12f6E7f',
+      vaultAddress: '0xAe49512Fa8c004ad97Bc79b27A4bc7AD47AE7dD3',
+      versionAddress: '0x0989ECb42054d2f4B078cEb499069E11d01B1Fda',
+      hubAddress: '0x9124884e8c75e74A10F652b3C3f705757828F4Ea',
+    };
+    //Donate ERC20 token.
+    const successERC = await donateAsset(
+      environment,
+      fund.vaultAddress,
+      'WETH',
+      '0xf6fF03432121c85E7D48A712A3aE1b5cE2472606',
+      undefined,
+      0.33,
+    );
+    testReport('Donated Asset.');
+    expect(successERC);
+  });
+});
+/*
     //First fund: (Giveth Fund2) Ropsten
     const fund = {
             "accountingAddress": "0xeEf50ca52b3bc4aC29AfC109a251BA6494A1F4c6",
@@ -149,30 +172,17 @@ describe('playground', () => {
 
     // active fund on kovan-kyberPrice
     const fund = {
-      accountingAddress: '0xB3f700a32CB71746E9D6ea10b1D890fAfcf0b18d',
-      feeManagerAddress: '0x79EF34dfF40aEa5a42c54e5243e2cA18eE4165d5',
-      participationAddress: '0x878137141754Af82fDA2ef9D8fAFf754257AFC55',
-      policyManagerAddress: '0x48cC092C7BAe923750a1B9A5Fb1b34Df820Dc42A',
-      priceSourceAddress: '0x689a746FeaEdC9333aCCD8691b88CaEB63152d2a',
-      registryAddress: '0xBabe5Cc5758e2896b8c57cc4AA57F519b163d308',
-      sharesAddress: '0x0f85063720be2F222d02AcDC7c95Fd965E060106',
-      tradingAddress: '0x0EAE8FffCf5944f2690935269290e5dD2C2dA4dE',
-      vaultAddress: '0x43eE07986849144ac85b38a76BF86524347f040B',
-      versionAddress: '0x313c81277A66BB1B072c2cB6D15588cCa3668E88',
-      hubAddress: '0x271baef8F2bbec64Db7a79449bc20A04bFD919f1',
+      "accountingAddress": "0x48c3FFfEb36f0B201022cB3a5B6BA0455ab995C9",
+      "feeManagerAddress": "0x1589Ee8d9896FcD9a3E32D306D10Bcd6D115837F",
+      "participationAddress": "0x0C857302C99e171447e8461d90D57d4c137a3e50",
+      "policyManagerAddress": "0x1e81E80d90C80080E7bD7dBd599b622d318B28C4",
+      "priceSourceAddress": "0x4b9bdB63308075730d81eFE2Eb3cDEC0be83AAca",
+      "registryAddress": "0x81899c97Bd10AF2Ba7b2eBC01321cef24C24d67e",
+      "sharesAddress": "0x073EBaC4a2763eFEA2d7C79C34CF790f9f9AA8c4",
+      "tradingAddress": "0x46Bb70d8f58522CC0252B7f90A8c20FbCAa1D4B6",
+      "vaultAddress": "0xC72a0667D247C212F8C017595B53EC45EC40D88C",
+      "versionAddress": "0xa9Ab8570eCc1930fbE5356750718e8D00c7397fB",
+      "hubAddress": "0x76C3897fFD845505b6DABa2174d3B3970DFA7432"
     };
-*/
-    //Donate ERC20 token.
-    const successERC = await donateAsset(
-      environment,
-      fund.vaultAddress,
-      'WETH',
-      '0x2Fd9AFa4B537629f6F6AB5908dAA70F4Ad0B327b',
-      undefined,
-      0.15,
-    );
-    testReport('Donated Asset.');
 
-    expect(successERC);
-  });
-});
+*/
