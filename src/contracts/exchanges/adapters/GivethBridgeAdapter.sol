@@ -33,57 +33,37 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         bytes _makerAssetData,
         bytes _takerAssetData,
         bytes _signature
-    ) public onlyManager notShutDown {
-
-        Hub hub = getHub();
-
-        address makerAsset = _orderAddresses[2];
+    ) public {
+        ensureCanMakeOrder(_orderAddresses[2]);
+        ERC20 makerAsset = ERC20(_orderAddresses[2]);
         uint makerQuantity = _orderValues[0];
-        address bridge = _targetExchange;
-
-        ensureCanMakeOrder(makerAsset);
+        require (_targetExchange == bridge,
+            "Wrong bridge is provided."
+        );
 
         // Order parameter checks
         getTrading().updateAndGetQuantityBeingTraded(makerAsset);
         ensureNotInOpenMakeOrder(makerAsset);
 
         // Get and approve makerAsset
-        approveMakerAsset(bridge, makerAsset,makerQuantity);
-        
+        Vault(Hub(getHub()).vault()).withdraw(makerAsset, makerQuantity);
+        require(
+            makerAsset.approve(bridge, makerQuantity),
+            "Maker asset could not be approved"
+        );        
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,
             receiverDAC,
-            makerAsset,
+            address(makerAsset),
             makerQuantity
         );
-        donations[msg.sender][makerAsset] += makerQuantity;
+        donations[msg.sender][address(makerAsset)] += makerQuantity;
         
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
 
-        //Maybe not needed.
-/*      getTrading().returnAssetToVault(makerAsset);
-*/      getTrading().orderUpdateHook(
-            bridge,
-            _identifier,
-            Trading.UpdateType.make,
-            [address(makerAsset), address(0x0)],
-            [makerQuantity, uint(0), uint(0)]
-        );
-        emit Donation(makerAsset, makerQuantity, now);
-    }
-
-    /// @notice needed to avoid stack too deep error
-    function approveMakerAsset(address _targetExchange, address _makerAsset, uint _makerQuantity)
-        internal
-    {
-        Hub hub = getHub();
-        Vault(hub.vault()).withdraw(_makerAsset, _makerQuantity);
-        require(
-            ERC20(_makerAsset).approve(_targetExchange, _makerQuantity),
-            "Maker asset could not be approved"
-        );
+        emit Donation(address(makerAsset), makerQuantity, now);
     }
 
     function changeBridge (address _newBridge) public onlyManager notShutDown returns(bool) {

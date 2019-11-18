@@ -69,8 +69,8 @@ const prepareArgs: PrepareArgsFunction<MakeGivethDonationArgs> = async (
       emptyAddress,
       emptyAddress,
     ],
-    [makerQuantity.quantity.toString(), '0', '0', '0', '0', '0', '0', '0'],
-    web3Utils.padLeft('0x0', 64),
+    [makerQuantity.quantity.toString(), '0', '0', '0', '0', '0', '0', 0],
+    web3Utils.padLeft('0x0', 32),
     web3Utils.padLeft('0x0', 64),
     web3Utils.padLeft('0x0', 64),
     web3Utils.padLeft('0x0', 64),
@@ -96,12 +96,25 @@ const postProcess: PostProcessFunction<
   };
 };
 
+interface Options {
+  skipGasEstimation?: boolean;
+  gas?: string;
+  gasPrice?: string;
+  value?: string;
+}
+const defaulOptions: Options = {
+  skipGasEstimation: true,
+  gasPrice: '2000000000',
+  gas: '8000000',
+};
+
 const makeGivethDonation = transactionFactory(
   'callOnExchange',
   Contracts.Trading,
   guard,
   prepareArgs,
   postProcess,
+  defaulOptions,
 );
 
 export { makeGivethDonation };

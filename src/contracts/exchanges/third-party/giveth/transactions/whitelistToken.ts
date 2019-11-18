@@ -12,7 +12,7 @@ const prepareArgs: PrepareArgsFunction<whitelistTokenArgs> = async (
   _,
   { tokenAddress },
 ) => {
-  return [tokenAddress.toString(), true];
+  return [tokenAddress, true];
 };
 
 const whitelistToken = transactionFactory(

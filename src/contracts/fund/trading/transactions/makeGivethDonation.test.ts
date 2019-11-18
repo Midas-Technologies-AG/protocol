@@ -17,7 +17,6 @@ describe('makeGivethDonation', () => {
     shared.routes = await setupInvestedTestFund(shared.env);
     shared.env.logger('First Step Done.');
 
-    shared.mln = await getTokenBySymbol(shared.env, 'MLN');
     shared.weth = await getTokenBySymbol(shared.env, 'WETH');
   });
 
@@ -29,9 +28,7 @@ describe('makeGivethDonation', () => {
     const donation = await makeGivethDonation(
       shared.env,
       shared.routes.tradingAddress,
-      {
-        makerQuantity,
-      },
+      { makerQuantity },
     );
     console.log('This is the donation:', donation);
   });

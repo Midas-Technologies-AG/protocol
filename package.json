@@ -58,7 +58,7 @@
     "publish:alpha": "yarn publish --tag alpha",
     "snyk": "snyk test",
     "pretest": "rimraf logs/test-*.log",
-    "test": "JSON_RPC_ENDPOINT=ws://localhost:8545 yarn jest --runInBand --forceExit",
+    "test": "yarn jest --runInBand --forceExit",
     "test:dev": "PRIVATE_KEY=0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 JSON_RPC_ENDPOINT=ws://localhost:8545 yarn test",
     "test:integration:legacy": "CHAIN_ENV=development ava legacy/tests/integration/fundTrading.js",
     "test:system": "yarn pretest && yarn jest --config ./src/tests/system/jest.config.js --runInBand --forceExit",
