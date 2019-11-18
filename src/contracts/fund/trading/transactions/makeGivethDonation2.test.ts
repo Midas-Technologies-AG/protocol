@@ -12,8 +12,9 @@ import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
 import { createQuantity } from '@melonproject/token-math';
-//import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
+import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 import { makeGivethDonation } from './makeGivethDonation';
+import { whitelistToken } from '~/contracts/exchanges/third-party/giveth/transactions/whitelistToken';
 
 // initialize environment
 export const init = async (_deploymentPath: string) => {
@@ -100,7 +101,14 @@ export const donateAsset = async (
   const makerQuantity = await createQuantity(token, amount);
 
   //@notice Send tokens to the vault, so that they can be donated.
-  //await transfer(environment, { to: routes.vaultAddress, howMuch: makerQuantity });
+  await transfer(environment, {
+    to: routes.vaultAddress,
+    howMuch: makerQuantity,
+  });
+
+  //@notice whitelist the token on the givethBridge.
+  const cc = await whitelistToken(environment, token.address);
+  functionReport('token whitelisted on Bridge.', cc);
 
   functionReport('start makeGivethDonation');
   const manager = await makeGivethDonation(environment, routes.tradingAddress, {
@@ -124,20 +132,7 @@ describe('playground', () => {
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    //const fund = await createFund(environment, 'Test Fund');
-    const fund = {
-      accountingAddress: '0x7DCBf2Fd249d6C3Ea31E1503B3A1069E1087cf1B',
-      feeManagerAddress: '0x45222A446de652EF2f82c52d16C9C09a2FaF387e',
-      participationAddress: '0x22cC2D132888AfeF0dc3Ae9f143B99155c172c37',
-      policyManagerAddress: '0x26F8cf7bB17df2805f0F7977f33f3b41098Dab7a',
-      priceSourceAddress: '0x669A6CF6E6613313125df40D739004e58dc4220E',
-      registryAddress: '0x8A3B221eb1aafe27A47c93fa22b2415e5eeF14E2',
-      sharesAddress: '0xbA6B4ADfC4b99BcfB1D6e7fB42624B38bA7e233B',
-      tradingAddress: '0x4410b85aDd0fb034AcA7D237D65439d3e12f6E7f',
-      vaultAddress: '0xAe49512Fa8c004ad97Bc79b27A4bc7AD47AE7dD3',
-      versionAddress: '0x0989ECb42054d2f4B078cEb499069E11d01B1Fda',
-      hubAddress: '0x9124884e8c75e74A10F652b3C3f705757828F4Ea',
-    };
+    const fund = await createFund(environment, 'Test Fund');
 
     //Donate ERC20 token.
     const successERC = await donateAsset(environment, fund, 'WETH', 0.33);
