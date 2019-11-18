@@ -12,8 +12,6 @@ import {
   transactionFactory,
 } from '~/utils/solidity/transactionFactory';
 import { getExchangeIndex } from '../calls/getExchangeIndex';
-import { ensureMakePermitted } from '~/contracts/fund/trading/guards/ensureMakePermitted';
-import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { ensureSufficientBalance } from '~/contracts/dependencies/token/guards/ensureSufficientBalance';
 import { getHub } from '~/contracts/fund/hub/calls/getHub';
 import { getRoutes } from '~/contracts/fund/hub/calls/getRoutes';
@@ -28,7 +26,6 @@ import { ensure } from '~/utils/guards/ensure';
 export type MakeGivethDonationResult = {
   howMuch: QuantityInterface;
   tokenAddress: Address;
-  id: string;
   timestamp: string;
 };
 
@@ -65,10 +62,10 @@ const prepareArgs: PrepareArgsFunction<MakeGivethDonationArgs> = async (
     exchangeIndex,
     FunctionSignatures.makeOrder,
     [
-      contractAddress.toString(),
+      environment.deployment.thirdPartyContracts.exchanges.givethBridge.toString(),
       emptyAddress,
       makerQuantity.token.address.toString(),
-      '0x0',
+      makerQuantity.token.address.toString(),
       emptyAddress,
       emptyAddress,
     ],
@@ -84,22 +81,17 @@ const postProcess: PostProcessFunction<
   MakeGivethDonationArgs,
   MakeGivethDonationResult
 > = async (environment, receipt) => {
-  const logEntry = receipt.events.LogMake;
-
+  const logEntry = receipt.events.Donation;
   ensure(
     !!logEntry,
     `No LogMake nor LogTake found in transaction: ${receipt.transactionHash}`,
   );
-
-  const matched = !!receipt.events.LogTrade;
-
-  const sellToken = await getToken(environment, logEntry.returnValues.pay_gem);
-
   return {
-    howMuch: createQuantity(buyToken, logEntry.returnValues.buy_amt),
-    id: web3Utils.toDecimal(logEntry.returnValues.id),
-    tokenAddress: logEntry.returnValues.maker,
-    matched,
+    howMuch: createQuantity(
+      logEntry.returnValues.makerAsset,
+      logEntry.returnValues.makerQuantity,
+    ),
+    tokenAddress: logEntry.returnValues.makerAsset,
     timestamp: logEntry.returnValues.timestamp,
   };
 };

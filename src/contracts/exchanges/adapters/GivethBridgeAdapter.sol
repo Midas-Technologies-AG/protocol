@@ -16,6 +16,11 @@ contract GivethBridgeAdapter is ExchangeAdapter {
     address public bridge;
     uint64 public receiverDAC;
 
+    // @notice Map donatoraddress to an array of tokens, where each points to an amount.
+    mapping (address => mapping(address => uint)) public  donations;
+    event Donation(address makerAsset, uint makerQuantity, uint time);
+    
+
     constructor(address _bridge, uint64 _receiverDAC) public {
         bridge = _bridge;
         receiverDAC = _receiverDAC;
@@ -52,6 +57,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             makerAsset,
             makerQuantity
         );
+        donations[msg.sender][makerAsset] += makerQuantity;
         
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
@@ -65,6 +71,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             [address(makerAsset), address(0x0)],
             [makerQuantity, uint(0), uint(0)]
         );
+        emit Donation(makerAsset, makerQuantity, now);
     }
 
     /// @notice needed to avoid stack too deep error
@@ -83,4 +90,9 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         bridge = _newBridge;
         return true;
     }
+
+    function showDonations(address _of, address _token) public view returns(uint){
+        return donations[_of][_token];
+    }
+    
 }
