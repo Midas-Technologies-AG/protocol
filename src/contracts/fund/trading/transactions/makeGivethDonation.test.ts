@@ -16,7 +16,7 @@ shared.args = {
 
 beforeAll(async () => {
   //Create Environment with PRIVATE_KEY and JSON_RPC_ENDPOINT.
-  shared.env = await initTestEnv('deployments/kovan-kyberPrice.json');
+  shared.env = await initTestEnv('deployments/development-kyberPrice.json');
   shared.testReport = shared.env.logger(
     'Midas-Technologies-AG/protocol:test-givethModule:',
     LogLevels.INFO,
@@ -42,7 +42,10 @@ beforeAll(async () => {
   shared.whitelisted = await whitelistToken(
     shared.env,
     shared.env.deployment.thirdPartyContracts.exchanges.givethBridge.toString(),
-    { tokenAddress: shared.fundHoldings[0].address },
+    {
+      tokenAddress: await getTokenBySymbol(shared.env, shared.args.tokenSymbol)
+        .address,
+    },
   );
   shared.testReport('whitelisting on givethBridge:', shared.whitelisted);
 });

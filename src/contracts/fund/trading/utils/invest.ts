@@ -40,8 +40,8 @@ export const invest = async (_environment, _tokenSymbol, _amount) => {
     await calcGav(_environment, _environment.routes.accountingAddress),
   );
 
-  const token = getTokenBySymbol(_environment, _tokenSymbol);
-  const investmentAmount = createQuantity(token, _amount);
+  const token = await getTokenBySymbol(_environment, _tokenSymbol);
+  const investmentAmount = await createQuantity(token, _amount);
   const fundToken = await getToken(
     _environment,
     _environment.routes.sharesAddress,
@@ -56,7 +56,7 @@ export const invest = async (_environment, _tokenSymbol, _amount) => {
     _environment.routes.participationAddress,
     {
       investmentAmount,
-      requestedShares: createQuantity(fundToken, 1),
+      requestedShares: createQuantity(fundToken, _amount),
     },
   );
   await executeRequest(_environment, _environment.routes.participationAddress);
