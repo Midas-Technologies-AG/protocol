@@ -100,7 +100,7 @@ const postProcess: PostProcessFunction<
   };
 };
 
-/*interface Options {
+interface Options {
   skipGasEstimation?: boolean;
   gas?: string;
   gasPrice?: string;
@@ -110,7 +110,7 @@ const defaulOptions: Options = {
   skipGasEstimation: true,
   gasPrice: '2000000000',
   gas: '7500100',
-};*/
+};
 
 export const makeGivethDonation = transactionFactory(
   'callOnExchange',
@@ -118,6 +118,7 @@ export const makeGivethDonation = transactionFactory(
   guard,
   prepareArgs,
   postProcess,
+  defaulOptions,
 );
 
 export const donateG = async (
