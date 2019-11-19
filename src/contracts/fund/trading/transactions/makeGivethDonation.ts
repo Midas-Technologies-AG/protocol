@@ -1,10 +1,8 @@
-import * as web3Utils from 'web3-utils';
 import {
   QuantityInterface,
   createQuantity,
   Address,
 } from '@melonproject/token-math';
-
 import {
   PrepareArgsFunction,
   GuardFunction,
@@ -22,6 +20,7 @@ import { FunctionSignatures } from '../utils/FunctionSignatures';
 import { emptyAddress } from '~/utils/constants/emptyAddress';
 import { ensureNotInOpenMakeOrder } from '../guards/ensureNotInOpenMakeOrder';
 import { ensure } from '~/utils/guards/ensure';
+import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
 
 export type MakeGivethDonationResult = {
   howMuch: QuantityInterface;
@@ -36,15 +35,16 @@ export interface MakeGivethDonationArgs {
 const guard: GuardFunction<MakeGivethDonationArgs> = async (
   environment,
   { makerQuantity },
-  contractAddress,
+  tradingContractAddress,
 ) => {
-  const hubAddress = await getHub(environment, contractAddress);
+  const hubAddress = await getHub(environment, tradingContractAddress);
   const { vaultAddress } = await getRoutes(environment, hubAddress);
 
+  //Balance, Fund/Trading checks
   await ensureSufficientBalance(environment, makerQuantity, vaultAddress);
-  await ensureFundOwner(environment, contractAddress);
+  await ensureFundOwner(environment, tradingContractAddress);
   await ensureIsNotShutDown(environment, hubAddress);
-  await ensureNotInOpenMakeOrder(environment, contractAddress, {
+  await ensureNotInOpenMakeOrder(environment, tradingContractAddress, {
     makerToken: makerQuantity.token,
   });
 };
@@ -52,28 +52,32 @@ const guard: GuardFunction<MakeGivethDonationArgs> = async (
 const prepareArgs: PrepareArgsFunction<MakeGivethDonationArgs> = async (
   environment,
   { makerQuantity },
-  contractAddress,
+  tradingContractAddress,
 ) => {
-  const exchangeIndex = await getExchangeIndex(environment, contractAddress, {
-    exchange: Exchanges.GivethBridge,
-  });
+  const exchangeIndex = await getExchangeIndex(
+    environment,
+    tradingContractAddress,
+    {
+      exchange: Exchanges.GivethBridge,
+    },
+  );
 
   return [
     exchangeIndex,
     FunctionSignatures.makeOrder,
     [
-      environment.deployment.thirdPartyContracts.exchanges.givethBridge.toString(),
+      emptyAddress,
       emptyAddress,
       makerQuantity.token.address.toString(),
       makerQuantity.token.address.toString(),
       emptyAddress,
       emptyAddress,
     ],
-    [makerQuantity.quantity.toString(), '0', '0', '0', '0', '0', '0', 0],
-    web3Utils.padLeft('0x0', 32),
-    web3Utils.padLeft('0x0', 64),
-    web3Utils.padLeft('0x0', 64),
-    web3Utils.padLeft('0x0', 64),
+    [makerQuantity.quantity, '0', '0', '0', '0', '0', '0', '0'],
+    '0x0000000000003678fd21a000',
+    '0x0000312',
+    '0x00312',
+    '0x000312',
   ];
 };
 
@@ -96,7 +100,7 @@ const postProcess: PostProcessFunction<
   };
 };
 
-interface Options {
+/*interface Options {
   skipGasEstimation?: boolean;
   gas?: string;
   gasPrice?: string;
@@ -105,16 +109,27 @@ interface Options {
 const defaulOptions: Options = {
   skipGasEstimation: true,
   gasPrice: '2000000000',
-  gas: '8000000',
-};
+  gas: '7500100',
+};*/
 
-const makeGivethDonation = transactionFactory(
+export const makeGivethDonation = transactionFactory(
   'callOnExchange',
   Contracts.Trading,
   guard,
   prepareArgs,
   postProcess,
-  defaulOptions,
 );
 
-export { makeGivethDonation };
+export const donateG = async (
+  _environment,
+  _tokenSymbol: string,
+  _amount: number,
+) => {
+  const token = await getTokenBySymbol(_environment, _tokenSymbol);
+  const makerQuantity = await createQuantity(token, _amount);
+  return await makeGivethDonation(
+    _environment,
+    _environment.routes.tradingAddress,
+    { makerQuantity },
+  );
+};

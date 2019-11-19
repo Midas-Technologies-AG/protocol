@@ -136,7 +136,8 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
             Registry(routes.registry).adapterMethodIsAllowed(
                 exchanges[exchangeIndex].adapter,
                 methodSelector
-            )
+            ),
+            "adapterMethodIsAllowed failed."
         );
         PolicyManager(routes.policyManager).preValidate(methodSelector, [orderAddresses[0], orderAddresses[1], orderAddresses[2], orderAddresses[3], exchanges[exchangeIndex].exchange], [orderValues[0], orderValues[1], orderValues[6]], identifier);
         if (

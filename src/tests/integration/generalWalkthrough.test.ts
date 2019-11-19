@@ -45,7 +45,7 @@ import { deployAndInitTestEnv } from '../utils/deployAndInitTestEnv';
 import { calcGav } from '~/contracts/fund/accounting/calls/calcGav';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { getOpenOrders } from '~/contracts/fund/trading/calls/getOpenOrders';
-import { allLogsWritten } from '../utils/testLogger';
+import { allLogsWritten } from '~/tests/utils/testLogger';
 
 describe('generalWalkthrough', () => {
   const shared: {

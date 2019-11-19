@@ -1,35 +1,55 @@
-import { Environment } from '~/utils/environment/Environment';
-import { deployAndInitTestEnv } from '~/tests/utils/deployAndInitTestEnv';
+import { initTestEnv } from '~/contracts/fund/trading/utils/initTestEnv';
+import { invest } from '~/contracts/fund/trading/utils/invest';
+import { donateG } from '~/contracts/fund/trading/transactions/makeGivethDonation';
+
+import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
-import { createQuantity } from '@melonproject/token-math';
-import { makeGivethDonation } from './makeGivethDonation';
-import { setupInvestedTestFund } from '~/tests/utils/setupInvestedTestFund';
 
-describe('makeGivethDonation', () => {
-  const shared: {
-    env?: Environment;
-    [p: string]: any;
-  } = {};
+import { LogLevels } from '~/utils/environment/Environment';
 
-  beforeAll(async () => {
-    shared.env = await deployAndInitTestEnv();
-    shared.accounts = await shared.env.eth.getAccounts();
-    shared.routes = await setupInvestedTestFund(shared.env);
-    shared.env.logger('First Step Done.');
+let shared: any = {};
+shared.args = {
+  tokenSymbol: 'WETH',
+  amount: 0.001,
+};
 
-    shared.weth = await getTokenBySymbol(shared.env, 'WETH');
-  });
+beforeAll(async () => {
+  //Create Environment with PRIVATE_KEY and JSON_RPC_ENDPOINT.
+  shared.env = await initTestEnv('deployments/kovan-kyberPrice.json');
+  shared.testReport = shared.env.logger(
+    'Midas-Technologies-AG/protocol:test-givethModule:',
+    LogLevels.INFO,
+  );
+  shared.testReport('Created environment and init testLogger.');
 
-  it('make givethBridge donation', async () => {
-    const makerQuantity = await createQuantity(shared.weth, 0.05);
+  //Create a fund.
+  shared.env.routes = await setupFund(shared.env, 'Test Fund');
+  shared.testReport(
+    'Func creation was successfull, routes:',
+    shared.env.routes,
+  );
 
-    //await increaseTime(shared.env, 60 * 30);
+  //Invest in Fund.
+  shared.fundHoldings = await invest(
+    shared.env,
+    shared.args.tokenSymbol,
+    shared.args.amount,
+  );
+});
 
-    const donation = await makeGivethDonation(
+test('Giveth Module Test', async () => {
+  shared.testReport('start donateG function...');
+  const result = await donateG(
+    shared.env,
+    shared.args.tokenSymbol,
+    shared.args.amount,
+  );
+  shared.testReport('Successfully donated via donateG:', result);
+  expect(result.howMuch.quantity).toEqual(shared.args.amount);
+  expect(result.tokenAddress.toString()).toEqual(
+    await getTokenBySymbol(
       shared.env,
-      shared.routes.tradingAddress,
-      { makerQuantity },
-    );
-    console.log('This is the donation:', donation);
-  });
+      shared.args.tokenSymbol,
+    ).address.toString(),
+  );
 });
