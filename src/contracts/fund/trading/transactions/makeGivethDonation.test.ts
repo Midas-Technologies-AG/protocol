@@ -1,6 +1,7 @@
 import { initTestEnv } from '~/contracts/fund/trading/utils/initTestEnv';
 import { invest } from '~/contracts/fund/trading/utils/invest';
 import { donateG } from '~/contracts/fund/trading/transactions/makeGivethDonation';
+import { whitelistToken } from '~/contracts/exchanges/third-party/giveth/transactions/whitelistToken';
 
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
@@ -25,7 +26,7 @@ beforeAll(async () => {
   //Create a fund.
   shared.env.routes = await setupFund(shared.env, 'Test Fund');
   shared.testReport(
-    'Func creation was successfull, routes:',
+    'Fund-creation was successfull, routes:',
     shared.env.routes,
   );
 
@@ -35,6 +36,15 @@ beforeAll(async () => {
     shared.args.tokenSymbol,
     shared.args.amount,
   );
+  shared.testReport('invest in Fund successfull:', shared.fundHoldings);
+
+  //@notice whitelist the token on the givethBridge.
+  shared.whitelisted = await whitelistToken(
+    shared.env,
+    shared.env.deployment.thirdPartyContracts.exchanges.givethBridge.toString(),
+    { tokenAddress: shared.fundHoldings[0].address },
+  );
+  shared.testReport('whitelisting on givethBridge:', shared.whitelisted);
 });
 
 test('Giveth Module Test', async () => {
