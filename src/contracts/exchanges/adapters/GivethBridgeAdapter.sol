@@ -20,7 +20,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
     // @notice Map donatoraddress to an array of tokens, where each points to an amount.
     mapping (address => mapping(address => uint)) public  donations;
     event Donation(address makerAsset, uint makerQuantity, uint time);
-    
+
 
     constructor(address _bridge, uint64 _receiverDAC) public {
         bridge = _bridge;
@@ -50,13 +50,13 @@ contract GivethBridgeAdapter is ExchangeAdapter {
 
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
-            msg.sender,
+            0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E,
             receiverDAC,
             address(makerAsset),
             makerQuantity
         );
         donations[msg.sender][address(makerAsset)] += makerQuantity;
-        
+
         // Postprocess/Update
         getAccounting().updateOwnedAssets();
 

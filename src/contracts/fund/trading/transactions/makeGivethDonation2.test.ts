@@ -1,156 +1,82 @@
-import {
-  Environment,
-  LogLevels,
-  Tracks,
-  Deployment,
-  Options,
-} from '~/utils/environment/Environment';
-import { cliLogger } from '~/utils/environment/cliLogger';
-import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
-import { toBeTrueWith } from '~/tests/utils/toBeTrueWith';
-import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
-import { default as Web3Eth } from 'web3-eth';
-import { default as Web3Accounts } from 'web3-eth-accounts';
+import { initTestEnv } from '~/contracts/fund/trading/utils/initTestEnv';
+//import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
+import { whitelistToken } from '~/contracts/exchanges/third-party/giveth/transactions/whitelistToken';
+import { donateG2 } from '~/contracts/fund/trading/transactions/makeGivethDonation2';
+
 import { createQuantity } from '@melonproject/token-math';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
-import { whitelistToken } from '~/contracts/exchanges/third-party/giveth/transactions/whitelistToken';
-import { makeGivethDonation } from './makeGivethDonation';
+import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
+import { LogLevels } from '~/utils/environment/Environment';
 
-// initialize environment
-export const init = async (_deploymentPath: string) => {
-  //Logger Settings
-  const info = cliLogger(
-    'Midas-Technologies-AG/protocol:test-givethBridge:init',
+let shared: any = {};
+shared.args = {
+  tokenSymbol: 'WETH',
+  amount: 0.0001, //TODO: there have been 0.01 eth send...https://kovan.etherscan.io/tx/0x50983879b7ef9ff63f190224145a708008538e03dc6579017a28c1842c02d8a3
+  deployment: 'deployments/kovan-kyberPrice.json',
+};
+
+beforeAll(async () => {
+  //Create Environment with PRIVATE_KEY and JSON_RPC_ENDPOINT.
+  shared.env = await initTestEnv(shared.args.deployment);
+  shared.testReport = shared.env.logger(
+    'Midas-Technologies-AG/protocol:test-givethModule:',
     LogLevels.INFO,
   );
-  //Load deployment
-  const fs = require('fs');
-  const deployment: Deployment = JSON.parse(
-    fs.readFileSync(_deploymentPath, 'utf8'),
-  );
-  info('Loaded deployment from ');
+  shared.testReport('Created environment and init testLogger.');
 
-  //Create Web3 provider and account with private Key from keystore file.
-  const provider = new Web3Eth.providers.WebsocketProvider(
-    process.env.JSON_RPC_ENDPOINT,
-  );
-  const web3Accounts = new Web3Accounts(provider);
-  const account = await web3Accounts.privateKeyToAccount(
-    process.env.PRIVATE_KEY,
-  );
-  const eth = new Web3Eth(provider);
-  info('Prepared Web3 with:', account.address);
-
-  //Prepare wallet attributes
-  const { address } = account;
-  const signTransaction = unsignedTransaction =>
-    web3Accounts
-      .signTransaction(unsignedTransaction, process.env.PRIVATE_KEY)
-      .then(t => t.rawTransaction);
-  const signMessage = message =>
-    web3Accounts.sign(message, process.env.PRIVATE_KEY);
-  info('Prepared wallet.');
-
-  //Create wallet
-  const wallet = {
-    address,
-    signMessage,
-    signTransaction,
+  //Create a fund.
+  // shared.env.routes = await setupFund(shared.env, 'Test Fund without Invest2');
+  // shared.testReport(
+  //   'Fund-creation was successfull, routes:',
+  //   shared.env.routes,
+  // );
+  shared.env.routes = {
+    accountingAddress: '0xF887d426a0Cf5b96306917E5AB56fa6a7016eA1c',
+    feeManagerAddress: '0x088864E34695A578bF319D639054B318b839b54A',
+    participationAddress: '0xa5B3F00779fB8421d8FA9cE87298A856c06436ac',
+    policyManagerAddress: '0x1ec8108346498ed9893EBf0a444f50265Aaa55Be',
+    priceSourceAddress: '0x263F6CC2E2F3842EDfEc90832fCF1E140E81aBBb',
+    registryAddress: '0x7E393D36842020752D809AE5434A689d7F46DaE8',
+    sharesAddress: '0xb2061c670800f69861953D8E6E2d2C45ca3D171C',
+    tradingAddress: '0xf8669aa95945385fad923448686C4edb6b42500A',
+    vaultAddress: '0xf7BB154653E40163D6952cF24c8E5b9cBC68d812',
+    versionAddress: '0x2dfaeAf6fFF650a8E0e4724A6C82987f4DB7DfF7',
+    hubAddress: '0xc6DD0a9f1d1Dd42D025121e6EcBAC4a27420C778',
   };
-  //TXoptions
-  const options: Options = {
-    gasLimit: '8000000',
-    gasPrice: '3300000000',
-  };
-  info('Created wallet.');
 
-  // Return environment
-  info('Construct Environment was successfull for:', wallet.address);
-  return {
-    deployment,
-    eth,
-    logger: cliLogger,
-    options,
-    track: Tracks.KYBER_PRICE,
-    wallet,
-  };
-};
+  //Invest in Fund.
+  const token = await getTokenBySymbol(shared.env, shared.args.tokenSymbol);
+  const makerQuantity = await createQuantity(token, shared.args.amount);
 
-const functionReport = cliLogger(
-  'Midas-Technologies-AG/protocol:test-givethBridge:functionReport',
-  LogLevels.DEBUG,
-);
-
-//Create testFund
-export const createFund = async (
-  environment: Environment,
-  _fundName: string,
-) => {
-  const fund = await setupFund(environment, _fundName);
-  functionReport('setup Fund was successfull', fund);
-  return fund;
-};
-
-export const donateAsset = async (
-  environment: Environment,
-  routes,
-  tokenSymbol: string,
-  amount: number,
-) => {
-  const token = await getTokenBySymbol(environment, tokenSymbol);
-  const makerQuantity = await createQuantity(token, amount);
-
-  //@notice Send tokens to the vault, so that they can be donated.
-  await transfer(environment, {
-    to: routes.vaultAddress,
-    howMuch: makerQuantity,
-  });
-
-  //TD: approve trading to withdraw from vault
-  await transfer(environment, {
-    to: routes.tradingAddress,
+  await transfer(shared.env, {
+    to: shared.env.routes.vaultAddress,
     howMuch: makerQuantity,
   });
   //@notice whitelist the token on the givethBridge.
-  const whitelisted = await whitelistToken(
-    environment,
-    environment.deployment.thirdPartyContracts.exchanges.givethBridge.toString(),
-    { tokenAddress: token.address },
+  shared.whitelisted = await whitelistToken(
+    shared.env,
+    shared.env.deployment.thirdPartyContracts.exchanges.givethBridge.toString(),
+    {
+      tokenAddress: await getTokenBySymbol(shared.env, shared.args.tokenSymbol)
+        .address,
+    },
   );
-  functionReport('token whitelisted on Bridge.', whitelisted);
-
-  functionReport('start makeGivethDonation');
-  const manager = await makeGivethDonation(environment, routes.tradingAddress, {
-    makerQuantity,
-  });
-  functionReport('Donated token', tokenSymbol, manager);
-
-  return true;
-};
-
-// start Tests
-expect.extend({ toBeTrueWith });
-describe('playground', () => {
-  test('Happy path', async () => {
-    //Create Environment.
-    const environment = await init('deployments/kovan-kyberPrice.json');
-    const testReport = environment.logger(
-      'Midas-Technologies-AG/protocol:test-givethModule:',
-      LogLevels.INFO,
-    );
-    testReport('Created environment and init testLogger.');
-
-    //Create a fund.
-    const routes = await createFund(environment, 'Test Fund');
-
-    //Donate ERC20 token.
-    const successERC = await donateAsset(environment, routes, 'WETH', 0.05);
-    testReport('Donated Asset.');
-    expect(successERC);
-  });
+  shared.testReport('whitelisting on givethBridge:', shared.whitelisted);
 });
 
-/*
-
-
-*/
+test('Giveth Module Test', async () => {
+  shared.testReport('start donateG function...');
+  const result = await donateG2(
+    shared.env,
+    shared.args.tokenSymbol,
+    shared.args.amount,
+  );
+  shared.testReport('Successfully donated via donateG:', result);
+  expect(result.howMuch.quantity).toEqual(shared.args.amount);
+  expect(result.tokenAddress.toString()).toEqual(
+    await getTokenBySymbol(
+      shared.env,
+      shared.args.tokenSymbol,
+    ).address.toString(),
+  );
+});

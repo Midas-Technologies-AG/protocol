@@ -4,7 +4,7 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  testRegex: '((\\makeGivethDonation.|/)(test|spec))\\.(js|ts)$',
+  testRegex: '((\\makeGivethDonation2.|/)(test|spec))\\.(js|ts)$',
   moduleFileExtensions: ['ts', 'js', 'json', 'node', 'bin'],
   setupTestFrameworkScriptFile: './jest.setup.js',
   moduleNameMapper: {

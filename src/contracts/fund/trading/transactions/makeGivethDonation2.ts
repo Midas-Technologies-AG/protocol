@@ -5,20 +5,13 @@ import {
 } from '@melonproject/token-math';
 import {
   PrepareArgsFunction,
-  GuardFunction,
   PostProcessFunction,
   transactionFactory,
 } from '~/utils/solidity/transactionFactory';
 import { getExchangeIndex } from '../calls/getExchangeIndex';
-import { ensureSufficientBalance } from '~/contracts/dependencies/token/guards/ensureSufficientBalance';
-import { getHub } from '~/contracts/fund/hub/calls/getHub';
-import { getRoutes } from '~/contracts/fund/hub/calls/getRoutes';
-import { ensureIsNotShutDown } from '~/contracts/fund/hub/guards/ensureIsNotShutDown';
-import { ensureFundOwner } from '~/contracts/fund/trading/guards/ensureFundOwner';
 import { Exchanges, Contracts } from '~/Contracts';
 import { FunctionSignatures } from '../utils/FunctionSignatures';
 import { emptyAddress } from '~/utils/constants/emptyAddress';
-import { ensureNotInOpenMakeOrder } from '../guards/ensureNotInOpenMakeOrder';
 import { ensure } from '~/utils/guards/ensure';
 import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
 
@@ -31,23 +24,6 @@ export type MakeGivethDonationResult = {
 export interface MakeGivethDonationArgs {
   makerQuantity: QuantityInterface;
 }
-
-const guard: GuardFunction<MakeGivethDonationArgs> = async (
-  environment,
-  { makerQuantity },
-  tradingContractAddress,
-) => {
-  const hubAddress = await getHub(environment, tradingContractAddress);
-  const { vaultAddress } = await getRoutes(environment, hubAddress);
-
-  //Balance, Fund/Trading checks
-  await ensureSufficientBalance(environment, makerQuantity, vaultAddress);
-  await ensureFundOwner(environment, tradingContractAddress);
-  await ensureIsNotShutDown(environment, hubAddress);
-  await ensureNotInOpenMakeOrder(environment, tradingContractAddress, {
-    makerToken: makerQuantity.token,
-  });
-};
 
 const prepareArgs: PrepareArgsFunction<MakeGivethDonationArgs> = async (
   environment,
@@ -113,23 +89,23 @@ const defaulOptions: Options = {
   gas: '7500100',
 };
 
-export const makeGivethDonation = transactionFactory(
+export const makeGivethDonation2 = transactionFactory(
   'callOnExchange',
   Contracts.Trading,
-  guard,
+  undefined,
   prepareArgs,
   postProcess,
   defaulOptions,
 );
 
-export const donateG = async (
+export const donateG2 = async (
   _environment,
   _tokenSymbol: string,
   _amount: number,
 ) => {
   const token = await getTokenBySymbol(_environment, _tokenSymbol);
   const makerQuantity = await createQuantity(token, _amount);
-  return await makeGivethDonation(
+  return await makeGivethDonation2(
     _environment,
     _environment.routes.tradingAddress,
     { makerQuantity },
