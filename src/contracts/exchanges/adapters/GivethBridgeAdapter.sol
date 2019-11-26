@@ -26,6 +26,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         bridge = _bridge;
         receiverDAC = _receiverDAC;
     }
+
     function makeOrder(
         address _targetExchange,
         address[6] _orderAddresses,
@@ -45,12 +46,16 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         getTrading().updateAndGetQuantityBeingTraded(makerAsset);
         ensureNotInOpenMakeOrder(makerAsset);
         // Get and approve makerAsset
-        require(approveMakerAsset(makerAsset, makerQuantity),
-            "approveMakerAsset() failed.");
+        Hub hub = getHub();
+        Vault vault = Vault(hub.vault());
+        vault.withdraw(makerAsset, makerQuantity);
+        require(
+            makerAsset.approve(bridge, makerQuantity),
+            "Maker asset could not be approved");
 
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
-            0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E,
+            msg.sender,
             receiverDAC,
             address(makerAsset),
             makerQuantity
@@ -61,19 +66,6 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         getAccounting().updateOwnedAssets();
 
         emit Donation(address(makerAsset), makerQuantity, now);
-    }
-
-    /// @notice needed to avoid stack too deep error
-    function approveMakerAsset(ERC20 _makerAsset, uint _makerQuantity)
-        internal returns(bool)
-    {
-        Hub hub = getHub();
-        Vault vault = Vault(hub.vault());
-        vault.withdraw(_makerAsset, _makerQuantity);
-        require(
-            _makerAsset.approve(bridge, _makerQuantity),
-            "Maker asset could not be approved");
-        return true;
     }
 
     function getOrder(
@@ -91,6 +83,31 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             donations[msg.sender][makerAsset],
             1
         );
+    }
+
+    function takeOrder(
+        address targetExchange,
+        address[6] orderAddresses,
+        uint[8] orderValues,
+        bytes32 identifier,
+        bytes makerAssetData,
+        bytes takerAssetData,
+        bytes signature
+    ) public {
+        revert("This is not usable.");
+    }
+
+    /// @notice Mock cancel order
+    function cancelOrder(
+        address targetExchange,
+        address[6] orderAddresses,
+        uint[8] orderValues,
+        bytes32 identifier,
+        bytes makerAssetData,
+        bytes takerAssetData,
+        bytes signature
+    ) public {
+        revert("This is not usable.");
     }
 
     function _returnAssetToVault (address _tokenAddress) internal onlyManager returns(bool) {
