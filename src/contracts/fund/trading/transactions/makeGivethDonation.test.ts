@@ -44,7 +44,7 @@ beforeAll(async () => {
   );*/
 
   //Invest in Fund.
-  shared.fundHoldings = await invest(
+  /*  shared.fundHoldings = await invest(
     shared.env,
     shared.args.tokenSymbol,
     shared.args.amount,
@@ -60,7 +60,7 @@ beforeAll(async () => {
         .address,
     },
   );
-  shared.testReport('whitelisting on givethBridge:', shared.whitelisted);
+  shared.testReport('whitelisting on givethBridge:', shared.whitelisted);*/
 });
 
 test('Giveth Module Test', async () => {
