@@ -1,5 +1,3 @@
-pragma solidity ^0.4.25;
-
 import "GivethBridge.sol";
 import "Hub.sol";
 import "ExchangeAdapter.sol";
@@ -8,11 +6,11 @@ import "Accounting.sol";
 import "Trading.sol";
 
 
+pragma solidity ^0.4.25;
+
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
-
 contract GivethBridgeAdapter is ExchangeAdapter {
-
     address public bridge;
     uint64 public receiverDAC;
 
@@ -21,14 +19,21 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         receiverDAC = _receiverDAC;
     }
 
-    function () public payable {
-        require (msg.value > 0);
-        require(GivethBridge(bridge).call.value(address(this).balance).gas(30000)(
-            bytes4(keccak256("donateAndCreateGiver(address,uint64)")),
-            msg.sender,
-            receiverDAC)
+    function prepareDonation (
+        address _makerAsset,
+        uint _makerQuantity) internal returns(bool) {
+        
+        Hub hub = getHub();
+        Vault vault = Vault(hub.vault());
+        vault.withdraw(_makerAsset, _makerQuantity);
+
+        require(
+            ERC20(_makerAsset).approve(bridge, _makerQuantity),
+            "Maker asset could not be approved"
         );
+        return true;
     }
+    
 
     function makeOrder(
         address _targetExchange,
@@ -45,15 +50,24 @@ contract GivethBridgeAdapter is ExchangeAdapter {
 
         require(approveMakerAsset(bridge, makerAsset, makerQuantity),
             "Approval in makeOrder did not work.");
+    }
+    function donate(
+        address _makerAsset,
+        uint _makerQuantity
+    ) public onlyManager notShutDown returns(uint){
+
+        Hub hub = getHub();
+        require(prepareDonation(_makerAsset, _makerQuantity), 'Preparation for donation failed.');
         
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,
             receiverDAC,
-            makerAsset,
-            makerQuantity);
+            _makerAsset,
+            _makerQuantity);
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
+        return _makerQuantity;
     }
 
     /// @notice needed to avoid stack too deep error
@@ -61,31 +75,20 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         internal returns(bool)
     {
         Hub hub = getHub();
-        Vault(hub.vault()).withdraw(_makerAsset, _makerQuantity);
-        require(
-            ERC20(_makerAsset).approve(_targetExchange, _makerQuantity),
-            "Maker asset could not be approved"
+        require(prepareDonation(_makerAsset, _makerQuantity), 'Preparation for donation failed.');
+        
+        // Donate asset
+        GivethBridge(bridge).donateAndCreateGiver(
+            msg.sender,
+            receiverDAC,
+            _makerAsset,
+            _makerQuantity
         );
         return true;
     }
 
-    function changeBridge (address _newBridge) public onlyManager notShutDown returns(bool) {
-        bridge = _newBridge;
-        return true;
-    }
-  
-    function tester (
-        address _token,
-        uint _amount
-    ) public payable returns(bool) {
-        require(ERC20(_token).approve(bridge, _amount),
-            "ERC approval failed.");        
-        GivethBridge(bridge).donateAndCreateGiver(
-            msg.sender,
-            receiverDAC,
-            _token,
-            _amount
-        );
+    function whitelistTokenOnBridge (address _token, bool _value) onlyManager public returns(bool) {
+        GivethBridge(bridge).whitelistToken(_token, _value);
         return true;
     }
 }

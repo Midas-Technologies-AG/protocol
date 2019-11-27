@@ -8,7 +8,7 @@
       "matchingMarketAccessor": "DEPLOY",
       "zeroExAdapter": "DEPLOY",
       "engineAdapter": "DEPLOY",
-      "givethAdapter": "DEPLOY"
+      "givethBridgeAdapter": "DEPLOY"
     },
     "policies": {
       "priceTolerance": "DEPLOY",
@@ -34,7 +34,7 @@
   },
   "thirdPartyContracts": {
     "exchanges": {    
-      "giveth": "DEPLOY",
+      "givethBridge": "0x07161Bf9907b598988a84Ac37fBa71F5b1548fD0",
       "kyber": {
         "conversionRates": "0xEddEeC7f5da5df29722D3252FC542E77D115a378",
         "kyberNetwork": "0xF27dbBeA1856f18142cDD3B575146199f7f3a7eA",

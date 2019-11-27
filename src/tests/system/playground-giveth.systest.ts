@@ -10,19 +10,13 @@ import { toBeTrueWith } from '../utils/toBeTrueWith';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-import {
-  createQuantity,
-  createToken,
-  Address /*, isAddress*/,
-} from '@melonproject/token-math';
-import {
-  donateGivethBridgeETH,
-  donateGivethBridgeERC20,
-} from '~/contracts/exchanges/transactions/donateGivethBridgeAdapter';
+import { createQuantity, createToken, Address } from '@melonproject/token-math';
+import { donateGivethBridgeERC20 } from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
+import { donateGivethBridgeETH } from '~/contracts/exchanges/transactions/donateGivethBridgeETH';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
 
 // initialize environment
-export const init = async () => {
+export const init = async (_deploymentPath: string) => {
   //Logger Settings
   const info = cliLogger(
     'Midas-Technologies-AG/protocol:test-givethBridge:init',
@@ -31,9 +25,9 @@ export const init = async () => {
   //Load deployment
   const fs = require('fs');
   const deployment: Deployment = JSON.parse(
-    fs.readFileSync('deployments/kovan-kyberPrice.json', 'utf8'),
+    fs.readFileSync(_deploymentPath, 'utf8'),
   );
-  info('Loaded deployment');
+  info('Loaded deployment from ');
 
   //Create Web3 provider and account with private Key from keystore file.
   const provider = new Web3Eth.providers.WebsocketProvider(
@@ -44,11 +38,6 @@ export const init = async () => {
     process.env.PRIVATE_KEY,
   );
   const eth = new Web3Eth(provider);
-
-  /*    const account = web3Accounts.decrypt(
-      JSON.parse(fs.readFileSync(process.env.KEYSTORE_FILE, 'utf8')),
-      process.env.KEYSTORE_PASSWORD,
-    );*/
   info('Prepared Web3 with:', account.address);
 
   //Prepare wallet attributes
@@ -70,7 +59,7 @@ export const init = async () => {
   //TXoptions
   const options: Options = {
     gasLimit: '8000000',
-    gasPrice: '2100000000',
+    gasPrice: '3300000000',
   };
   info('Created wallet.');
 
@@ -94,24 +83,21 @@ const functionReport = cliLogger(
 //Create testFund
 export const createFund = async (environment: Environment, _name: string) => {
   const fund = await setupFund(environment, _name);
-  const { hubAddress } = fund;
   functionReport('setup Fund was successfull', fund);
-  functionReport('hubAddress is:', hubAddress);
   return fund;
 };
 
 export const donateETH = async (environment: Environment, _amount: number) => {
   //Donate through giveth Bridge Adapter contract.
   const howMuch = await createQuantity('ETH', _amount);
-  const to: Address =
-    environment.deployment.melonContracts.adapters.givethBridgeAdapter;
-  await donateGivethBridgeETH(environment, { to, howMuch });
+  await donateGivethBridgeETH(environment, { howMuch });
   functionReport('Donated ETH: $(howMuch.quantity.toString()).');
   return true;
 };
 
 export const donateAsset = async (
   environment: Environment,
+  vaultAddress: Address,
   tokenSymbol: string,
   tokenAddress: string,
   decimals: number = 18,
@@ -119,19 +105,17 @@ export const donateAsset = async (
 ) => {
   const token = await createToken(tokenSymbol, tokenAddress, decimals);
   const howMuch = await createQuantity(token, amount);
-  // @notice First transfer token to BridgeAdapter, so the BridgeAdapter can approve the Bridge
-  // to make the transferFrom(...)
-  const to: Address =
-    environment.deployment.melonContracts.adapters.givethBridgeAdapter;
-  await transfer(environment, { to, howMuch });
-  await donateGivethBridgeERC20(
+
+  await transfer(environment, { to: vaultAddress, howMuch });
+
+  functionReport('start donateGivethBridgeERC20...');
+  const manager = await donateGivethBridgeERC20(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,
     { token, howMuch },
   );
-  functionReport(
-    `Donated ERC: $(howMuch.quantity.toString()) of $(token.symbol).`,
-  );
+  functionReport('Donated token', tokenSymbol, manager);
+
   return true;
 };
 
@@ -140,30 +124,26 @@ expect.extend({ toBeTrueWith });
 describe('playground', () => {
   test('Happy path', async () => {
     //Create Environment.
-    const environment = await init();
+    const environment = await init('deployments/development-kyberPrice.json');
     const testReport = environment.logger(
-      'Midas-Technologies-AG/protocol:test-givethBridge:testReport',
+      'Midas-Technologies-AG/protocol:test-givethModule:',
       LogLevels.INFO,
     );
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    await createFund(environment, 'Fund1');
-
-    // Donate Ether.
-    const successETH = await donateETH(environment, 0.0001);
-    testReport('Donated ETH from:', environment.wallet.address);
+    const fund = await createFund(environment, 'Test Fund');
 
     //Donate ERC20 token.
     const successERC = await donateAsset(
       environment,
+      fund.vaultAddress,
       'WETH',
       '0x0De667F576E787562707A9565245417875070577',
       18,
       0.0002,
     );
     testReport('Donated Asset from', environment.wallet.address);
-
-    expect(successETH && successERC);
+    expect(successERC);
   });
 });

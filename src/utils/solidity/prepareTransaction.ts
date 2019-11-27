@@ -33,7 +33,6 @@ export const prepareTransaction = async (
   optionsOrCallback: OptionsOrCallback,
 ): Promise<PreparedTransaction> => {
   const encoded = transaction.encodeABI();
-
   const options = {
     amguPayable: false,
     from: environment.wallet.address.toString(),
@@ -71,7 +70,6 @@ export const prepareTransaction = async (
       : await transaction.estimateGas({
           ...R.omit(['amguPayable', 'incentive'], amguOptions),
         });
-
     transaction.gasEstimation = Math.ceil(
       Math.min(gasEstimation * 1.1, parseInt(environment.options.gasLimit, 10)),
     );
