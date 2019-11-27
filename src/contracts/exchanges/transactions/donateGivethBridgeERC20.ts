@@ -43,7 +43,7 @@ const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
   _,
   { token, howMuch }: donateGivethBridgeERC20Args,
 ) => {
-  '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
+  new String('0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E'),
     [
       '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
       '0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E',
