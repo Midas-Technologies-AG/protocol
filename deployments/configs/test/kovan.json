@@ -33,8 +33,7 @@
     "ranking": "DEPLOY"
   },
   "thirdPartyContracts": {
-    "exchanges": {    
-      "givethBridge": "0x07161Bf9907b598988a84Ac37fBa71F5b1548fD0",
+    "exchanges": {
       "kyber": {
         "conversionRates": "0xEddEeC7f5da5df29722D3252FC542E77D115a378",
         "kyberNetwork": "0xF27dbBeA1856f18142cDD3B575146199f7f3a7eA",
@@ -47,15 +46,10 @@
         "wrapperRegistryEFX": "0x0c722EA3b6f05d109712dFBfa4421e6b7c5254b9",
         "wrapperPairs": [],
         "erc20proxy": ""
-      }
+      },
+      "givethBridge": "0x6e205cf70AEB90faDC4A85bAa0D06E7D7c200EC4"
     },
     "tokens": [
-      {
-        "address": "0x31F7e02B09b4d6AB5D57a8F48EC06b288Feb7EcB",
-        "name": "Aragon Network Token",
-        "symbol": "ANT",
-        "decimals": 18
-      },
       {
         "address": "0xB14c0f4a8150c028806bE46Afb5214daea870CB7",
         "name": "Basic Attention Token",
@@ -63,22 +57,10 @@
         "decimals": 18
       },
       {
-        "address": "0xEeDD208514B92d6057E1370e9aFc69d479D5E5F9",
-        "name": "Digix Dao Token",
-        "symbol": "DGD",
-        "decimals": 9
-      },
-      {
         "address": "0x16886a2B35BF40C59087500dEC9Bbc24765382C2",
         "name": "Digix Gold Token",
         "symbol": "DGX",
         "decimals": 9
-      },
-      {
-        "address": "0x5F65E97C0533Da34c7Bd72595B5bE179c731d382",
-        "name": "Gnosis Token",
-        "symbol": "GNO",
-        "decimals": 18
       },
       {
         "address": "0xa80C98433E2a82DF3636ED934083E3285163Fad8",
@@ -90,12 +72,6 @@
         "address": "0x0A3610a0E87cEDDEE6b81b62b462c7a0fD450E2a",
         "name": "ZeroX Protocol Token",
         "symbol": "ZRX",
-        "decimals": 18
-      },
-      {
-        "address": "0x5C092c72a655Bf14fC3C796C35840bc8bd126d27",
-        "name": "Request Network",
-        "symbol": "REQ",
         "decimals": 18
       },
       {
@@ -126,24 +102,6 @@
         "address": "0xB5098BAFbF90F278374EcFA973A703fD0eb87A12",
         "name": "Kyber Network",
         "symbol": "KNC",
-        "decimals": 18
-      },
-      {
-        "address": "0x4a2b588BE548FF50C05Fd5Fc5041384d80D2a8ed",
-        "name": "Jibrel Network",
-        "symbol": "JNT",
-        "decimals": 18
-      },
-      {
-        "address": "0xb2edad34d3B6318252a35Cb80af4DF75B398692c",
-        "name": "Omise-Go",
-        "symbol": "OMG",
-        "decimals": 18
-      },
-      {
-        "address": "0x5A261fa748EA3053b32790963b2De588b100aB24",
-        "name": "Numeraire",
-        "symbol": "NMR",
         "decimals": 18
       }
     ]
