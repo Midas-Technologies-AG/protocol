@@ -43,7 +43,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         address makerAsset = _orderAddresses[2];
         uint makerQuantity = _orderValues[0];
 
-        require (approveMakerAsset(bridge, makerAsset, makerQuantity),
+        require(approveMakerAsset(bridge, makerAsset, makerQuantity),
             "Approval in makeOrder did not work.");
         
         // Donate asset
@@ -58,7 +58,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
 
     /// @notice needed to avoid stack too deep error
     function approveMakerAsset(address _targetExchange, address _makerAsset, uint _makerQuantity)
-        internal
+        internal returns(bool)
     {
         Hub hub = getHub();
         Vault(hub.vault()).withdraw(_makerAsset, _makerQuantity);
@@ -66,6 +66,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             ERC20(_makerAsset).approve(_targetExchange, _makerQuantity),
             "Maker asset could not be approved"
         );
+        return true;
     }
 
     function changeBridge (address _newBridge) public onlyManager notShutDown returns(bool) {
