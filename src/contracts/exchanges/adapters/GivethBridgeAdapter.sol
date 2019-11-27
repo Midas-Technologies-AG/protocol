@@ -1,17 +1,16 @@
 pragma solidity ^0.4.25;
 
 import "GivethBridge.sol";
+import "Hub.sol";
 import "ExchangeAdapter.sol";
 import "Vault.sol";
+import "Accounting.sol";
+import "Trading.sol";
+
 
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
-/**
- * TD:
 
-            FunctionSignatures.withdrawTokens,
-
- */
 contract GivethBridgeAdapter is ExchangeAdapter {
 
     address public bridge;
@@ -40,44 +39,21 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         bytes _takerAssetData,
         bytes _signature
     ) public onlyManager notShutDown {
-
         Hub hub = getHub();
-
         address makerAsset = _orderAddresses[2];
         uint makerQuantity = _orderValues[0];
-        address bridge = _targetExchange;
 
-        ensureCanMakeOrder(makerAsset);
-
-        // Order parameter checks
-        getTrading().updateAndGetQuantityBeingTraded(makerAsset);
-        ensureNotInOpenMakeOrder(makerAsset);
-
-        // Get and approve makerAsset
-        approveMakerAsset(bridge, makerAsset,makerQuantity);
+        require (approveMakerAsset(bridge, makerAsset, makerQuantity),
+            "Approval in makeOrder did not work.");
         
-        //check
-        require (address(hub.manager()) == address(msg.sender));
         // Donate asset
         GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,
             receiverDAC,
             makerAsset,
-            makerQuantity
-        );
-        
+            makerQuantity);
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
-
-        //Maybe not needed.
-/*      getTrading().returnAssetToVault(makerAsset);
-*/      getTrading().orderUpdateHook(
-            bridge,
-            _identifier,
-            Trading.UpdateType.make,
-            [address(makerAsset), address(0x0)],
-            [makerQuantity, uint(0), uint(0)]
-        );
     }
 
     /// @notice needed to avoid stack too deep error
@@ -101,7 +77,8 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         address _token,
         uint _amount
     ) public payable returns(bool) {
-        require(ERC20(_token).approve(bridge, _amount));        
+        require(ERC20(_token).approve(bridge, _amount),
+            "ERC approval failed.");        
         GivethBridge(bridge).donateAndCreateGiver(
             msg.sender,
             receiverDAC,

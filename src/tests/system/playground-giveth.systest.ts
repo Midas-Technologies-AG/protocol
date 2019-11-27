@@ -92,17 +92,17 @@ const functionReport = cliLogger(
 );
 
 //Create testFund
-export const createFund = async (environment: Environment) => {
-  const fund = await setupFund(environment, 'Giveth Fund');
+export const createFund = async (environment: Environment, _name: string) => {
+  const fund = await setupFund(environment, _name);
   const { hubAddress } = fund;
   functionReport('setup Fund was successfull', fund);
   functionReport('hubAddress is:', hubAddress);
   return fund;
 };
 
-export const donateETH = async (environment: Environment) => {
+export const donateETH = async (environment: Environment, _amount: number) => {
   //Donate through giveth Bridge Adapter contract.
-  const howMuch = await createQuantity('ETH', 0.002);
+  const howMuch = await createQuantity('ETH', _amount);
   const to: Address =
     environment.deployment.melonContracts.adapters.givethBridgeAdapter;
   await donateGivethBridgeETH(environment, { to, howMuch });
@@ -148,24 +148,22 @@ describe('playground', () => {
     testReport('Created environment and init testLogger.');
 
     //Create a fund.
-    /*    const fund = await createFund(environment);
-    const hubAddress = fund.hubAddress;
-    testReport('hubAddress is', hubAddress);
-*/
+    await createFund(environment, 'Fund1');
+
     // Donate Ether.
-    const successETH = await donateETH(environment);
+    const successETH = await donateETH(environment, 0.0001);
     testReport('Donated ETH from:', environment.wallet.address);
 
     //Donate ERC20 token.
     const successERC = await donateAsset(
       environment,
       'WETH',
-      '0xD9F54219128F67457E20Ac8bc09897C31C63Dc48',
+      '0x0De667F576E787562707A9565245417875070577',
       18,
-      0.12,
+      0.0002,
     );
     testReport('Donated Asset from', environment.wallet.address);
 
-    expect(/*isAddress(hubAddress) && */ successETH && successERC);
+    expect(successETH && successERC);
   });
 });
