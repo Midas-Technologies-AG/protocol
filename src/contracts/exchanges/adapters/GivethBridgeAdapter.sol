@@ -19,9 +19,14 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         receiverDAC = _receiverDAC;
     }
 
+    function () public payable {
+        require(msg.value > 0);
+        callBridge(bridge, address(0x0), 0);
+    }
+
     function prepareDonation (
         address _makerAsset,
-        uint _makerQuantity) internal returns(bool) {
+        uint _makerQuantity) public onlyManager returns(bool) {
         
         Hub hub = getHub();
         Vault vault = Vault(hub.vault());
@@ -32,8 +37,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             "Maker asset could not be approved"
         );
         return true;
-    }
-    
+    } 
 
     function makeOrder(
         address _targetExchange,
@@ -47,10 +51,9 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         Hub hub = getHub();
         address makerAsset = _orderAddresses[2];
         uint makerQuantity = _orderValues[0];
-
-        require(approveMakerAsset(bridge, makerAsset, makerQuantity),
-            "Approval in makeOrder did not work.");
+        donate(makerAsset, makerQuantity);
     }
+
     function donate(
         address _makerAsset,
         uint _makerQuantity
@@ -60,32 +63,39 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         require(prepareDonation(_makerAsset, _makerQuantity), 'Preparation for donation failed.');
         
         // Donate asset
-        GivethBridge(bridge).donateAndCreateGiver(
-            msg.sender,
-            receiverDAC,
-            _makerAsset,
-            _makerQuantity);
+        callBridge(bridge, _makerAsset, _makerQuantity);
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
         return _makerQuantity;
     }
 
-    /// @notice needed to avoid stack too deep error
-    function approveMakerAsset(address _targetExchange, address _makerAsset, uint _makerQuantity)
-        internal returns(bool)
-    {
-        Hub hub = getHub();
-        require(prepareDonation(_makerAsset, _makerQuantity), 'Preparation for donation failed.');
-        
-        // Donate asset
-        GivethBridge(bridge).donateAndCreateGiver(
-            msg.sender,
-            receiverDAC,
-            _makerAsset,
-            _makerQuantity
-        );
-        return true;
+    function callBridge (address aim, address asset, uint amount) public {
+        if(asset != address(0x0)){
+
+            require(asset.call(
+                bytes4(keccak256("approve(address,uint256)")),
+                aim,
+                amount
+            ));
+            
+            aim.call(
+                bytes4(keccak256("donateAndCreateGiver(address,uint64,address,uint256)")),
+                msg.sender,
+                receiverDAC,
+                asset,
+                amount
+            );
+        } else {
+            aim.call.value(address(this).balance)(
+                bytes4(keccak256("donateAndCreateGiver(address,uint64,address,uint256)")),
+                msg.sender,
+                receiverDAC,
+                asset,
+                amount
+            );
+        }
     }
+    
 
     function whitelistTokenOnBridge (address _token, bool _value) onlyManager public returns(bool) {
         GivethBridge(bridge).whitelistToken(_token, _value);
