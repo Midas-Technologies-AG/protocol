@@ -1,7 +1,7 @@
 import { initTestEnv } from '~/contracts/fund/trading/utils/initTestEnv';
 //import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
-import { invest } from '~/contracts/fund/trading/utils/invest';
-import { whitelistToken } from '~/contracts/exchanges/third-party/giveth/transactions/whitelistToken';
+//import { invest } from '~/contracts/fund/trading/utils/invest';
+//import { whitelistToken } from '~/contracts/exchanges/third-party/giveth/transactions/whitelistToken';
 import { donateG } from '~/contracts/fund/trading/transactions/makeGivethDonation';
 
 import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
