@@ -5,7 +5,7 @@ import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
 
 let shared: any = {};
 shared.args = {
-  deployment: 'deployments/kovan-kyberPrice.json',
+  deployment: 'deployments/ropsten-kyberPrice.json',
   amount: 5,
 };
 
@@ -21,10 +21,9 @@ beforeAll(async () => {
 
 test('Giveth Module Test', async () => {
   const check = await updateKyber(
-    shared.env.deployment.meta.deployer,
+    shared.env,
     shared.env.deployment.melonContracts.priceSource,
   );
-  shared.testReport('UpdateKyber result:', check);
   expect(check);
   shared.testReport('Done.');
 });
