@@ -2,6 +2,7 @@ pragma solidity ^0.4.25;
 
 import "GivethBridge.sol";
 import "ExchangeAdapter.sol";
+import "Hub.sol";
 import "Vault.sol";
 import "Trading.sol";
 
