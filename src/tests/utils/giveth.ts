@@ -9,7 +9,7 @@ import { cliLogger } from '~/utils/environment/cliLogger';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-import { createQuantity, createToken, Address } from '@melonproject/token-math';
+import { createQuantity, createToken } from '@melonproject/token-math';
 import { makeGivethDonation } from '~/contracts/exchanges/transactions/makeGivethDonation';
 import { sendGivethETH } from '~/contracts/exchanges/transactions/sendGivethETH';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
@@ -100,7 +100,6 @@ export const donateGivethAdapterETH = async (
 
 export const donateGivethAdapter = async (
   environment: Environment,
-  givethBridgeAdapterAddress: Address,
   tokenSymbol: string,
   tokenAddress: string,
   decimals: number = 18,
@@ -109,15 +108,18 @@ export const donateGivethAdapter = async (
   const token = await createToken(tokenSymbol, tokenAddress, decimals);
   const howMuch = await createQuantity(token, amount);
 
-  await transfer(environment, { to: givethBridgeAdapterAddress, howMuch });
+  await transfer(environment, {
+    to: environment.deployment.melonContracts.adapters.givethBridgeAdapter,
+    howMuch,
+  });
 
   givethReport('start donateGivethAdapter...');
-  const manager = await makeGivethDonation(
+  const donated = await makeGivethDonation(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,
     { token, howMuch },
   );
-  givethReport('Donated token', tokenSymbol, manager);
+  givethReport('Donated token', tokenSymbol, donated);
 
   return true;
 };

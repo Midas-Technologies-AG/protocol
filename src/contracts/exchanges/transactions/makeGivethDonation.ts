@@ -39,6 +39,16 @@ const prepareArgs: PrepareArgsFunction<makeDonationArgs> = async (
 
 type makeDonationResult = boolean;
 
+export const makeGivethDonation: EnhancedExecute<
+  makeDonationArgs,
+  makeDonationResult
+> = transactionFactory(
+  'makeDonation',
+  Contracts.GivethBridgeAdapter,
+  guard,
+  prepareArgs,
+);
+
 /*interface Options {
   amguPayable?: boolean;
   incentive?: boolean;
@@ -55,19 +65,3 @@ const defaultOptions: Options = {
   gas: '8000000',
   gasPrice: '8000000000',
 };*/
-
-// donate
-// whitelistTokenOnBridge
-// testNoMod
-// returnAssetToVault input just token
-// whitelistToken @ Bridge
-
-export const makeGivethDonation: EnhancedExecute<
-  makeDonationArgs,
-  makeDonationResult
-> = transactionFactory(
-  'makeDonation',
-  Contracts.GivethBridgeAdapter,
-  guard,
-  prepareArgs,
-);
