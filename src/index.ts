@@ -209,7 +209,12 @@ export {
   getPerformanceFee,
 } from '~/contracts/fund/fees/calls/getPerformanceFee';
 export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
-export {
-  donateGivethBridgeERC20,
-} from '~/contracts/exchanges/transactions/donateGivethBridgeERC20';
 export { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
+export {
+  init,
+  createFund,
+  donateGiveth,
+  investInFund,
+  donateGivethAdapterETH,
+  donateGivethAdapter,
+} from '~/tests/utils/giveth';

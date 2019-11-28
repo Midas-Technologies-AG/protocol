@@ -4,6 +4,7 @@ import { requireMap, Contracts } from '~/Contracts';
 const adapterABI = requireMap[Contracts.ExchangeAdapter];
 const ethfinexAdapterABI = requireMap[Contracts.EthfinexAdapter];
 const participationABI = requireMap[Contracts.Participation];
+const givethBridgeAdapterABI = requireMap[Contracts.GivethBridgeAdapter];
 
 export enum FunctionSignatures {
   makeOrder = getFunctionSignature(adapterABI, 'makeOrder'),
@@ -14,4 +15,5 @@ export enum FunctionSignatures {
     participationABI,
     'requestInvestment',
   ),
+  makeDonation = getFunctionSignature(givethBridgeAdapterABI, 'makeDonation'),
 }

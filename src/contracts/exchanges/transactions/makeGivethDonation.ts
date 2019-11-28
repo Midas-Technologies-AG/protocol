@@ -5,7 +5,6 @@ import {
   hasAddress,
   display,
 } from '@melonproject/token-math';
-
 import { Environment } from '~/utils/environment/Environment';
 import { ensure } from '~/utils/guards/ensure';
 import { Contracts } from '~/Contracts';
@@ -16,14 +15,14 @@ import {
   GuardFunction,
 } from '~/utils/solidity/transactionFactory';
 
-interface donateGivethBridgeERC20Args {
+interface makeDonationArgs {
   token: TokenInterface;
   howMuch: QuantityInterface;
 }
 
-const guard: GuardFunction<donateGivethBridgeERC20Args> = async (
+const guard: GuardFunction<makeDonationArgs> = async (
   environment: Environment,
-  { token, howMuch }: donateGivethBridgeERC20Args,
+  { token, howMuch }: makeDonationArgs,
 ) => {
   ensure(
     isToken(token) && hasAddress(token),
@@ -31,14 +30,14 @@ const guard: GuardFunction<donateGivethBridgeERC20Args> = async (
   );
 };
 
-const prepareArgs: PrepareArgsFunction<donateGivethBridgeERC20Args> = async (
+const prepareArgs: PrepareArgsFunction<makeDonationArgs> = async (
   environment: Environment,
-  { token, howMuch }: donateGivethBridgeERC20Args,
+  { token, howMuch }: makeDonationArgs,
 ) => {
   return [token.address.toString(), howMuch.quantity.toString()];
 };
 
-type donateGivethBridgeERC20Result = boolean;
+type makeDonationResult = boolean;
 
 /*interface Options {
   amguPayable?: boolean;
@@ -63,11 +62,11 @@ const defaultOptions: Options = {
 // returnAssetToVault input just token
 // whitelistToken @ Bridge
 
-export const donateGivethBridgeERC20: EnhancedExecute<
-  donateGivethBridgeERC20Args,
-  donateGivethBridgeERC20Result
+export const makeGivethDonation: EnhancedExecute<
+  makeDonationArgs,
+  makeDonationResult
 > = transactionFactory(
-  'testNoMod',
+  'makeDonation',
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,

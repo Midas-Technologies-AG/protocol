@@ -24,78 +24,48 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         callBridge(bridge, address(0x0), 0);
     }
 
-    function prepareDonation (
-        address _makerAsset,
-        uint _makerQuantity) public onlyManager returns(bool) {
-        
+    function makeDonation(
+        address donationAsset,
+        uint donationQuantity
+        ) public payable onlyManager notShutDown {
         Hub hub = getHub();
-        Vault vault = Vault(hub.vault());
-        vault.withdraw(_makerAsset, _makerQuantity);
-
-        require(
-            ERC20(_makerAsset).approve(bridge, _makerQuantity),
-            "Maker asset could not be approved"
-        );
-        return true;
-    } 
-
-    function makeOrder(
-        address _targetExchange,
-        address[6] _orderAddresses,
-        uint[8] _orderValues,
-        bytes32 _identifier,
-        bytes _makerAssetData,
-        bytes _takerAssetData,
-        bytes _signature
-    ) public onlyManager notShutDown {
-        Hub hub = getHub();
-        address makerAsset = _orderAddresses[2];
-        uint makerQuantity = _orderValues[0];
-        donate(makerAsset, makerQuantity);
-    }
-
-    function donate(
-        address _makerAsset,
-        uint _makerQuantity
-    ) public onlyManager notShutDown returns(uint){
-
-        Hub hub = getHub();
-        require(prepareDonation(_makerAsset, _makerQuantity), 'Preparation for donation failed.');
-        
+        // Prepare donation
+        require(prepareDonation(donationAsset, donationQuantity), 'Preparation for donation failed.');
         // Donate asset
-        callBridge(bridge, _makerAsset, _makerQuantity);
+        require(callBridge(bridge, donationAsset, donationQuantity), 'call Bridge failed.');
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
-        return _makerQuantity;
     }
 
-    function callBridge (address aim, address asset, uint amount) public {
-        if(asset != address(0x0)){
+    function prepareDonation (
+        address donationAsset,
+        uint donationQuantity) internal onlyManager returns(bool) {
+        ensureCanMakeOrder(donationAsset);
+        Hub hub = getHub();
+        // Order parameter checks
+        getTrading().updateAndGetQuantityBeingTraded(donationAsset);
+        ensureNotInOpenMakeOrder(donationAsset);
+        //withdraw the tokens
+        Vault vault = Vault(hub.vault());
+        vault.withdraw(donationAsset, donationQuantity);
 
-            require(asset.call(
-                bytes4(keccak256("approve(address,uint256)")),
-                aim,
-                amount
-            ));
-            
-            aim.call(
-                bytes4(keccak256("donateAndCreateGiver(address,uint64,address,uint256)")),
-                msg.sender,
-                receiverDAC,
-                asset,
-                amount
+        require(
+            ERC20(donationAsset).approve(bridge, donationQuantity),
+            "Maker asset could not be approved"
             );
-        } else {
-            aim.call.value(address(this).balance)(
-                bytes4(keccak256("donateAndCreateGiver(address,uint64,address,uint256)")),
-                msg.sender,
-                receiverDAC,
-                asset,
-                amount
-            );
-        }
+        return true;
     }
-    
+
+    function callBridge (address aim, address asset, uint amount) public payable returns(bool) {
+        aim.call.value(address(this).balance)(
+            bytes4(keccak256("donateAndCreateGiver(address,uint64,address,uint256)")),
+            msg.sender,
+            receiverDAC,
+            asset,
+            amount
+            );
+        return true;
+    }
 
     function whitelistTokenOnBridge (address _token, bool _value) onlyManager public returns(bool) {
         GivethBridge(bridge).whitelistToken(_token, _value);

@@ -3,13 +3,13 @@ import { Environment } from '~/utils/environment/Environment';
 import { sendEth } from '~/utils/evm/sendEth';
 import { Contracts } from '~/Contracts';
 
-interface DonateGivethBridgeETHArgs {
+interface SendGivethETHArgs {
   howMuch: QuantityInterface;
 }
 
-const donateGivethBridgeETH = async (
+const sendGivethETH = async (
   environment: Environment,
-  { howMuch }: DonateGivethBridgeETHArgs,
+  { howMuch }: SendGivethETHArgs,
 ): Promise<void> => {
   const args = {
     to: Contracts.GivethBridgeAdapter,
@@ -19,8 +19,8 @@ const donateGivethBridgeETH = async (
   try {
     await sendEth(environment, args);
   } catch (error) {
-    throw new Error(`Error with donateGivethBridgeETH ${error.message}`);
+    throw new Error(`Error with donateGivethETH ${error.message}`);
   }
 };
 
-export { donateGivethBridgeETH };
+export { sendGivethETH };

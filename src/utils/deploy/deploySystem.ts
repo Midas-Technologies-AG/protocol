@@ -521,6 +521,7 @@ export const deploySystem = async (
         FunctionSignatures.takeOrder,
         FunctionSignatures.cancelOrder,
         FunctionSignatures.withdrawTokens,
+        FunctionSignatures.makeDonation,
       ],
       takesCustody: exchangeConfig.takesCustody,
     };

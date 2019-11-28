@@ -178,6 +178,38 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
         );
     }
 
+function donateOnExchange(
+        uint exchangeIndex,
+        string methodSignature,
+        address donationAsset,
+        uint donationQuantity
+    )
+        public
+        onlyInitialized
+    {
+        bytes4 methodSelector = bytes4(keccak256(methodSignature));
+        require(
+            Registry(routes.registry).adapterMethodIsAllowed(
+                exchanges[exchangeIndex].adapter,
+                methodSelector
+            )
+        );
+        require(Registry(routes.registry).assetIsRegistered(
+            donationAsset), 'Maker asset not registered'
+        );
+        require(
+            exchanges[exchangeIndex].adapter.delegatecall(
+                abi.encodeWithSignature(
+                    methodSignature,
+                    exchanges[exchangeIndex].exchange,
+                    donationAsset,
+                    donationQuantity
+                )
+            ),
+            "Delegated call to exchange failed"
+        );
+    }
+
     /// @dev Make sure this is called after orderUpdateHook in adapters
     function addOpenMakeOrder(
         address ofExchange,
