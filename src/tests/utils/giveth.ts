@@ -13,7 +13,8 @@ import { createQuantity, createToken } from '@melonproject/token-math';
 import { makeGivethDonation } from '~/contracts/exchanges/transactions/makeGivethDonation';
 import { sendGivethETH } from '~/contracts/exchanges/transactions/sendGivethETH';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
-//import { donateOnExchange } from '~/contracts/fund/trading/transactions/donateOnExchange';
+import { donateOnExchange } from '~/contracts/fund/trading/transactions/donateOnExchange';
+import { invest } from '~/contracts/fund/trading/utils/invest';
 
 // initialize environment
 export const init = async (_deploymentPath: string) => {
@@ -124,7 +125,14 @@ export const donateGivethAdapter = async (
   return true;
 };
 
-export const investInFund = async () => {
+export const investInFund = async (
+  environment,
+  tokenSymbol: string,
+  amount: number,
+) => {
+  fundHoldings = await invest(environment, tokenSymbol, amount);
+  givethReport('invest in Fund successfull:', fundHoldings);
+
   return true;
 };
 
