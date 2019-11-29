@@ -10,10 +10,15 @@ import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
 import { createQuantity, createToken } from '@melonproject/token-math';
+import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
+
 import { makeGivethDonation } from '~/contracts/exchanges/transactions/makeGivethDonation';
 import { sendGivethETH } from '~/contracts/exchanges/transactions/sendGivethETH';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
-import { donateOnExchange } from '~/contracts/fund/trading/transactions/donateOnExchange';
+import {
+  donateOnExchange,
+  donateOnExchangeArgs,
+} from '~/contracts/fund/trading/transactions/donateOnExchange';
 import { invest } from '~/contracts/fund/trading/utils/invest';
 
 // initialize environment
@@ -130,13 +135,26 @@ export const investInFund = async (
   tokenSymbol: string,
   amount: number,
 ) => {
-  fundHoldings = await invest(environment, tokenSymbol, amount);
+  const fundHoldings = await invest(environment, tokenSymbol, amount);
   givethReport('invest in Fund successfull:', fundHoldings);
-
   return true;
 };
 
-export const donateGiveth = async () => {
-  //donateOnExchange
+export const donateGiveth = async (env, tokenSymbol, donationQuantity) => {
+  const tokenAddress = getTokenBySymbol(env, tokenSymbol);
+
+  const args: donateOnExchangeArgs = {
+    methodSignature: 'makeDonation',
+    donationAssetAddress: tokenAddress.toString(),
+    donationQuantity: donationQuantity,
+  };
+
+  await donateOnExchange(
+    env,
+    env.routes.tradingAddress,
+    args,
+    env.routes.hubAddress,
+  );
+  givethReport('donateGiveth was successfull executed.');
   return true;
 };

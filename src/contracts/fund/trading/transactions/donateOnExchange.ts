@@ -27,11 +27,11 @@ const guard: GuardFunction<donateOnExchangeArgs> = async (
   const { vaultAddress } = await getRoutes(environment, hubAddress);
   const donationToken = await getToken(environment, args.donationAssetAddress);
 
-  const DonationQuantity = createQuantity(
+  const donationQuant = createQuantity(
     donationToken,
     args.donationQuantity.toString(),
   );
-  await ensureSufficientBalance(environment, DonationQuantity, vaultAddress);
+  await ensureSufficientBalance(environment, donationQuant, vaultAddress);
 };
 
 const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (

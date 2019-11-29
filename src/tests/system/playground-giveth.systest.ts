@@ -5,9 +5,10 @@ import {
   createFund,
   donateGivethAdapterETH,
   donateGivethAdapter,
+  investInFund,
+  donateGiveth,
 } from '~/tests/utils/giveth';
 import { allLogsWritten } from '../utils/testLogger';
-import { getRoutes } from '~/contracts/fund/hub/calls/getRoutes';
 
 export const firstTest = async (environment, testReport) => {
   //Donate ERC20 token.
@@ -26,11 +27,14 @@ export const firstTest = async (environment, testReport) => {
 
 export const scndTest = async (environment, testReport) => {
   //Create a fund.
-  await createFund(environment, 'Fund');
+  const routes = await createFund(environment, 'Fund');
+  environment.routes = routes;
+  //nvest into a fund.
+  const invested = await investInFund(environment, 'WETH', 0.0003);
+  //donateOnExchange :)
+  const don = await donateGiveth(environment, 'WETH', 0.003);
 
-  //TODO: invest properly into a fund.
-  //TODO: Try donateOnExchange :)
-  return true;
+  return invested && don;
 };
 
 // start Tests
@@ -47,17 +51,10 @@ describe('playground', () => {
       LogLevels.INFO,
     );
     testReport('Created environment and init testLogger.');
-
-    const routes = await getRoutes(
-      environment,
-      '0x25Fd21483bD8030a0A436c4fc6fD89F3B5a7F9a1',
-    );
-    testReport('Routes:', routes);
-
     //    const donatedAdapter = await firstTest(environment, testReport);
     //    expect(donatedAdapter);
 
-    //    const donatedGiveth = await scndTest(environment, testReport);
-    //    expect(donatedGiveth);
+    const donatedGiveth = await scndTest(environment, testReport);
+    expect(donatedGiveth);
   });
 });
