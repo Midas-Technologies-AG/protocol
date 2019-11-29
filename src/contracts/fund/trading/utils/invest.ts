@@ -47,6 +47,7 @@ export const invest = async (_environment, _tokenSymbol, _amount) => {
     _environment,
     _environment.routes.sharesAddress,
   );
+  const requestedShares = await createQuantity(fundToken, _amount);
 
   await approve(_environment, {
     howMuch: investmentAmount,
@@ -55,10 +56,7 @@ export const invest = async (_environment, _tokenSymbol, _amount) => {
   await requestInvestment(
     _environment,
     _environment.routes.participationAddress,
-    {
-      investmentAmount,
-      requestedShares: createQuantity(fundToken, _amount),
-    },
+    { investmentAmount, requestedShares },
   );
   await executeRequest(_environment, _environment.routes.participationAddress);
   info(
