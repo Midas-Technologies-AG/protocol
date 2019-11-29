@@ -192,7 +192,8 @@ function donateOnExchange(
             Registry(routes.registry).adapterMethodIsAllowed(
                 exchanges[exchangeIndex].adapter,
                 methodSelector
-            )
+            ),
+            "adapterMethodIsAllowed failed."
         );
         require(Registry(routes.registry).assetIsRegistered(
             donationAsset), 'Maker asset not registered'

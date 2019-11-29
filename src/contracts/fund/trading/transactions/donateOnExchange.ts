@@ -6,12 +6,11 @@ import {
   PrepareArgsFunction,
   transactionFactory,
 } from '~/utils/solidity/transactionFactory';
-import { getHub } from '../../hub/calls/getHub';
-import { getRoutes } from '../../hub/calls/getRoutes';
+import { getHub } from '~/contracts/fund/hub/calls/getHub';
+import { getRoutes } from '~/contracts/fund/hub/calls/getRoutes';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { ensureSufficientBalance } from '~/contracts/dependencies/token/guards/ensureSufficientBalance';
 
-// The order needs to be signed by the manager
 export interface donateOnExchangeArgs {
   methodSignature: string;
   donationAssetAddress: string;
@@ -20,23 +19,23 @@ export interface donateOnExchangeArgs {
 
 const guard: GuardFunction<donateOnExchangeArgs> = async (
   environment,
-  args: donateOnExchangeArgs,
+  { donationAssetAddress, donationQuantity },
   contractAddress,
 ) => {
   const hubAddress = await getHub(environment, contractAddress);
   const { vaultAddress } = await getRoutes(environment, hubAddress);
-  const donationToken = await getToken(environment, args.donationAssetAddress);
+  const donationToken = await getToken(environment, donationAssetAddress);
 
-  const donationQuant = createQuantity(
+  const donationQuant = await createQuantity(
     donationToken,
-    args.donationQuantity.toString(),
+    donationQuantity.toString(),
   );
   await ensureSufficientBalance(environment, donationQuant, vaultAddress);
 };
 
 const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
   environment,
-  args: donateOnExchangeArgs,
+  { methodSignature, donationAssetAddress, donationQuantity },
   contractAddress,
 ) => {
   const exchangeIndex = await getExchangeIndex(environment, contractAddress, {
@@ -44,19 +43,16 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
   });
   const functionArgs = [
     exchangeIndex,
-    args.methodSignature,
-    args.donationAssetAddress,
-    args.donationQuantity,
+    methodSignature,
+    donationAssetAddress,
+    donationQuantity,
   ];
-
   return functionArgs;
 };
 
-const donateOnExchange = transactionFactory(
+export const donateOnExchange = transactionFactory(
   'donateOnExchange',
   Contracts.Trading,
   guard,
   prepareArgs,
 );
-
-export { donateOnExchange };

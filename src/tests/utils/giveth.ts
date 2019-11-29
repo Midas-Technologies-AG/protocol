@@ -15,10 +15,7 @@ import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
 import { makeGivethDonation } from '~/contracts/exchanges/transactions/makeGivethDonation';
 import { sendGivethETH } from '~/contracts/exchanges/transactions/sendGivethETH';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
-import {
-  donateOnExchange,
-  donateOnExchangeArgs,
-} from '~/contracts/fund/trading/transactions/donateOnExchange';
+import { donateOnExchange } from '~/contracts/fund/trading/transactions/donateOnExchange';
 import { invest } from '~/contracts/fund/trading/utils/invest';
 
 // initialize environment
@@ -142,19 +139,11 @@ export const investInFund = async (
 
 export const donateGiveth = async (env, tokenSymbol, donationQuantity) => {
   const tokenAddress = getTokenBySymbol(env, tokenSymbol);
-
-  const args: donateOnExchangeArgs = {
+  await donateOnExchange(env, env.routes.tradingAddress, {
     methodSignature: 'makeDonation',
     donationAssetAddress: tokenAddress.toString(),
     donationQuantity: donationQuantity,
-  };
-
-  await donateOnExchange(
-    env,
-    env.routes.tradingAddress,
-    args,
-    env.routes.hubAddress,
-  );
+  });
   givethReport('donateGiveth was successfull executed.');
   return true;
 };
