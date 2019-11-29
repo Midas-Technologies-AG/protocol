@@ -6,6 +6,8 @@ import {
   donateGivethAdapterETH,
   donateGivethAdapter,
 } from '~/tests/utils/giveth';
+import { allLogsWritten } from '../utils/testLogger';
+import { getRoutes } from '~/contracts/fund/hub/calls/getRoutes';
 
 export const firstTest = async (environment, testReport) => {
   //Donate ERC20 token.
@@ -22,10 +24,9 @@ export const firstTest = async (environment, testReport) => {
   return successERC && succsessETH;
 };
 
-const scndTest = async (environment, testReport) => {
+export const scndTest = async (environment, testReport) => {
   //Create a fund.
-  const fund = await createFund(environment, 'Test Fund');
-  testReport('Created fund:', fund);
+  await createFund(environment, 'Fund');
 
   //TODO: invest properly into a fund.
   //TODO: Try donateOnExchange :)
@@ -35,6 +36,9 @@ const scndTest = async (environment, testReport) => {
 // start Tests
 expect.extend({ toBeTrueWith });
 describe('playground', () => {
+  afterAll(async () => {
+    await allLogsWritten();
+  });
   test('Happy path', async () => {
     //Create Environment.
     const environment = await init('deployments/kovan-kyberPrice.json');
@@ -44,10 +48,16 @@ describe('playground', () => {
     );
     testReport('Created environment and init testLogger.');
 
+    const routes = await getRoutes(
+      environment,
+      '0x25Fd21483bD8030a0A436c4fc6fD89F3B5a7F9a1',
+    );
+    testReport('Routes:', routes);
+
     //    const donatedAdapter = await firstTest(environment, testReport);
     //    expect(donatedAdapter);
 
-    const donatedGiveth = await scndTest(environment, testReport);
-    expect(donatedGiveth);
+    //    const donatedGiveth = await scndTest(environment, testReport);
+    //    expect(donatedGiveth);
   });
 });
