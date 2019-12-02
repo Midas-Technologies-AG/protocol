@@ -34,7 +34,7 @@ export const scndTest = async (environment, testReport) => {
   //donateOnExchange :)
   const don = await donateGiveth(environment, 'WETH', 0.000004);
 
-  return don;
+  return invested && don;
 };
 
 // start Tests
