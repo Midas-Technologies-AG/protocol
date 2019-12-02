@@ -11,6 +11,8 @@ import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
 import { createQuantity, createToken } from '@melonproject/token-math';
 import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
+import { updateExchangeAdapter } from '~/contracts/version/transactions/updateExchangeAdapter';
+import { FunctionSignatures } from '~/contracts/fund/trading/utils/FunctionSignatures';
 
 import { makeGivethDonation } from '~/contracts/exchanges/transactions/makeGivethDonation';
 import { sendGivethETH } from '~/contracts/exchanges/transactions/sendGivethETH';
@@ -137,10 +139,27 @@ export const investInFund = async (
   return true;
 };
 
+export const updateGivethAdapter = async env => {
+  const args = {
+    exchange: env.deployment.thirdPartyContracts.exchanges.givethBridge,
+    adapter: env.deployment.melonContracts.adapters.givethBridgeAdapter,
+    takesCustody: false,
+    sigs: [FunctionSignatures.makeDonation],
+  };
+  await updateExchangeAdapter(env, env.routes.registryAddress, args);
+  await updateExchangeAdapter(
+    env,
+    env.deployment.melonContracts.registry,
+    args,
+  );
+  return true;
+};
+
 export const donateGiveth = async (env, tokenSymbol, donationQuantity) => {
   const token = getTokenBySymbol(env, tokenSymbol);
+
   await donateOnExchange(env, env.routes.tradingAddress, {
-    methodSignature: 'makeDonation',
+    methodSignature: FunctionSignatures.makeDonation,
     donationAssetAddress: token.address.toString(),
     donationQuantity: donationQuantity,
   });

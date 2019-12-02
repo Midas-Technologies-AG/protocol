@@ -4,6 +4,7 @@ import {
   init,
   createFund,
   investInFund,
+  //updateGivethAdapter,
   donateGivethAdapterETH,
   donateGivethAdapter,
   donateGiveth,
@@ -31,6 +32,8 @@ export const scndTest = async (environment, testReport) => {
   environment.routes = routes;
   //nvest into a fund.
   const invested = await investInFund(environment, 'WETH', 0.00005);
+  // register makeDonation function for givethAdapter
+  //const reg = await updateGivethAdapter(environment);
   //donateOnExchange :)
   const don = await donateGiveth(environment, 'WETH', 0.000004);
 

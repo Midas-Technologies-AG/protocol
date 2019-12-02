@@ -202,7 +202,6 @@ function donateOnExchange(
             exchanges[exchangeIndex].adapter.delegatecall(
                 abi.encodeWithSignature(
                     methodSignature,
-                    exchanges[exchangeIndex].exchange,
                     donationAsset,
                     donationQuantity
                 )

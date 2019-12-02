@@ -44,8 +44,13 @@ export const withdrawTokensSignature = joinSignature('withdrawTokens', [
   'bytes',
   'bytes',
 ]);
+export const makeDonationSignature = joinSignature('makeDonation', [
+  'address',
+  'uint256',
+]);
 
 export const makeOrderSignatureBytes = abiEncode(makeOrderSignature);
 export const takeOrderSignatureBytes = abiEncode(takeOrderSignature);
 export const cancelOrderSignatureBytes = abiEncode(cancelOrderSignature);
 export const withdrawTokensSignatureBytes = abiEncode(withdrawTokensSignature);
+export const makeDonationSignatureBytes = abiEncode(makeDonationSignature);

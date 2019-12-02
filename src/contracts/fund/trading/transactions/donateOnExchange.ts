@@ -12,9 +12,9 @@ import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { ensureSufficientBalance } from '~/contracts/dependencies/token/guards/ensureSufficientBalance';
 
 export interface donateOnExchangeArgs {
-  methodSignature: string;
-  donationAssetAddress: string;
-  donationQuantity: number;
+  methodSignature;
+  donationAssetAddress;
+  donationQuantity;
 }
 
 const guard: GuardFunction<donateOnExchangeArgs> = async (
@@ -41,13 +41,30 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
   const exchangeIndex = await getExchangeIndex(environment, contractAddress, {
     exchange: Exchanges.GivethBridge,
   });
+  const donationToken = await getToken(environment, donationAssetAddress);
+  const donationQuant = await createQuantity(
+    donationToken,
+    donationQuantity.toString(),
+  );
   const functionArgs = [
     exchangeIndex,
     methodSignature,
     donationAssetAddress,
-    donationQuantity,
+    donationQuant.quantity,
   ];
   return functionArgs;
+};
+
+interface Options {
+  skipGasEstimation?: boolean;
+  gas: string;
+  gasPrice: string;
+  value?: string;
+}
+const defaultOptions: Options = {
+  skipGasEstimation: true,
+  gasPrice: '2000000000',
+  gas: '7500100',
 };
 
 export const donateOnExchange = transactionFactory(
@@ -55,4 +72,6 @@ export const donateOnExchange = transactionFactory(
   Contracts.Trading,
   guard,
   prepareArgs,
+  undefined,
+  defaultOptions,
 );
