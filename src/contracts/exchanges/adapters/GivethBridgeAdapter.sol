@@ -27,38 +27,21 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         ensureCanMakeOrder(donationAsset);
         Hub hub = getHub();
         // Prepare donation
-        require(prepareDonation(donationAsset, donationQuantity), 'Preparation for donation failed.');
-        // Donate asset
-        require(callBridge(bridge, donationAsset, donationQuantity), 'call Bridge failed.');
-        // Postprocess/Update
-        getAccounting().updateOwnedAssets(); 
-    }
-
-    function prepareDonation (
-        address donationAsset,
-        uint donationQuantity) internal returns(bool) {
-        Hub hub = getHub();
-        //withdraw the tokens
         Vault vault = Vault(hub.vault());
         vault.withdraw(donationAsset, donationQuantity);
         require(
             ERC20(donationAsset).approve(bridge, donationQuantity),
             "Maker asset could not be approved"
-            );
-        return true;
-    }
-
-    function callBridge (address aim, address asset, uint amount) internal returns(bool) {
-        aim.delegatecall(
-                abi.encodeWithSignature(
-                    "donateAndCreateGiver(address,uint64,address,uint256)",
-                    msg.sender,
-                    receiverDAC,
-                    asset,
-                    amount
-                )
-            );
-        return true;
+        );
+        // Donate
+        GivethBridge(bridge).donateAndCreateGiver(
+            msg.sender,
+            receiverDAC,
+            donationAsset,
+            donationQuantity
+        );
+        // Postprocess/Update
+        getAccounting().updateOwnedAssets(); 
     }
 
     function whitelistTokenOnBridge (address _token, bool _value) onlyManager public returns(bool) {
