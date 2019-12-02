@@ -138,10 +138,10 @@ export const investInFund = async (
 };
 
 export const donateGiveth = async (env, tokenSymbol, donationQuantity) => {
-  const tokenAddress = getTokenBySymbol(env, tokenSymbol);
+  const token = getTokenBySymbol(env, tokenSymbol);
   await donateOnExchange(env, env.routes.tradingAddress, {
     methodSignature: 'makeDonation',
-    donationAssetAddress: tokenAddress.toString(),
+    donationAssetAddress: token.address.toString(),
     donationQuantity: donationQuantity,
   });
   givethReport('donateGiveth was successfull executed.');
