@@ -26,18 +26,18 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         ensureNotInOpenMakeOrder(donationAsset);
         // Prepare donation
         //prepareDonation(bridge, donationAsset, donationQuantity);
-/*        Vault(Hub(getHub()).vault()).withdraw(donationAsset, donationQuantity);
+        //Vault(Hub(getHub()).vault()).withdraw(donationAsset, donationQuantity);
         require(
             ERC20(donationAsset).approve(bridge, donationQuantity),
             "Maker asset could not be approved"
-        );*/
-        // Donate
-        GivethBridge(bridge).donateAndCreateGiver(
-                address(this),
-                uint64(receiverDAC),
-                address(donationAsset),
-                uint(donationQuantity)
-            )    
+        );
+        bridge.call(
+            abi.encodeWithSignature(
+                "donateAndCreateGiver(address,uint64,address,uint256)",
+                msg.sender,
+                receiverDAC,
+                donationAsset,
+                donationQuantity));
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
     }
@@ -48,8 +48,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         vault.withdraw(donationAsset, donationQuantity);
         require(
             ERC20(donationAsset).approve(bridge, donationQuantity),
-            "Taker asset could not be approved"
-        );
+            "Taker asset could not be approved");
     }
 
     function whitelistTokenOnBridge (address bridge, address _token, bool _value)

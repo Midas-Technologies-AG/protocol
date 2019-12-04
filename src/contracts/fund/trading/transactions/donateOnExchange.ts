@@ -14,7 +14,7 @@ import { ensureSufficientBalance } from '~/contracts/dependencies/token/guards/e
 export interface donateOnExchangeArgs {
   methodSignature;
   donationAssetAddress;
-  donationQuantity;
+  donationQuantity: number;
 }
 
 const guard: GuardFunction<donateOnExchangeArgs> = async (
@@ -26,10 +26,7 @@ const guard: GuardFunction<donateOnExchangeArgs> = async (
   const { vaultAddress } = await getRoutes(environment, hubAddress);
   const donationToken = await getToken(environment, donationAssetAddress);
 
-  const donationQuant = await createQuantity(
-    donationToken,
-    donationQuantity.toString(),
-  );
+  const donationQuant = await createQuantity(donationToken, donationQuantity);
   await ensureSufficientBalance(environment, donationQuant, vaultAddress);
 };
 
@@ -42,17 +39,14 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
     exchange: Exchanges.GivethBridge,
   });
   const donationToken = await getToken(environment, donationAssetAddress);
-  const donationQuant = await createQuantity(
-    donationToken,
-    donationQuantity.toString(),
-  );
+  const donationQuant = await createQuantity(donationToken, donationQuantity);
   const functionArgs = [
     exchangeIndex,
     methodSignature,
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
     1,
     donationAssetAddress,
-    donationQuant.quantity,
+    donationQuant.quantity.toString(),
   ];
   return functionArgs;
 };
@@ -66,7 +60,7 @@ interface Options {
 const defaultOptions: Options = {
   skipGasEstimation: true,
   gasPrice: '2000000000',
-  gas: '7500100',
+  gas: '8000000',
 };
 
 export const donateOnExchange = transactionFactory(

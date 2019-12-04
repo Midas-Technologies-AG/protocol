@@ -3,7 +3,7 @@ import { LogLevels } from '~/utils/environment/Environment';
 import {
   init,
   //createFund,
-  investInFund,
+  //investInFund,
   //updateGivethAdapter,
   donateGivethAdapterETH,
   donateGivethAdapter,
@@ -29,27 +29,29 @@ export const firstTest = async (environment, testReport) => {
 export const scndTest = async (environment, testReport) => {
   //Create a fund.
   const routes = {
-    accountingAddress: '0xD444261F46c65438C5142FdFCB24D0E5e1837505',
-    feeManagerAddress: '0x63FF1cd96AF8E999f5308B072847Fd9053a81003',
-    participationAddress: '0x64FCb11E5c53296B83863d13Dc5013AF6F6d07F4',
-    policyManagerAddress: '0xDf9386451cC10267d09EF9Ad3d94b6e7FbEBAAF5',
-    priceSourceAddress: '0x24D1E7de725a1945CfDAD0e353522bd37Ef9c86b',
-    registryAddress: '0x65fc21E1b6F377EE5E84a415695c450Cb43C4C80',
-    sharesAddress: '0x92b2df7535eb5b5eceFF36fd3d9E72Ca0B1EeCe2',
-    tradingAddress: '0x9452D3D86fb38262f1e486a212a10A35B6D68540',
-    vaultAddress: '0x5339Cc89d86B4Af8B67D9A52545E0DE3b141827F',
-    versionAddress: '0x4f4077Bbc721795c23F1948E57Bce7421E7d4AD4',
-    hubAddress: '0x988358446D2E003F7d81d4A4a2031fb2D65a5be8',
-  }; //await createFund(environment, 'Fund');
+    accountingAddress: '0x935E50DE7428060BBF309eFb0568Bd15E322782f',
+    feeManagerAddress: '0x8cebD94D9F2EC957B2290484149d44F071A141be',
+    participationAddress: '0xEf8F4AcE98F20863B215F3d93bCd208435260C9b',
+    policyManagerAddress: '0xc1eD32D9F2834AD654895c0f384A7650AF7CA839',
+    priceSourceAddress: '0x00881ccB557F7BC86B03a5A4D4297722A2dbFE1b',
+    registryAddress: '0x9BD1B343eb6089F5B3E545C00c9e1F25EdB2d1A8',
+    sharesAddress: '0xF1A13B9FEEd8e138370324260e4d2bc2b028976d',
+    tradingAddress: '0x1fe6B1AA1A6C8389EBB00dC8CCFFEd5c293EAb0A',
+    vaultAddress: '0x5B6237C03E615E548810a66980c173A045508d18',
+    versionAddress: '0x61A4793838F55A41FAbcc7B2FB491214309CA544',
+    hubAddress: '0xA9d400FF77D3afEf6B08d093A6957D768d30ed00',
+  };
+
+  //await createFund(environment, 'Fund');
   environment.routes = routes;
   //Invest into a fund.
-  const invested = await investInFund(environment, 'WETH', 0.123);
+  //const invested = await investInFund(environment, 'WETH', 1.0);
   // register makeDonation function for givethAdapter
   //const reg = await updateGivethAdapter(environment);
   //donateOnExchange :)
-  const don = await donateGiveth(environment, 'WETH', 0.123);
+  const don = await donateGiveth(environment, 'WETH', 0.044);
 
-  return invested && don;
+  return don;
 };
 
 // start Tests
@@ -70,7 +72,7 @@ describe('playground', () => {
     expect(donatedAdapter);*/
 
     const donatedGiveth = await scndTest(environment, testReport);
-
+    //const donatedGiveth = await createFund(environment, 'Fund');
     expect(donatedGiveth);
   });
 });

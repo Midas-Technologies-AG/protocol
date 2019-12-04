@@ -20,6 +20,12 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
         bool takesCustody;
     }
 
+    struct Donation {
+        Exchange exchange;
+        address asset;
+        uint amount;        
+    } //TODO: use it   
+
     enum UpdateType { make, take, cancel }
 
     struct Order {
@@ -43,6 +49,7 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
 
     Exchange[] public exchanges;
     Order[] public orders;
+    Donation[] public donations; //TODO: use it 
     mapping (address => bool) public adapterIsAdded;
     mapping (address => mapping(address => OpenMakeOrder)) public exchangesToOpenMakeOrders;
     mapping (address => uint) public openMakeOrdersAgainstAsset;
@@ -189,6 +196,7 @@ function donateOnExchange(
         public
         onlyInitialized
     {
+        //registrychecks of Aaptermethod and Asset
         bytes4 methodSelector = bytes4(keccak256(methodSignature));
         require(
             Registry(routes.registry).adapterMethodIsAllowed(
