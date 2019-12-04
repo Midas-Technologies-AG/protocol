@@ -4,6 +4,7 @@ import "Vault.i.sol";
 import "Spoke.sol";
 import "Factory.sol";
 import "TokenUser.sol";
+import "ERC20.i.sol";
 
 /// @notice Dumb custody component
 contract Vault is VaultInterface, TokenUser, Spoke {
@@ -12,6 +13,9 @@ contract Vault is VaultInterface, TokenUser, Spoke {
 
     function withdraw(address token, uint amount) external auth {
         safeTransfer(token, msg.sender, amount);
+    }
+    function withdraw2(address token, uint amount) external auth {
+        ERC20(token).transfer(msg.sender, amount);
     }
 }
 

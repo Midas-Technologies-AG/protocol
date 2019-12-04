@@ -181,6 +181,8 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
 function donateOnExchange(
         uint exchangeIndex,
         string methodSignature,
+        address bridge,
+        uint64 receiverDAC,
         address donationAsset,
         uint donationQuantity
     )
@@ -202,6 +204,8 @@ function donateOnExchange(
             exchanges[exchangeIndex].adapter.delegatecall(
                 abi.encodeWithSignature(
                     methodSignature,
+                    bridge,
+                    receiverDAC,
                     donationAsset,
                     donationQuantity
                 )

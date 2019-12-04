@@ -49,6 +49,8 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
   const functionArgs = [
     exchangeIndex,
     methodSignature,
+    environment.deployment.thirdPartyContracts.exchanges.givethBridge,
+    1,
     donationAssetAddress,
     donationQuant.quantity,
   ];

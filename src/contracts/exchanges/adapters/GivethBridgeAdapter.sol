@@ -12,39 +12,48 @@ import "ERC20.i.sol";
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
 
 contract GivethBridgeAdapter is ExchangeAdapter {
-    address public bridge;
-    uint64 public receiverDAC;
 
-    constructor(address _bridge, uint64 _receiverDAC) public {
-        bridge = _bridge;
-        receiverDAC = _receiverDAC;
-    }
+    constructor() public { }
 
     function makeDonation(
+        address bridge,
+        uint64 receiverDAC,
         address donationAsset,
         uint donationQuantity
         ) public onlyManager notShutDown {
         ensureCanMakeOrder(donationAsset);
-        Hub hub = getHub();
+        getTrading().updateAndGetQuantityBeingTraded(donationAsset);
+        ensureNotInOpenMakeOrder(donationAsset);
         // Prepare donation
-        Vault vault = Vault(hub.vault());
-        vault.withdraw(donationAsset, donationQuantity);
+        //prepareDonation(bridge, donationAsset, donationQuantity);
+/*        Vault(Hub(getHub()).vault()).withdraw(donationAsset, donationQuantity);
         require(
             ERC20(donationAsset).approve(bridge, donationQuantity),
             "Maker asset could not be approved"
-        );
+        );*/
         // Donate
         GivethBridge(bridge).donateAndCreateGiver(
-            msg.sender,
-            receiverDAC,
-            donationAsset,
-            donationQuantity
-        );
+                address(this),
+                uint64(receiverDAC),
+                address(donationAsset),
+                uint(donationQuantity)
+            )    
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
     }
 
-    function whitelistTokenOnBridge (address _token, bool _value) onlyManager public returns(bool) {
+    function prepareDonation (address bridge, address donationAsset, uint donationQuantity) internal {
+        Hub hub = getHub();
+        Vault vault = Vault(hub.vault());
+        vault.withdraw(donationAsset, donationQuantity);
+        require(
+            ERC20(donationAsset).approve(bridge, donationQuantity),
+            "Taker asset could not be approved"
+        );
+    }
+
+    function whitelistTokenOnBridge (address bridge, address _token, bool _value)
+    onlyManager public returns(bool) {
         GivethBridge(bridge).whitelistToken(_token, _value);
         return true;
     }
