@@ -25,8 +25,7 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         getTrading().updateAndGetQuantityBeingTraded(donationAsset);
         ensureNotInOpenMakeOrder(donationAsset);
         // Prepare donation
-        //prepareDonation(bridge, donationAsset, donationQuantity);
-        //Vault(Hub(getHub()).vault()).withdraw(donationAsset, donationQuantity);
+        prepareDonation(bridge, donationAsset, donationQuantity);
         require(
             ERC20(donationAsset).approve(bridge, donationQuantity),
             "Maker asset could not be approved"
