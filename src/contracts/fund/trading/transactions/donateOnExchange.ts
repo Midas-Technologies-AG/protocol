@@ -44,7 +44,7 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
     exchangeIndex,
     methodSignature,
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
-    1, //This is the receiverDAC. Maybe something TODO for policies, prevalidation ec...
+    5, //This is the receiverDAC. Maybe something TODO for policies, prevalidation ec...
     donationAssetAddress,
     donationQuant.quantity.toString(),
   ];

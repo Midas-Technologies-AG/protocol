@@ -4,6 +4,7 @@ node_modules/
 *.swp
 
 .env
+bin/*.sh
 
 # manual backup files
 *.bak

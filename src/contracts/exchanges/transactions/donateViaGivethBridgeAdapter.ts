@@ -39,7 +39,7 @@ const prepareArgs: PrepareArgsFunction<
 ) => {
   return [
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
-    1, //HardCoded receiverDAC :HC:
+    5, //HardCoded receiverDAC :HC:
     token.address.toString(),
     howMuch.quantity.toString(),
   ];
@@ -47,22 +47,6 @@ const prepareArgs: PrepareArgsFunction<
 
 type donateViaGivethBridgeAdapterResult = boolean;
 
-interface Options {
-  amguPayable?: boolean;
-  incentive?: boolean;
-  skipGuards?: boolean;
-  skipGasEstimation?: boolean;
-  from?: string;
-  gas?: string;
-  gasPrice?: string;
-  value?: string;
-}
-
-const customOptions: Options = {
-  skipGasEstimation: true,
-  gas: '8000000',
-  gasPrice: '2000000000',
-};
 export const donateViaGivethBridgeAdapter: EnhancedExecute<
   donateViaGivethBridgeAdapterArgs,
   donateViaGivethBridgeAdapterResult
@@ -71,8 +55,6 @@ export const donateViaGivethBridgeAdapter: EnhancedExecute<
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
-  undefined,
-  customOptions,
 );
 
 //enable before last const and add after prepareArgs, undefined (or postProcess if exists above), customOptions.

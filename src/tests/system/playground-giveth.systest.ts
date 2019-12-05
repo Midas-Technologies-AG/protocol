@@ -10,17 +10,14 @@ import {
 } from '~/tests/utils/givethTestingUtils';
 import { donateGiveth } from '~/contracts/fund/trading/transactions/donateGiveth';
 import { allLogsWritten } from '../utils/testLogger';
+import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
 
 //To use just this testfile set the 8th line of ./jest.setup.js to:
 //  testRegex: '((\\giveth.|/)(systest))\\.(js|ts)$', //To test single files change here.
 
 export const firstTest = async (environment, testReport) => {
   //Donate ERC20 token directly via adapter, no fund needed...(not possible from fund.)
-  const successERC = await donateGivethAdapter(
-    environment,
-    'WETH',
-    0.000006789,
-  );
+  const successERC = await donateGivethAdapter(environment, 'DAI', 0.000001);
   testReport('Donated Asset from', environment.wallet.address);
 
   //const succsessETH = await donateGivethAdapterETH(environment, 0.00345);
@@ -30,20 +27,19 @@ export const firstTest = async (environment, testReport) => {
 
 export const scndTest = async (environment, testReport) => {
   //Create a fund.
-  const routes = await createFund(environment, 'Fund');
+  const routes = await createFund(environment, 'Fund Ash');
   environment.routes = routes;
   //Invest into a fund.
-  const invested = await investInFund(environment, 'WETH', 0.120006789);
+  await investInFund(environment, 'DAI', 0.000004321);
   // register makeDonation function for givethAdapter
   //const reg = await updateGivethAdapter(environment);
   //donateOnExchange :)
-  const don = await donateGiveth(environment, 'WETH', 0.01);
+  await donateGiveth(environment, 'DAI', 0.000001);
+  await donateGiveth(environment, 'DAI', 0.0000011);
+  await donateGiveth(environment, 'DAI', 0.00000111);
+  await donateGiveth(environment, 'DAI', 0.000001111);
 
-  await donateGiveth(environment, 'WETH', 0.0000001);
-  await donateGiveth(environment, 'WETH', 0.0099999);
-  await donateGiveth(environment, 'WETH', 0.000006789);
-
-  return don && invested;
+  return true;
 };
 
 // start Tests
@@ -54,15 +50,18 @@ describe('playground', () => {
   });
   test('Happy path', async () => {
     //Create Environment.
-    const environment = await init('deployments/kovan-kyberPrice.json');
+    const environment = await init('deployments/mainnet-kyberPrice.json');
     const testReport = environment.logger(
       'Midas-Technologies-AG/protocol:test-givethModule:',
       LogLevels.INFO,
     );
     testReport('Created environment and init testLogger.');
-
-    const donatedAdapter = await firstTest(environment, testReport);
-    expect(donatedAdapter);
+    await updateKyber(
+      environment,
+      environment.deployment.melonContracts.priceSource,
+    );
+    //const donatedAdapter = await firstTest(environment, testReport);
+    //expect(donatedAdapter);
 
     const donatedGiveth = await scndTest(environment, testReport);
     expect(donatedGiveth);

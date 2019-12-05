@@ -63,7 +63,7 @@ export const init = async (_deploymentPath: string) => {
   //TXoptions
   const customOptions: Options = {
     gasLimit: '8000000',
-    gasPrice: '2300000000',
+    gasPrice: '17000000000',
   };
   info('Created wallet.');
 

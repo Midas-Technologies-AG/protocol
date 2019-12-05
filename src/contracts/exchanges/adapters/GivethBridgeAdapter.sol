@@ -9,6 +9,7 @@ import "Trading.sol";
 import "ERC20.i.sol";
 
 /*GivethAdapter enables  ERC20funds on @melonproject/protocol to donate giveth DAC's. (DecentralizedAltruisticCommun) */
+/*Author: @IEM_WLL on github.*/
 
 contract GivethBridgeAdapter is ExchangeAdapter {
 
@@ -28,10 +29,6 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         //TODO2: Use it.
         // Prepare donation
         prepareDonation(bridge, donationAsset, donationQuantity);
-        require(
-            ERC20(donationAsset).approve(bridge, donationQuantity),
-            "donationAsset could not be approved"
-        );
         //makeDonation
         bridge.call(
             abi.encodeWithSignature(
@@ -45,6 +42,16 @@ contract GivethBridgeAdapter is ExchangeAdapter {
         // Postprocess/Update
         getAccounting().updateOwnedAssets(); 
     }
+    
+    function prepareDonation (address bridge, address donationAsset, uint donationQuantity) internal {
+        Hub hub = getHub();
+        Vault vault = Vault(hub.vault());
+        vault.withdraw(donationAsset, donationQuantity);
+        require(
+            ERC20(donationAsset).approve(bridge, donationQuantity),
+            "donationAsset could not be approved");
+    }
+
     function donateViaGivethBridge(
         address bridge,
         uint64 receiverDAC,
@@ -69,25 +76,6 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             receiverDAC,
             donationAsset,
             donationQuantity
-        ));
-        return true;
-    }
-
-    function prepareDonation (address bridge, address donationAsset, uint donationQuantity) internal {
-        Hub hub = getHub();
-        Vault vault = Vault(hub.vault());
-        vault.withdraw(donationAsset, donationQuantity);
-        require(
-            ERC20(donationAsset).approve(bridge, donationQuantity),
-            "donationAsset could not be approved");
-    }
-
-    function whitelistTokenOnBridge (address bridge, address token, bool value)
-    onlyManager public returns(bool) {
-        bridge.call(abi.encodeWithSignature(
-            "whitelistToken(address,uint256)",
-            token,
-            value
         ));
         return true;
     }
