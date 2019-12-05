@@ -9,15 +9,14 @@ import { cliLogger } from '~/utils/environment/cliLogger';
 import { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 import { default as Web3Eth } from 'web3-eth';
 import { default as Web3Accounts } from 'web3-eth-accounts';
-import { createQuantity, createToken } from '@melonproject/token-math';
+import { createQuantity } from '@melonproject/token-math';
 import { getTokenBySymbol } from '~/utils/environment/getTokenBySymbol';
 import { updateExchangeAdapter } from '~/contracts/version/transactions/updateExchangeAdapter';
 import { FunctionSignatures } from '~/contracts/fund/trading/utils/FunctionSignatures';
 
-import { makeGivethDonation } from '~/contracts/exchanges/transactions/makeGivethDonation';
+import { donateViaGivethBridgeAdapter } from '~/contracts/exchanges/transactions/donateViaGivethBridgeAdapter';
 import { sendGivethETH } from '~/contracts/exchanges/transactions/sendGivethETH';
 import { transfer } from '~/contracts/dependencies/token/transactions/transfer';
-import { donateOnExchange } from '~/contracts/fund/trading/transactions/donateOnExchange';
 import { invest } from '~/contracts/fund/trading/utils/invest';
 
 // initialize environment
@@ -62,9 +61,9 @@ export const init = async (_deploymentPath: string) => {
     signTransaction,
   };
   //TXoptions
-  const options: Options = {
+  const customOptions: Options = {
     gasLimit: '8000000',
-    gasPrice: '3300000000',
+    gasPrice: '2300000000',
   };
   info('Created wallet.');
 
@@ -74,7 +73,7 @@ export const init = async (_deploymentPath: string) => {
     deployment,
     eth,
     logger: cliLogger,
-    options,
+    options: customOptions,
     track: Tracks.KYBER_PRICE,
     wallet,
   };
@@ -91,7 +90,7 @@ export const createFund = async (environment: Environment, _name: string) => {
   givethReport('setup Fund was successfull', fund);
   return fund;
 };
-
+//should revert for now. TODO
 export const donateGivethAdapterETH = async (
   environment: Environment,
   _amount: number,
@@ -106,11 +105,9 @@ export const donateGivethAdapterETH = async (
 export const donateGivethAdapter = async (
   environment: Environment,
   tokenSymbol: string,
-  tokenAddress: string,
-  decimals: number = 18,
   amount: number,
 ) => {
-  const token = await createToken(tokenSymbol, tokenAddress, decimals);
+  const token = await getTokenBySymbol(environment, tokenSymbol);
   const howMuch = await createQuantity(token, amount);
 
   await transfer(environment, {
@@ -119,7 +116,7 @@ export const donateGivethAdapter = async (
   });
 
   givethReport('start donateGivethAdapter...');
-  const donated = await makeGivethDonation(
+  const donated = await donateViaGivethBridgeAdapter(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,
     { token, howMuch },
@@ -152,17 +149,5 @@ export const updateGivethAdapter = async env => {
     env.deployment.melonContracts.registry,
     args,
   );
-  return true;
-};
-
-export const donateGiveth = async (env, tokenSymbol, donationQuantity) => {
-  const token = getTokenBySymbol(env, tokenSymbol);
-
-  await donateOnExchange(env, env.routes.tradingAddress, {
-    methodSignature: FunctionSignatures.makeDonation,
-    donationAssetAddress: token.address.toString(),
-    donationQuantity: donationQuantity,
-  });
-  givethReport('donateGiveth was successfull executed.');
   return true;
 };

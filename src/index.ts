@@ -211,10 +211,5 @@ export {
 export { getLastUpdate } from '~/contracts/prices/calls/getLastUpdate';
 export { setupFund } from '~/contracts/fund/hub/transactions/setupFund';
 export {
-  init,
-  createFund,
   donateGiveth,
-  investInFund,
-  donateGivethAdapterETH,
-  donateGivethAdapter,
-} from '~/tests/utils/giveth';
+} from '~/contracts/fund/trading/transactions/donateGiveth';

@@ -206,7 +206,7 @@ function donateOnExchange(
             "adapterMethodIsAllowed failed."
         );
         require(Registry(routes.registry).assetIsRegistered(
-            donationAsset), 'Maker asset not registered'
+            donationAsset), 'donationAsset not registered'
         );
         require(
             exchanges[exchangeIndex].adapter.delegatecall(

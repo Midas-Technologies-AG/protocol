@@ -44,14 +44,24 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
     exchangeIndex,
     methodSignature,
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
-    1,
+    1, //This is the receiverDAC. Maybe something TODO for policies, prevalidation ec...
     donationAssetAddress,
     donationQuant.quantity.toString(),
   ];
   return functionArgs;
 };
 
-interface Options {
+export const donateOnExchange = transactionFactory(
+  'donateOnExchange',
+  Contracts.Trading,
+  guard,
+  prepareArgs,
+  //undefined,
+  //defaultOptions
+);
+
+//Enable these lines and add args above: undefined, defaultOptions
+/*interface Options {
   skipGasEstimation?: boolean;
   gas: string;
   gasPrice: string;
@@ -61,13 +71,4 @@ const defaultOptions: Options = {
   skipGasEstimation: true,
   gasPrice: '2000000000',
   gas: '8000000',
-};
-
-export const donateOnExchange = transactionFactory(
-  'donateOnExchange',
-  Contracts.Trading,
-  guard,
-  prepareArgs,
-  undefined,
-  defaultOptions,
-);
+};*/
