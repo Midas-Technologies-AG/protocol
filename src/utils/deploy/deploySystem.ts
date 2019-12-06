@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import { Exchanges, Contracts } from '~/Contracts';
+import { Exchanges /*, Contracts*/ } from '~/Contracts';
 import { deployMatchingMarketAdapter } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarketAdapter';
 import { deployMatchingMarketAccessor } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarketAccessor';
 import { deployEngine } from '~/contracts/engine/transactions/deployEngine';
@@ -44,10 +44,10 @@ import { registerFees } from '~/contracts/version/transactions/registerFees';
 import { getRegistryInformation } from '~/contracts/version/calls/getRegistryInformation';
 import { deployKyberPriceFeed } from '~/contracts/prices/transactions/deployKyberPriceFeed';
 import { getLogCurried } from '../environment/getLogCurried';
-import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
+//import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
 import { deployTestingPriceFeed } from '~/contracts/prices/transactions/deployTestingPriceFeed';
-import { getConvertedPrices } from '~/tests/utils/updateTestingPriceFeed';
-import { getContract } from '~/utils/solidity/getContract';
+//import { getConvertedPrices } from '~/tests/utils/updateTestingPriceFeed';
+//import { getContract } from '~/utils/solidity/getContract';
 import { setDecimals } from '~/contracts/prices/transactions/setDecimals';
 import { deployManagementFee } from '~/contracts/fund/fees/transactions/deployManagementFee';
 import { deployPerformanceFee } from '~/contracts/fund/fees/transactions/deployPerformanceFee';
@@ -541,7 +541,7 @@ export const deploySystem = async (
     }
   }
 
-  if (environment.track === Tracks.KYBER_PRICE) {
+  /*  if (environment.track === Tracks.KYBER_PRICE) {
     await updateKyber(
       environmentWithDeployment,
       environmentWithDeployment.deployment.melonContracts.priceSource,
@@ -558,7 +558,7 @@ export const deploySystem = async (
       Object.values(prices).map(e => e.toString()),
     );
     //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
-  }
+  }*/
 
   const track = environment.track;
   const network = await environment.eth.net.getId();

@@ -110,12 +110,12 @@ export const donateGivethAdapter = async (
   const token = await getTokenBySymbol(environment, tokenSymbol);
   const howMuch = await createQuantity(token, amount);
 
-  const check = await transfer(environment, {
+  await transfer(environment, {
     howMuch,
     to: environment.deployment.melonContracts.adapters.givethBridgeAdapter,
   });
 
-  givethReport('start donateGivethAdapter...', check);
+  givethReport('start donateGivethAdapter...');
   const donated = await donateViaGivethBridgeAdapter(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,

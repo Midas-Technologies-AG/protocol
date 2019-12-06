@@ -14,6 +14,7 @@ import {
   PrepareArgsFunction,
   GuardFunction,
 } from '~/utils/solidity/transactionFactory';
+
 //Not via fund possible.
 interface donateViaGivethBridgeAdapterArgs {
   token: TokenInterface;
@@ -41,12 +42,27 @@ const prepareArgs: PrepareArgsFunction<
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
     5, //HardCoded receiverDAC :HC:
     token.address.toString(),
-    howMuch.quantity,
+    howMuch.quantity.toString(),
   ];
 };
 
 type donateViaGivethBridgeAdapterResult = boolean;
+interface Options {
+  amguPayable?: boolean;
+  incentive?: boolean;
+  skipGuards?: boolean;
+  skipGasEstimation?: boolean;
+  from?: string;
+  gas?: string;
+  gasPrice?: string;
+  value?: string;
+}
 
+const customOptions: Options = {
+  skipGasEstimation: true,
+  gas: '250000',
+  gasPrice: '8000000000',
+};
 export const donateViaGivethBridgeAdapter: EnhancedExecute<
   donateViaGivethBridgeAdapterArgs,
   donateViaGivethBridgeAdapterResult
@@ -55,6 +71,8 @@ export const donateViaGivethBridgeAdapter: EnhancedExecute<
   Contracts.GivethBridgeAdapter,
   guard,
   prepareArgs,
+  undefined,
+  customOptions,
 );
 
 //enable before last const and add after prepareArgs, undefined (or postProcess if exists above), customOptions.

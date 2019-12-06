@@ -31,7 +31,6 @@ const setupFund = async (environment: Environment, name?) => {
 
   const weth = getTokenBySymbol(environment, 'WETH');
   const mln = getTokenBySymbol(environment, 'MLN');
-  const dai = getTokenBySymbol(environment, 'DAI');
   const fees = [
     {
       feeAddress: melonContracts.fees.managementFee.toLowerCase(),
@@ -46,7 +45,7 @@ const setupFund = async (environment: Environment, name?) => {
   ];
 
   await beginSetup(environment, melonContracts.version, {
-    defaultTokens: [weth, mln, dai],
+    defaultTokens: [weth, mln],
     exchangeConfigs,
     fees,
     fundName,
