@@ -13,8 +13,6 @@ import "ERC20.i.sol";
 
 contract GivethBridgeAdapter is ExchangeAdapter {
     mapping (address => bool) public whiteListed;
-         
-   
     mapping (address => mapping (address => uint)) public donations;
     
     event Donated(address who, address asset, uint256 amount);
