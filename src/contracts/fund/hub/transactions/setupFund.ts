@@ -31,21 +31,22 @@ const setupFund = async (environment: Environment, name?) => {
 
   const weth = getTokenBySymbol(environment, 'WETH');
   const mln = getTokenBySymbol(environment, 'MLN');
+  const dai = getTokenBySymbol(environment, 'DAI');
   const fees = [
     {
       feeAddress: melonContracts.fees.managementFee.toLowerCase(),
       feePeriod: toBI(DAY_IN_SECONDS * 45),
-      feeRate: appendDecimals(weth, 0.02),
+      feeRate: appendDecimals(weth, 0.002),
     },
     {
       feeAddress: melonContracts.fees.performanceFee.toLowerCase(),
       feePeriod: toBI(DAY_IN_SECONDS * 90),
-      feeRate: appendDecimals(weth, 0.2),
+      feeRate: appendDecimals(weth, 0.02),
     },
   ];
 
   await beginSetup(environment, melonContracts.version, {
-    defaultTokens: [weth, mln],
+    defaultTokens: [weth, mln, dai],
     exchangeConfigs,
     fees,
     fundName,

@@ -51,6 +51,20 @@
 		},
 		"tokens": [
 			{
+				"address": "0xe41d2489571d322189246dafa5ebde1f4699f498",
+				"name": "ZeroX Protocol Token",
+				"symbol": "ZRX",
+				"decimals": 18,
+				"reserveMin": 533190906598901500000
+			},
+			{
+				"address": "0x4f3afec4e5a3f2a6a1a411def7d7dfe50ee057bf",
+				"name": "Digix Gold Token",
+				"symbol": "DGX",
+				"decimals": 9,
+				"reserveMin": 2844909745
+			},
+			{
 				"address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
 				"name": "Eth Token",
 				"symbol": "WETH",

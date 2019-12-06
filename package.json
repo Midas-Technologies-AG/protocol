@@ -39,6 +39,8 @@
     "clean:logs": "rimraf logs/*.log",
     "compile": "node bin/melon.js compile",
     "deploy": "node bin/melon.js deploy",
+    "set-price": "node bin/melon.js set-price",
+    "update-kyber": "node bin/melon.js update-kyber-pricefeed",
     "deploy:dev": "yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T testing && yarn deploy -P 0xd3fdff38aaf7be159fc1c12c66982fea997df08ca5b91b399e437370d3681721 -T kyberPrice",
     "deployMain": "sh bin/deployMain.sh",
     "dplK": "sh bin/testDeployKovan.sh",

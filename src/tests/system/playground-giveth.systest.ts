@@ -10,14 +10,14 @@ import {
 } from '~/tests/utils/givethTestingUtils';
 import { donateGiveth } from '~/contracts/fund/trading/transactions/donateGiveth';
 import { allLogsWritten } from '../utils/testLogger';
-import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
+//import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
 
 //To use just this testfile set the 8th line of ./jest.setup.js to:
 //  testRegex: '((\\giveth.|/)(systest))\\.(js|ts)$', //To test single files change here.
 
 export const firstTest = async (environment, testReport) => {
   //Donate ERC20 token directly via adapter, no fund needed...(not possible from fund.)
-  const successERC = await donateGivethAdapter(environment, 'DAI', 0.000001);
+  const successERC = await donateGivethAdapter(environment, 'DAI', 0.01);
   testReport('Donated Asset from', environment.wallet.address);
 
   //const succsessETH = await donateGivethAdapterETH(environment, 0.00345);
@@ -27,17 +27,17 @@ export const firstTest = async (environment, testReport) => {
 
 export const scndTest = async (environment, testReport) => {
   //Create a fund.
-  const routes = await createFund(environment, 'Fund Ash');
+  const routes = await createFund(environment, 'Fund1');
   environment.routes = routes;
   //Invest into a fund.
-  await investInFund(environment, 'DAI', 0.000004321);
+  await investInFund(environment, 'DAI', 0.0004321);
   // register makeDonation function for givethAdapter
   //const reg = await updateGivethAdapter(environment);
   //donateOnExchange :)
-  await donateGiveth(environment, 'DAI', 0.000001);
-  await donateGiveth(environment, 'DAI', 0.0000011);
-  await donateGiveth(environment, 'DAI', 0.00000111);
-  await donateGiveth(environment, 'DAI', 0.000001111);
+  await donateGiveth(environment, 'DAI', 0.0001);
+  await donateGiveth(environment, 'DAI', 0.00011);
+  await donateGiveth(environment, 'DAI', 0.000111);
+  await donateGiveth(environment, 'DAI', 0.0001111);
 
   return true;
 };
@@ -56,10 +56,10 @@ describe('playground', () => {
       LogLevels.INFO,
     );
     testReport('Created environment and init testLogger.');
-    await updateKyber(
+    /*    await updateKyber(
       environment,
       environment.deployment.melonContracts.priceSource,
-    );
+    );*/
     //const donatedAdapter = await firstTest(environment, testReport);
     //expect(donatedAdapter);
 

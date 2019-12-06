@@ -31,7 +31,7 @@ export const init = async (_deploymentPath: string) => {
   const deployment: Deployment = JSON.parse(
     fs.readFileSync(_deploymentPath, 'utf8'),
   );
-  info('Loaded deployment from ');
+  info('Loaded deployment from:', _deploymentPath);
 
   //Create Web3 provider and account with private Key from keystore file.
   const provider = new Web3Eth.providers.WebsocketProvider(
@@ -62,8 +62,8 @@ export const init = async (_deploymentPath: string) => {
   };
   //TXoptions
   const customOptions: Options = {
-    gasLimit: '8000000',
-    gasPrice: '17000000000',
+    gasLimit: '8850000',
+    gasPrice: '15000000000',
   };
   info('Created wallet.');
 
@@ -110,12 +110,12 @@ export const donateGivethAdapter = async (
   const token = await getTokenBySymbol(environment, tokenSymbol);
   const howMuch = await createQuantity(token, amount);
 
-  await transfer(environment, {
-    to: environment.deployment.melonContracts.adapters.givethBridgeAdapter,
+  const check = await transfer(environment, {
     howMuch,
+    to: environment.deployment.melonContracts.adapters.givethBridgeAdapter,
   });
 
-  givethReport('start donateGivethAdapter...');
+  givethReport('start donateGivethAdapter...', check);
   const donated = await donateViaGivethBridgeAdapter(
     environment,
     environment.deployment.melonContracts.adapters.givethBridgeAdapter,

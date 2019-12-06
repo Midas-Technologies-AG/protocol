@@ -1,43 +1,43 @@
 {
   "meta": {
     "deployer": "0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E",
-    "timestamp": "2019-12-05T18:04:35.414Z",
+    "timestamp": "2019-12-05T22:03:49.088Z",
     "track": "kyberPrice",
     "version": "1.0.0",
     "chain": 1
   },
   "melonContracts": {
-    "priceSource": "0x4559DDD9E0a567bD8AB071ac106C1bC2d0C0b6Ef",
+    "priceSource": "0x1c8AD0e03CBf615036317d7617f33578126f35E3",
     "adapters": {
-      "kyberAdapter": "0xb18003f9E8E0eEca3001F5F2666d05BBDaC86FA3",
-      "ethfinexAdapter": "0x00Cf1388342831c5AB69C7BF625E664f20506c2C",
-      "matchingMarketAdapter": "0x2dE080F84a84cc87F396124c4581f05D420bdd38",
-      "matchingMarketAccessor": "0x6c99f61126b532eAe47E36313D0d6cf144567d42",
-      "zeroExAdapter": "0x17A825CC6B02Acc07D583dE98891a6564EFb2a4B",
-      "engineAdapter": "0x10E49E2D803521eA92dAb51876a718bd0c685199",
-      "givethBridgeAdapter": "0xf050e1b5a9AB4ab767DCe2F9E4c5B53eA0337B03"
+      "kyberAdapter": "0x03ccE6B3BaDfA28050CC1B4CC6C0fAB3CD5B2fe3",
+      "ethfinexAdapter": "0x1eab1477b3a23D45CCa4c092F281aD93488B452a",
+      "matchingMarketAdapter": "0x7a8ACbF66b792E2284F546E34E0f6dedbC14126A",
+      "matchingMarketAccessor": "0xC8e1e69090e57E39F0CAA6D259E1056F417dEe9C",
+      "zeroExAdapter": "0xD87713f500Ca666124Db08f9517A444bEE14A521",
+      "engineAdapter": "0x721c1573A56CcF8bDAEa0c94dfBEc9FAd7d967da",
+      "givethBridgeAdapter": "0x187a64261910718d931fB38EC419de0710e7b01a"
     },
     "policies": {
-      "priceTolerance": "0x648B7f9615cfcC36c66F3604537F4cA28bfdCBc4",
-      "userWhitelist": "0x63Bb49f556DcAaFE3F8CA7a45ff3B0AD524c0084"
+      "priceTolerance": "0x59d4e4885a614cC41dC39bAfe84B1Aff6F7262D8",
+      "userWhitelist": "0x2a5E40710C8098F99463d4C3bDf5cc75c9e68De5"
     },
     "fees": {
-      "managementFee": "0xe27976f1094F83F1C1665E156c42918264Dc1D9d",
-      "performanceFee": "0x109041F47cC361239d5821B08F11759E5531d95b"
+      "managementFee": "0xAeaBfe5bA4caF8459858bE7aaC41af06FA0Cd7CF",
+      "performanceFee": "0xB9b5A144F11E030EEf7Cc63f4ce60bf0fB811486"
     },
     "factories": {
-      "accountingFactory": "0x96f998f4809adbf6e9ba3d1e1654192829dD87F5",
-      "feeManagerFactory": "0x889bDE73aA8e8791F225e236ba88B1FE18d21178",
-      "participationFactory": "0x745cAA88fC65d57776034f88964c34B371E25130",
-      "policyManagerFactory": "0x6E9D7e06EB1Ed27B448C50290526f4AeCB059E5E",
-      "sharesFactory": "0x4a10cb0b9E27A3fa94F99bccdb791AA56b4cBE45",
-      "tradingFactory": "0x14293d791758C5FCE98bd032bfF428fd74aEf258",
-      "vaultFactory": "0xE312212b144d236d586C5F5f8Af07E7aB8Ee0e04"
+      "accountingFactory": "0xB09F1DA58B311496A37ED093077C9c1189d3dE5C",
+      "feeManagerFactory": "0xd1b0C3AF005FbB8CAD47c3F7E91762eAAbD7A278",
+      "participationFactory": "0x044a5FaC9235604C47d2aF40da97f9EC47E28236",
+      "policyManagerFactory": "0x8389aA880C88d728E0374Cf3eB510da9524A9a6e",
+      "sharesFactory": "0x7c61cCC9Db21b70B8684FB8d0F7162545675832a",
+      "tradingFactory": "0x0aA0935c74C7d2921FC40aC197be9069080ff4d0",
+      "vaultFactory": "0x0d50d4FB516881E10134abde8F839d99Db685727"
     },
-    "engine": "0x95755703734f3167f645cD46E4e9893E1BBD7ed0",
-    "registry": "0xCB375b09758009f53418cD0e09c177878C06241e",
-    "version": "0xb37BCf868137B4752B98f38cb4dA75E0717c8614",
-    "ranking": "0x4E8CB101CFffFD87aF99FC29382a451aEd77a1Fd"
+    "engine": "0x292F845Be5f59eCC755AC4135c207CF402012cD9",
+    "registry": "0x057f931219EF30cB560BfBd99E4e7F1FfdF6459C",
+    "version": "0x3F22acc0cD2DAe11Ea5acE7a51d21e4CC68Ebdd4",
+    "ranking": "0x0999d1Cc22B2287fC64a2696d6D91e398fE01175"
   },
   "thirdPartyContracts": {
     "exchanges": {
@@ -58,6 +58,20 @@
     },
     "tokens": [
       {
+        "address": "0xe41d2489571d322189246dafa5ebde1f4699f498",
+        "name": "ZeroX Protocol Token",
+        "symbol": "ZRX",
+        "decimals": 18,
+        "reserveMin": 533190906598901500000
+      },
+      {
+        "address": "0x4f3afec4e5a3f2a6a1a411def7d7dfe50ee057bf",
+        "name": "Digix Gold Token",
+        "symbol": "DGX",
+        "decimals": 9,
+        "reserveMin": 2844909745
+      },
+      {
         "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
         "name": "Eth Token",
         "symbol": "WETH",
@@ -72,7 +86,7 @@
         "reserveMin": 7519079664649047000
       },
       {
-        "address": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+        "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
         "name": "Dai",
         "symbol": "DAI",
         "decimals": 18,
@@ -89,32 +103,32 @@
   },
   "exchangeConfigs": {
     "MatchingMarket": {
-      "adapter": "0x2dE080F84a84cc87F396124c4581f05D420bdd38",
+      "adapter": "0x7a8ACbF66b792E2284F546E34E0f6dedbC14126A",
       "exchange": "0x39755357759cE0d7f32dC8dC45414CCa409AE24e",
       "takesCustody": true
     },
     "KyberNetwork": {
-      "adapter": "0xb18003f9E8E0eEca3001F5F2666d05BBDaC86FA3",
+      "adapter": "0x03ccE6B3BaDfA28050CC1B4CC6C0fAB3CD5B2fe3",
       "exchange": "0x818E6FECD516Ecc3849DAf6845e3EC868087B755",
       "takesCustody": false
     },
     "ZeroEx": {
-      "adapter": "0x17A825CC6B02Acc07D583dE98891a6564EFb2a4B",
+      "adapter": "0xD87713f500Ca666124Db08f9517A444bEE14A521",
       "exchange": "0x080bf510fcbf18b91105470639e9561022937712",
       "takesCustody": false
     },
     "Ethfinex": {
-      "adapter": "0x00Cf1388342831c5AB69C7BF625E664f20506c2C",
+      "adapter": "0x1eab1477b3a23D45CCa4c092F281aD93488B452a",
       "exchange": "0xdcdb42c9a256690bd153a7b409751adfc8dd5851",
       "takesCustody": true
     },
     "MelonEngine": {
-      "adapter": "0x10E49E2D803521eA92dAb51876a718bd0c685199",
-      "exchange": "0x95755703734f3167f645cD46E4e9893E1BBD7ed0",
+      "adapter": "0x721c1573A56CcF8bDAEa0c94dfBEc9FAd7d967da",
+      "exchange": "0x292F845Be5f59eCC755AC4135c207CF402012cD9",
       "takesCustody": false
     },
     "GivethBridge": {
-      "adapter": "0xf050e1b5a9AB4ab767DCe2F9E4c5B53eA0337B03",
+      "adapter": "0x187a64261910718d931fB38EC419de0710e7b01a",
       "exchange": "0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7",
       "takesCustody": false
     }

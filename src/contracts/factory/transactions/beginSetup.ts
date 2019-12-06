@@ -80,10 +80,28 @@ const postProcess: PostProcessFunction<
   );
 };
 
+interface Options {
+  amguPayable?: boolean;
+  incentive?: boolean;
+  skipGuards?: boolean;
+  skipGasEstimation?: boolean;
+  from?: string;
+  gas?: string;
+  gasPrice?: string;
+  value?: string;
+}
+
+const customOptions: Options = {
+  skipGasEstimation: true,
+  gas: '8000000',
+  gasPrice: '8000000000',
+};
+
 export const beginSetup = transactionFactory<BeginSetupArgs, BeginSetupResult>(
   'beginSetup',
   Contracts.FundFactory,
   guard,
   prepareArgs,
   postProcess,
+  customOptions,
 );

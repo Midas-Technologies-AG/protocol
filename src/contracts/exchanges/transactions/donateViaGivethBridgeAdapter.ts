@@ -41,7 +41,7 @@ const prepareArgs: PrepareArgsFunction<
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
     5, //HardCoded receiverDAC :HC:
     token.address.toString(),
-    howMuch.quantity.toString(),
+    howMuch.quantity,
   ];
 };
 
