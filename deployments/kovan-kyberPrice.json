@@ -1,7 +1,7 @@
 {
   "meta": {
     "deployer": "0x173Add8c7E4f7034e9ca41c5D2D8a0A986FD427E",
-    "timestamp": "2019-12-06T15:20:08.650Z",
+    "timestamp": "2019-12-06T17:39:40.454Z",
     "track": "kyberPrice",
     "version": "1.0.0",
     "chain": 42
@@ -19,7 +19,7 @@
     },
     "policies": {
       "priceTolerance": "0xb264cF49f40F636F194473DcC30534B23fBe0A24",
-      "userWhitelist": "0xc5a042306A69341C293011bba2A5f1bCc6B4C462"
+      "userWhitelist": "0xbaFAB38dF2EE81Caf976ca7Bb995C2e7A3D6E5C7"
     },
     "fees": {
       "managementFee": "0xE9D49808967d574f7Aec6A5Fe11766D01819C6C7",
@@ -31,13 +31,13 @@
       "participationFactory": "0x3bA196e5882ee5847a21b6015bA322A8e2Ff3a75",
       "policyManagerFactory": "0xE3194a85bC6F3c010384A7cbA80Abc54F07C30C5",
       "sharesFactory": "0x91d84c092180274b20f5d909D385BF2758985eC1",
-      "tradingFactory": "0x129507A3d3533E88AE7787Ff3FbeBFdAaD31D06e",
+      "tradingFactory": "0xAf476a1De3062bCbe5C75815514e18c85F5C5877",
       "vaultFactory": "0xf2879E95a4F0A88d244Aef11137e767F4E80b4bF"
     },
-    "engine": "0x0A417AE0e12F67929335E65F752E2B596b491d71",
-    "registry": "0x563FeD76573b6f5240b6E136673f9D1179C6c48E",
-    "version": "0xE88A7ECe8F8B0E8CA5bC3A33675541f2eA76D180",
-    "ranking": "0x94671A4c361C0b17bb9131FF4658c5d0bE105637"
+    "engine": "0x0607AC96CD050A0BD2B0940F3F9659610fea49d6",
+    "registry": "0x01C6C207087F0f0163a52bd6E71FA51Bd95bf167",
+    "version": "0x6917f78D84545F4eEcaf62b27f519C6dBB9Fa093",
+    "ranking": "0xd4A4c61761c3c9Ae519B7197fAD5c821A11E0e33"
   },
   "thirdPartyContracts": {
     "exchanges": {
@@ -136,7 +136,7 @@
     },
     "MelonEngine": {
       "adapter": "0x24289D3dee1c6eA31bEe75d8A7Dd6a36E29F26c6",
-      "exchange": "0x0A417AE0e12F67929335E65F752E2B596b491d71",
+      "exchange": "0x0607AC96CD050A0BD2B0940F3F9659610fea49d6",
       "takesCustody": false
     },
     "GivethBridge": {

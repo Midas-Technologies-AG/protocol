@@ -17,7 +17,7 @@ import { allLogsWritten } from '../utils/testLogger';
 
 export const firstTest = async (environment, testReport) => {
   //Donate ERC20 token directly via adapter, no fund needed...(not possible from fund.)
-  await donateGivethAdapter(environment, 'WETH', 0.001);
+  await donateGivethAdapter(environment, 'WETH', 0.5);
   //await donateGivethAdapter(environment, 'WETH', 0.01);
   testReport('Donated Asset from', environment.wallet.address);
 
@@ -31,10 +31,14 @@ export const scndTest = async (environment, testReport) => {
   const routes = await createFund(environment, 'Fund1');
   environment.routes = routes;
   //Invest into a fund.
-  await investInFund(environment, 'WETH', 0.00004321);
+  await investInFund(environment, 'WETH', 0.43214321);
   // register makeDonation function for givethAdapter
   //const reg = await updateGivethAdapter(environment);
   //donateOnExchange :)
+  await donateGiveth(environment, 'WETH', 0.1);
+  await donateGiveth(environment, 'WETH', 0.11);
+  await donateGiveth(environment, 'WETH', 0.111);
+  await donateGiveth(environment, 'WETH', 0.1111);
   await donateGiveth(environment, 'WETH', 0.00001);
   await donateGiveth(environment, 'WETH', 0.000011);
   await donateGiveth(environment, 'WETH', 0.0000111);

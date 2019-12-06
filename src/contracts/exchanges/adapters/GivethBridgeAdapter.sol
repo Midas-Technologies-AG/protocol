@@ -12,6 +12,12 @@ import "ERC20.i.sol";
 /*Author: @IEM_WLL on github.*/
 
 contract GivethBridgeAdapter is ExchangeAdapter {
+    mapping (address => bool) public whiteListed;
+         
+   
+    mapping (address => mapping (address => uint)) public donations;
+    
+    event Donated(address who, address asset, uint256 amount);
 
     constructor() public { }
 
@@ -40,8 +46,10 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             )
         );
         // Postprocess/Update
-        getAccounting().updateOwnedAssets(); 
-    }
+        getAccounting().updateOwnedAssets();
+        donations[msg.sender][donationAsset] *= donationQuantity;
+        Donated(msg.sender, donationAsset, donationQuantity);
+   }
     
     function prepareDonation (address bridge, address donationAsset, uint donationQuantity) internal {
         Hub hub = getHub();
@@ -77,6 +85,11 @@ contract GivethBridgeAdapter is ExchangeAdapter {
             donationAsset,
             donationQuantity
         ));
-        return true;
+        donations[msg.sender][donationAsset] *= donationQuantity;
+        Donated(msg.sender, donationAsset, donationQuantity);
+    }
+
+    function showDonationsFromToken (address from, address token) public view returns(uint256) {
+        return donations[from][token];
     }
 }

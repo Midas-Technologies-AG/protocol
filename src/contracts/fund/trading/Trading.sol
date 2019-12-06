@@ -22,9 +22,10 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
 
     struct Donation {
         Exchange exchange;
+        address spender;
         address asset;
         uint amount;        
-    } //TODO: use it   
+    }  
 
     enum UpdateType { make, take, cancel }
 
@@ -220,6 +221,7 @@ function donateOnExchange(
             ),
             "Delegated call to exchange failed"
         );
+        donations.push(Donation(exchanges[exchangeIndex], msg.sender, donationAsset, donationQuantity));
     }
 
     /// @dev Make sure this is called after orderUpdateHook in adapters
@@ -377,6 +379,10 @@ function donateOnExchange(
         return (order.makerAsset, order.takerAsset, order.makerQuantity, order.takerQuantity);
     }
 
+    function getDonationInfo () public view returns(Donation[] res) {
+        return donations;
+    }
+    
     function getZeroExOrderDetails(bytes32 orderId) public view returns (LibOrder.Order) {
         return orderIdToZeroExOrder[orderId];
     }
