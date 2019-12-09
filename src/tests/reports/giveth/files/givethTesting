@@ -1,0 +1,10 @@
+https://kovan.etherscan.io/tx/0xec3f766656fe77807830d7ee15dbdb2d69a5d01972770881a78d2a621a011ed6#internal
+
+without vaul.withdraw(), sent the amount directly to trading to test everything else.
+It works now:
+https://kovan.etherscan.io/tx/0x49eb5a0c7cdb91e46e6e0f8d946c4ca58fd77fb7289776e709ef82214904a870#internal
+
+TODO: use vault.withdraw()
+https://kovan.etherscan.io/tx/0x9ec367ae57263968d4d417fa187120015c73818ef68aa5d7a76886fc0eba187f
+DONE :)
+

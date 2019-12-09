@@ -8,23 +8,27 @@ This is a report about the giveth Module from Midas Technologies AG for the @mel
 
 == Some words on this Title
 
-what we added:
+=== what we added:
 
 	- givethBridgeAdapter.sol as ExchangeAdapter
 	- donateOnExchange() in Trading.sol
 	- givethBridge as an "Exchange"
 
-Why/What they do?:
+=== Why/What they do?:
 
 	- enable donations from a fund (just callable as fundManager) to givethDAC's
 	(Decentralized Altruistic Communities see https://giveth.io) as written in ...(milestone ec.).
 
-Kovan prototype:
+=== How can we use it?
+
+TODO: npm package manager integration
+
+== Kovan prototype:
 
 Since this is about connecting two different independet systems, the @melonproject/protocol code hosted on github and @giveth especially their Bridge Contract, with the aim to donate from a fund from the melon system to a DAC of giveth, there are a few steps need to be done, before a convenient deploy on mainnet makes the benefit of this Module.
 
 1. Further and deeper integration into the policy system ec. of the melonprotocol. (@melonproject?)
-2. Redeploy of GivethBridge with ` checkWhitelisted(address _token) public view...`  (@giveth?)
+2. Redeploy of GivethBridge with ` checkWhitelisted(address _token) public view... `  (@giveth?)
 
 For now the Setup is an own deployed GivethBridge which is taken from etherscan verified contract of the givethBridge on Ropsten/rechecked on github. But because we want to donate tokens  every token needs a whitelisting on giveth to be accepted as donation we deployed it ourselves to be able to set the whitlistings.
 
@@ -35,20 +39,20 @@ During this writing we deployed everything from scratch on kovan TESTNET and you
 On the following link you see 8 transactions starting at Block 15,279,692 with tx hash `0x2252970f9...` (https://kovan.etherscan.io/address/0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e). These are donations from a fund ('Fund1') to the givethDAC matching the identifier `receiverDAC`. With the setting from the following commit on @Midas-Technologies-AG/protocol a fork from @melonproject/protocol, namely the branch `kovan-donateOnE` i run the two combined commands below to setup this testSetup from scratch with giving two export variables:
 `PRIVATE_KEY=...` and `JSCON_RPC_ENDPOINT=wss://infura...`.
 
-IMPORTANT: If you want to redo, set the  variables above via bash `export PRIV....` AND! change in the `bin/*deploy*.sh` file which gets called via `yarn dplK` via `package.json` command by removing line `--keystore` and adding `-P <your-private-key> \`.
+IMPORTANT: If you want to redo, set the  variables above via bash `export PRIV....` AND! change in the `bin/*deploy*.sh` file which gets called via `yarn dplK` via `package.json` command by removing line `--keystore` and adding `-P <your-private-key> \` or your personal keystore file.
 
 WaaauuuAAuBauuuuu ;)
 cheers.
 
-commit: `3e9c231`
+commit: https://github.com/Midas-Technologies-AG/protocol/tree/3e9c231090604de63675ac7dbdd64b0a5079d5d9[`3e9c231090604de63675ac7dbdd64b0a5079d5d9`]
 
 <<<
 
-== First cmd
+== Second Command
 
 `yarn dplK && yarn test:system`:
 
-.Output 1:
+=== Output deploy:
 
 [source,bash]
 ----
@@ -139,7 +143,9 @@ Node has 100 peers
 Done in 151.61s.
 ----
 
-.2 Output
+<<<
+
+=== Output createFund and test giveth donations.
 
 [source,bash]
 ----
@@ -401,9 +407,9 @@ Have you considered using `--detectOpenHandles` to detect async operations that 
 Done in 144.47s.
 ----
 
+<<<
 
-
-== Attachment 2
+== Preparation Commands
 
 `yarn clean && yarn compile && yarn build`:
 
@@ -1123,7 +1129,7 @@ KyberReserve.sol:252:9: Warning: Invoking events without "emit" prefix is deprec
         ^-------------------------------------------------------------------------------^
 ManagementFee.sol:23:127: Warning: Using "years" as a unit denomination is deprecated.
             uint preDilutionFeeShares = mul(mul(shares.totalSupply(), managementFeeRate[msg.sender]) / DIVISOR, timePassed) / 1 years;
-                                                                                                                              ^-----^
+						^-------^
 MatchingMarket.sol:119:13: Warning: This function only accepts a single "bytes" argument. Please use "abi.encodePacked(...)" or a similar function to encode the data.
             keccak256(offers[id].pay_gem, offers[id].buy_gem),
             ^-----------------------------------------------^
@@ -1223,6 +1229,8 @@ PriceSource.i.sol:20:5: Warning: No visibility specified. Defaulting to "public"
 Warning: There are more than 256 warnings. Ignoring the rest.
 Contract name duplication detected: /home/willie/github/midas/protocol/out/Owned.abi. Please make sure that every contract is uniquely named across all dirctories.
 Done in 158.63s.
+
+
 yarn run v1.17.3
 $ rimraf lib
 $ tsc -p tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./lib > /dev/null
