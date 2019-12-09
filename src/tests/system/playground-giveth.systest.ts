@@ -17,11 +17,8 @@ import { allLogsWritten } from '../utils/testLogger';
 
 export const firstTest = async (environment, testReport) => {
   //Donate ERC20 token directly via adapter, no fund needed...(not possible from fund.)
-  await donateGivethAdapter(environment, 'WETH', 0.5);
-  //await donateGivethAdapter(environment, 'WETH', 0.01);
+  await donateGivethAdapter(environment, 'WETH', 0.0055);
   testReport('Donated Asset from', environment.wallet.address);
-
-  //const succsessETH = await donateGivethAdapterETH(environment, 0.00345);
   //TODO:Adapter accesible and new eth donateFunction
   return true;
 };
@@ -31,18 +28,18 @@ export const scndTest = async (environment, testReport) => {
   const routes = await createFund(environment, 'Fund1');
   environment.routes = routes;
   //Invest into a fund.
-  await investInFund(environment, 'WETH', 0.43214321);
+  await investInFund(environment, 'WETH', 0.043214321);
   // register makeDonation function for givethAdapter
   //const reg = await updateGivethAdapter(environment);
   //donateOnExchange :)
-  await donateGiveth(environment, 'WETH', 0.1);
-  await donateGiveth(environment, 'WETH', 0.11);
-  await donateGiveth(environment, 'WETH', 0.111);
-  await donateGiveth(environment, 'WETH', 0.1111);
-  await donateGiveth(environment, 'WETH', 0.00001);
-  await donateGiveth(environment, 'WETH', 0.000011);
-  await donateGiveth(environment, 'WETH', 0.0000111);
-  await donateGiveth(environment, 'WETH', 0.00001111);
+  await donateGiveth(environment, 410, 'WETH', 0.01);
+  await donateGiveth(environment, 410, 'WETH', 0.011);
+  await donateGiveth(environment, 410, 'WETH', 0.0111);
+  await donateGiveth(environment, 410, 'WETH', 0.01111);
+  await donateGiveth(environment, 410, 'WETH', 0.000001);
+  await donateGiveth(environment, 410, 'WETH', 0.0000011);
+  await donateGiveth(environment, 410, 'WETH', 0.00000111);
+  await donateGiveth(environment, 410, 'WETH', 0.000001111);
 
   return true;
 };
@@ -55,7 +52,7 @@ describe('playground', () => {
   });
   test('Happy path', async () => {
     //Create Environment.
-    const environment = await init('deployments/kovan-kyberPrice.json');
+    const environment = await init('deployments/ropsten-kyberPrice.json');
     const testReport = environment.logger(
       'Midas-Technologies-AG/protocol:test-givethModule:',
       LogLevels.INFO,
@@ -65,9 +62,9 @@ describe('playground', () => {
       environment,
       environment.deployment.melonContracts.priceSource,
     );*/
-
     await firstTest(environment, testReport);
-    await scndTest(environment, testReport);
+    await createFund(environment, 'dAppFund');
+    //await scndTest(environment, testReport);
     expect(true);
   });
 });

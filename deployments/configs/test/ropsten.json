@@ -1,116 +1,148 @@
 {
   "melonContracts": {
-    "priceSource": "DEPLOY",
+    "priceSource": "0xBaaf29A927072e149F0C39b5D5D6af09d47fD160",
     "adapters": {
-      "kyberAdapter": "DEPLOY",
-      "ethfinexAdapter": "DEPLOY",
-      "matchingMarketAdapter": "DEPLOY",
-      "matchingMarketAccessor": "DEPLOY",
-      "zeroExAdapter": "DEPLOY",
-      "engineAdapter": "DEPLOY",
-      "givethBridgeAdapter": "DEPLOY"
+      "kyberAdapter": "0x9C257dCD1005A5715d3E062aBe542C336b3FFB01",
+      "ethfinexAdapter": "0x6e8805CDdffda5b98494D26BF1D4f8F056e26eb1",
+      "matchingMarketAdapter": "0x3985aF904fF00DfE1fb8D6F79Ae061340Edf6E7A",
+      "matchingMarketAccessor": "0xED61a219cc5497778b949112188C606e2d88BBF6",
+      "zeroExAdapter": "0x7796038fD945eE609AAC80523612AF976AC964F8",
+      "engineAdapter": "0x13570d7B9FC02c3bd7BFaE43c4B6e90967417d69",
+      "givethBridgeAdapter": "0x9b1AB9924c14F588a6e7b04ca5EAb2714ace8aE3"
     },
     "policies": {
-      "priceTolerance": "DEPLOY",
-      "userWhitelist": "DEPLOY"
+      "priceTolerance": "0x6c14fbFa6A1321fA853E44B88432CC59171EcEF2",
+      "userWhitelist": "0xBaaf29A927072e149F0C39b5D5D6af09d47fD160"
     },
     "fees": {
-      "managementFee": "DEPLOY",
-      "performanceFee": "DEPLOY"
+      "managementFee": "0xaD2a21b588A3812519F65a550de1b9146ed08B72",
+      "performanceFee": "0xF3b0c8bfBD6Ab84c0588705378D11aF61702f0F5"
     },
     "factories": {
-      "accountingFactory": "DEPLOY",
-      "feeManagerFactory": "DEPLOY",
-      "participationFactory": "DEPLOY",
-      "policyManagerFactory": "DEPLOY",
-      "sharesFactory": "DEPLOY",
-      "tradingFactory": "DEPLOY",
-      "vaultFactory": "DEPLOY"
+      "accountingFactory": "0xcEf82C02AAD4214d3d38C85c4572a1FdB45E6682",
+      "feeManagerFactory": "0x1914464e4891FdBf83Ef207DD988F9806C31Fe21",
+      "participationFactory": "0x0537486E55c0859d055C0dea60F42F7FbA1BA523",
+      "policyManagerFactory": "0xA5e40D64b134940A7051Be298046f0F9D5F3FcF2",
+      "sharesFactory": "0x707E42B708308F2fF8265093aC86cF0b88a599e3",
+      "tradingFactory": "0x9ae595f8925d4f4af7Cc6690325434613A48f930",
+      "vaultFactory": "0x8fBFD5a1f9779e1F76286c4534993481ddFef859"
     },
     "engine": "DEPLOY",
     "registry": "DEPLOY",
     "version": "DEPLOY",
     "ranking": "DEPLOY"
   },
-"thirdPartyContracts": {
+  "thirdPartyContracts": {
     "exchanges": {
       "ethfinex": {
-        "erc20Proxy": "0x0D95783a0BBD64876A941A97ecd73EA2D0AfACd6",
-        "exchange": "0xc752f720b1E4f4d002f7E30Be0D85a39BA6fd405",
+        "erc20Proxy": "0xD27D10d0fce56ef9220F304B8ACd396C680f930F",
+        "exchange": "0x273Ffea82Ab4B25b3A716F79F058fd9Aa905F2f4",
         "wrapperPairs": [
           {
-            "token": "0x00f92ed24BAadb6Da6CcD54B9525D29Fb1DF49F0",
-            "wrapper": "0x15A540D39e93cDe643d8985e43a64895cf13079E"
+            "token": "0x87544720ed79326374fE04F482C985bBA434135A",
+            "wrapper": "0xd54D0427b80Ec873026a310114c5D5FDC5aa8DEE"
           },
           {
-            "token": "0x254650dF1480A281b324b52051AEC39E1C9B0C1c",
-            "wrapper": "0x19Ad579E47FB0DD7D0Dbf2dC0A77CFaD5e946e07"
+            "token": "0x5bAB6132dF96aF4D498Bf983C759a6E76c3dB301",
+            "wrapper": "0x0F1Ccf19Cb048F945135D4d30EC7f17F482BF1b3"
           },
           {
-            "token": "0x8FacE705Fe8C0C63ed8F85af4dFc585f709DD8b5",
-            "wrapper": "0x7921900BBe2a975013BE27210774cd0116B23899"
+            "token": "0x52b0AfEE8241C21970bFD4c8Ad9E803E6f8E9963",
+            "wrapper": "0xFd9c422759efBFcf264624107712090eCebD8a4A"
           },
           {
-            "token": "0xc452CF1D051F0429A0444b209D66BE1672395Adb",
-            "wrapper": "0x9e285C1BFE3eB10bDc2B48EB474689BAfdb3ccCC"
+            "token": "0x1Dee89d9Ffa1C806dF043a20724aa65c044f9849",
+            "wrapper": "0x2aF3510452e9618137Ed5133924a48030cD0ef8a"
           },
           {
-            "token": "0x07333C9499050354d3048C8Ce3BB58D0e3883865",
-            "wrapper": "0x0f58F57bd0ea5176cB409327199cf43A2591ED5E"
+            "token": "0xDcd4Db832Cd25bEdb54d8bE238116564469300Db",
+            "wrapper": "0xfDa851E25c122d972b50B8FB00749eD7a03aA010"
           },
           {
-            "token": "0x9d6685cDdaaBeD7B9eCE83C8fd63d382C452d184",
-            "wrapper": "0x98436505C84bd1a6c0Db675433735345b5780CaC"
+            "token": "0x68Aa0f81c95D60174ded9D91ee2ce1408FabD520",
+            "wrapper": "0xC110EEf9F7d205F1aEa2C7213F4Ce186C497dD84"
           }
         ],
-        "wrapperRegistryEFX": "0x9855709b484408bE46cdDF17ebf498ADb891bCbD"
+        "wrapperRegistryEFX": "0xB866228356C3B0c31aB79501da04a5358AEdbb51"
       },
       "kyber": {
-        "conversionRates": "0xDd3fb7D820b1991a604D7D249D7F8Ad3516Bd4B2",
-        "kyberNetwork": "0xa30808B626F66fb37906f1Fa3E92f1B3fa53B6Ad",
-        "kyberNetworkProxy": "0x34F67E1D17042ABb10520D875EB86946Dc8b43e4"
+        "conversionRates": "0x74197EBE1Da2da7cfE76a528A6F8fB767614F477",
+        "kyberNetwork": "0x34e94d50BABB3759637Be7ab6d07e5815f660A99",
+        "kyberNetworkProxy": "0xCD9fDB1c117339b547CdC2f692Db84cF4a31733D"
       },
-      "matchingMarket": "0x148A1ca9D32b7A4884A541A6353Af3733a8DAcDc",
-      "zeroEx": "0xc752f720b1E4f4d002f7E30Be0D85a39BA6fd405",
-      "givethBridge": "0xFf7283Cd5b0a2477B88C492750D8ea60fADA7f05"
+      "matchingMarket": "0x6471c0D5999a9f7B97500E0e2549D44C64555e4d",
+      "zeroEx": "0x273Ffea82Ab4B25b3A716F79F058fd9Aa905F2f4",
+      "givethBridge": "0x279277482F13aeF92914317a0417DD591145aDc9"
     },
     "tokens": [
       {
-        "address": "0x00f92ed24BAadb6Da6CcD54B9525D29Fb1DF49F0",
+        "address": "0x87544720ed79326374fE04F482C985bBA434135A",
         "decimals": 18,
         "symbol": "WETH",
         "reserveMin": 1000000000000000000
       },
       {
-        "address": "0x254650dF1480A281b324b52051AEC39E1C9B0C1c",
+        "address": "0x5bAB6132dF96aF4D498Bf983C759a6E76c3dB301",
         "decimals": 18,
         "symbol": "MLN",
         "reserveMin": 1000000000000000000
       },
       {
-        "address": "0x8FacE705Fe8C0C63ed8F85af4dFc585f709DD8b5",
+        "address": "0x52b0AfEE8241C21970bFD4c8Ad9E803E6f8E9963",
         "decimals": 18,
         "symbol": "ZRX",
         "reserveMin": 1000000000000000000
       },
       {
-        "address": "0xc452CF1D051F0429A0444b209D66BE1672395Adb",
+        "address": "0x1Dee89d9Ffa1C806dF043a20724aa65c044f9849",
         "decimals": 18,
         "symbol": "EUR",
         "reserveMin": 1000000000000000000
       },
       {
-        "address": "0x07333C9499050354d3048C8Ce3BB58D0e3883865",
+        "address": "0xDcd4Db832Cd25bEdb54d8bE238116564469300Db",
         "decimals": 18,
         "symbol": "DGX",
         "reserveMin": 1000000000000000000
       },
       {
-        "address": "0x9d6685cDdaaBeD7B9eCE83C8fd63d382C452d184",
+        "address": "0x68Aa0f81c95D60174ded9D91ee2ce1408FabD520",
         "decimals": 18,
         "symbol": "DAI",
         "reserveMin": 1000000000000000000
       }
     ]
+  },
+  "exchangeConfigs": {
+    "MatchingMarket": {
+      "adapter": "0x3985aF904fF00DfE1fb8D6F79Ae061340Edf6E7A",
+      "exchange": "0x6471c0D5999a9f7B97500E0e2549D44C64555e4d",
+      "takesCustody": true
+    },
+    "KyberNetwork": {
+      "adapter": "0x9C257dCD1005A5715d3E062aBe542C336b3FFB01",
+      "exchange": "0xCD9fDB1c117339b547CdC2f692Db84cF4a31733D",
+      "takesCustody": false
+    },
+    "ZeroEx": {
+      "adapter": "0x7796038fD945eE609AAC80523612AF976AC964F8",
+      "exchange": "0x273Ffea82Ab4B25b3A716F79F058fd9Aa905F2f4",
+      "takesCustody": false
+    },
+    "Ethfinex": {
+      "adapter": "0x6e8805CDdffda5b98494D26BF1D4f8F056e26eb1",
+      "exchange": "0x273Ffea82Ab4B25b3A716F79F058fd9Aa905F2f4",
+      "takesCustody": true
+    },
+    "MelonEngine": {
+      "adapter": "0x13570d7B9FC02c3bd7BFaE43c4B6e90967417d69",
+      "exchange": "0xE5C11d0B148baA471F188c5655707226A16a0990",
+      "takesCustody": false
+    },
+    "GivethBridge": {
+      "adapter": "0x9b1AB9924c14F588a6e7b04ca5EAb2714ace8aE3",
+      "exchange": "0x0FF1CE876aD46d0c14f2E543c6349Aa2fBF6e996",
+      "takesCustody": false
+    }
   }
 }

@@ -13,6 +13,7 @@ import { ensureSufficientBalance } from '~/contracts/dependencies/token/guards/e
 
 export interface donateOnExchangeArgs {
   methodSignature;
+  receiverDAC: number;
   donationAssetAddress;
   donationQuantity: number;
 }
@@ -32,7 +33,7 @@ const guard: GuardFunction<donateOnExchangeArgs> = async (
 
 const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
   environment,
-  { methodSignature, donationAssetAddress, donationQuantity },
+  { methodSignature, receiverDAC, donationAssetAddress, donationQuantity },
   contractAddress,
 ) => {
   const exchangeIndex = await getExchangeIndex(environment, contractAddress, {
@@ -44,7 +45,7 @@ const prepareArgs: PrepareArgsFunction<donateOnExchangeArgs> = async (
     exchangeIndex,
     methodSignature,
     environment.deployment.thirdPartyContracts.exchanges.givethBridge,
-    5, //This is the receiverDAC. Maybe something TODO for policies, prevalidation ec...
+    receiverDAC,
     donationAssetAddress,
     donationQuant.quantity.toString(),
   ];

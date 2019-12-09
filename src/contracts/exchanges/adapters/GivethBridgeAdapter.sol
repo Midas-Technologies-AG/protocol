@@ -19,6 +19,24 @@ contract GivethBridgeAdapter is ExchangeAdapter {
 
     constructor() public { }
 
+    function () payable returns(bool res) internal {
+        
+    }
+
+    function donateETH (address bridge, uint64 receiverDAC) internal returns(bool res) {
+        require (msg.value > 0);
+        
+        bridge.call.value(this.balanceOf)(
+            abi.encodeWithSignature(
+                "donateAndCreateGiver(address,uint64)",
+                msg.sender,
+                receiverDAC
+            )
+        );
+    }
+    
+    
+
     function makeDonation(
         address bridge,
         uint64 receiverDAC,

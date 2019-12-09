@@ -541,7 +541,7 @@ export const deploySystem = async (
     }
   }
 
-  /*  if (environment.track === Tracks.KYBER_PRICE) {
+  /*    if (environment.track === Tracks.KYBER_PRICE) {
     await updateKyber(
       environmentWithDeployment,
       environmentWithDeployment.deployment.melonContracts.priceSource,
@@ -556,8 +556,7 @@ export const deploySystem = async (
     await testingPriceFeed.methods.update(
       Object.keys(prices),
       Object.values(prices).map(e => e.toString()),
-    );
-    //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
+    ).send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
   }*/
 
   const track = environment.track;
