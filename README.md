@@ -2,8 +2,6 @@
 
 This Repository is forked from @melonproject/protocol and is for now on version v1.0.0 unpublished as npm-package.
 
-First TODO is to get it published and running via npm i @Midas-Technologies-AG/protocol.
-
 This branch is successfull running on Kovan TESTNET.
 
 ## Setup
@@ -33,4 +31,12 @@ Check out the scripts in `package.json` to see, what and how you can use this pr
 
 ## Report
 
-For further and deeper understanding read the following pdf, `src/tests/reports/giveth/givethModuleReport.pdf`. 
+For further and deeper understanding read the following pdf, `src/tests/reports/giveth/givethModuleReport.pdf`.
+
+## TODOs
+
+1. Publish and run via npm i @Midas-Technologies-AG/protocol.
+2. Further and deeper integration into the policy system ec. of the melonprotocol.
+3. Redeploy of GivethBridge with ` checkWhitelisted(address _token) public view... `.
+
+cheers!
