@@ -31,7 +31,7 @@ Check out the scripts in `package.json` to see, what and how you can use this pr
 
 ## Report
 
-For further and deeper understanding read the following pdf, `src/tests/reports/giveth/givethModuleReport.pdf`.
+For further and deeper understanding read the following pdf, `src/tests/reports/giveth/Report-Giveth-Module.pdf`.
 
 ## TODOs
 
