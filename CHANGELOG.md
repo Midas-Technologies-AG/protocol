@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Canonical pricefeed is a staking pricefeed factory
 - history to canonical pricefeed
 - withdrawMln function to Competition contract callable by the owner
+- infrastructure to donate a giveth DAC
 
 ### Changed
 

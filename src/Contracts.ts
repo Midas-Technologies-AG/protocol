@@ -21,6 +21,8 @@ export enum Contracts {
   FeeManagerFactory = 'FeeManagerFactory',
   FundFactory = 'FundFactory',
   FundRanking = 'FundRanking',
+  GivethBridge = 'GivethBridge',
+  GivethBridgeAdapter = 'GivethBridgeAdapter',
   Hub = 'Hub',
   KyberAdapter = 'KyberAdapter',
   KyberNetwork = 'KyberNetwork',
@@ -116,6 +118,10 @@ export const requireMap = {
     require('../out/FundFactory.abi.json'),
   [Contracts.FundRanking]:
     require('../out/FundRanking.abi.json'),
+  [Contracts.GivethBridge]:
+    require(`../out/GivethBridge.abi.json`),
+  [Contracts.GivethBridgeAdapter]:
+    require(`../out/GivethBridgeAdapter.abi.json`),
   [Contracts.Hub]:
     require('../out/Hub.abi.json'),
   [Contracts.MockAdapter]:
@@ -278,4 +284,5 @@ export enum Exchanges {
   ZeroEx = 'ZeroEx',
   Ethfinex = 'Ethfinex',
   MelonEngine = 'MelonEngine',
+  GivethBridge = 'GivethBridge',
 }

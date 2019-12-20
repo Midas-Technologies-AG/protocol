@@ -1,9 +1,14 @@
 {
+  "meta": {
+    "deployer": "0x00360d2b7D240Ec0643B6D819ba81A09e40E5bCd",
+    "track": "kyberPrice",
+    "chain": 42
+  },
   "melonContracts": {
     "priceSource": "DEPLOY",
     "adapters": {
-      "kyberAdapter": "DEPLOY",
       "ethfinexAdapter": "DEPLOY",
+      "kyberAdapter": "DEPLOY",
       "matchingMarketAdapter": "DEPLOY",
       "matchingMarketAccessor": "DEPLOY",
       "zeroExAdapter": "DEPLOY",
@@ -15,8 +20,8 @@
       "userWhitelist": "DEPLOY"
     },
     "fees": {
-      "managementFee": "DEPLOY",
-      "performanceFee": "DEPLOY"
+        "managementFee": "DEPLOY",
+        "performanceFee": "DEPLOY"
     },
     "factories": {
       "accountingFactory": "DEPLOY",

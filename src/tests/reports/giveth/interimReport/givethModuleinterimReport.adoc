@@ -1,0 +1,244 @@
+= givethModule (first Ropsten tests)
+Willie Laubenheimer, <willie@m1d4s.tech>
+:toc:
+
+This is the documentation of the giveth Module from Midas Technologies AG for the @melonproject/protocol.
+
+<<<
+
+== First tests not directly continued.
+
+IMPORTANT: For now, all tests below are on the *ropsten testnet*.
+
+
+=== 1. Stage
+
+The first stage is just about the Bridge Contract from giveth (@giveht/giveth-bridge).
+
+TODO'S:
+
+* [x] Deploy the Bridge.
+* [x] Donate ETH.
+* [x] Donate ERC20 token.
+
+
+NOTE: We use the WETH token `0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8` and we modified the `giveth-bridge.sol` for test purposes. Especially we added to events and some Errormessages for the `require()` function. Nothing that changes the functionality!
+
+<<<
+==== 1. Deploy the giveth-bridge.sol
+
+Constructor Arguments are:
+
+- absoluteMinTimeLock: `uint256 90,000`
+- escapeHatchCaller: `address 0x812ea1c4C193Ffa12a3789405E3050a066FCbE25`
+- escapeHatchDestination: `address 0x812ea1c4C193Ffa12a3789405E3050a066FCbE25`
+- maxSecurityGuardDelay: `uint256 432,000`
+- securityGuard: `address 0x812ea1c4C193Ffa12a3789405E3050a066FCbE25`
+- timeLock: `uint256 172,800`
+
+The deployed address is https://ropsten.etherscan.io/address/0xa2c8a0f4fa277c9c50f5b36c7ddc5c86404da655[`0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655`].
+
+.Observables:
+* gas Used: `1,931,528`
+
+Now we are able to test the functions of the Bridge we need.
+
+<<<
+==== 2. Test donate Ether on the Bridge
+
+The following steps are required to donate ETH to a DAC (here just as example `receiverID = 1`).
+
+. Execute `donateAndCreateGiver(address giver, uint64 receiver)` from `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e` with the inputs:
+
+- `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`
+- `1`
+
+. Tx hash: https://ropsten.etherscan.io/tx/0x72d4d506275409fb5010fc12719f41c4eee28a06ed38fe5923e7501f6c875f39[`0x72d4d506275409fb5010fc12719f41c4eee28a06ed38fe5923e7501f6c875f39`].
+
+. Observables:
+* Gas used: `29,738`
+* Events:
+	** Testing:
+		*** messageSender from called function: `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`
+		*** messageSender from internal called function: `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`
+		*** seeThis from internal called function: `0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655`
+	** Origin:
+		*** DonateAndCreateGiver
+
+Everything worked as expected.
+
+<<<
+==== 3. Test donate ERC20 on the Bridge
+
+IMPORTANT: This works without a whitelisting on the Bridge, because we added the constructor to whitelist our WETH token.
+
+First testrun will be without an ERC20 approval for the Bridge. Expected behaiviour is to get a failing tx at the internal tx from the WETH contract.
+
+. Execute `donateAndCreateGiver(address giver, uint64 receiver, address token, uint amount)` from `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e` with the inputs:
+
+- `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`
+- `1`
+- `0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8`
+- `1000000000000000` which is 0.001 WETH.
+
+. Successfull not successfull :) (https://ropsten.etherscan.io/tx/0x64b0eda6983ba481b43d11cf8d532ef1f05f6c21a8b81ea05877361f68f1d9bd[Tx Hash: 0x64b0eda6983ba481b43d11cf8d532...])
+
+. Observables:
+* Gas used: `32,905`
+* InternalTx:
+	** 1 from `0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655` (the Bridge) to `0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8` (WETH token).
+
+NOTE: There are no events triggered.
+
+WARNING: Actually we expect another Error message than `Fail`, because the following picture shows the message we want from the tokentransfer if it fails...
+
+image::ERC20errorMsg.png[]
+
+
+Now we approve `0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655` (the Bridge) for `1000000000000000` (0.001).
+
+Execute `approve(address guy, uint amout)` on the WETH token contract from `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`. https://ropsten.etherscan.io/tx/0x30c1474af09c607d7565a47ec4e09c458fcdebdb6e902e57cf022478f4bb90fa[(See here.)]
+
+<<<
+Since we approved the Bridge Contract we can *repeat 1.* from above:
+
+. Execute `donateAndCreateGiver(...` with the same inputs.
+
+. https://ropsten.etherscan.io/tx/0x4de5d9ce87f0d1a49cc67f4c921ce0ac86a79d846ae52e35829f3572c6f21667[Worked as expected.]
+
+. Observables:
+* Gas used: `54,740`
+* InternalTX:
+	** 1 from `0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655`(the Bridge) to `0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8`(WETH token).
+* https://ropsten.etherscan.io/tx/0x4de5d9ce87f0d1a49cc67f4c921ce0ac86a79d846ae52e35829f3572c6f21667#eventlog[Events:]
+	** Testing:
+		*** messageSender from called function: `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`
+		*** messageSender from internal called function: `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e`
+		*** seeThis from internal called function: `0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655`
+	** Origin:
+		*** Transfer from `0x173add8c7e4f7034e9ca41c5d2d8a0a986fd427e` amount `1000000000000000` to `0xA2C8a0F4Fa277c9c50f5B36C7DDC5C86404dA655` (ERC20 Event)
+		*** DonateAndCreateGiver (Bridge Contract Event)
+
+https://ropsten.etherscan.io/token/0x758e94c97caf81d0d0624b272278fe9cd2bddfb8?a=0xa2c8a0f4fa277c9c50f5b36c7ddc5c86404da655[Here] you see the WETH held by the Bridge...
+
+This worked smooth. Now we need to summarize.
+
+
+<<<
+==== Summary 1. Stage testing
+
+We have finished the 1. Stage testing successfully. A few things we need to save for further testing.
+
+
+. To transfer the ERC20 token we need to set an approval on the ERC20 token contract. (In this stage we needed to approve the Bridge.)
+. The gas used for an ERC20 donation directly via the Bridge was around `55000`.
+. To donate ETH directly the contract needed around `30000` gas.
+
+
+<<<
+=== 2. Stage
+
+The second stage is about the new giveth module in the fork from @midas-technologies-ag/protocol.
+
+TODO'S:
+
+* [x] Deploy the Giveth contract with the previous deployed Bridge.
+* [x] Donate ETH.
+* [ ] Donate ERC20 token.
+
+
+NOTE: Again we use the WETH token `0x758E94c97caf81d0d0624B272278fe9cd2bdDfB8` and furthermore previous tests always failed for donate an ERC20 token. Suggestion is that the call stack is too deep.
+
+To visualize the call stack see the following tx-chain:
+
+*BaseAddress tx* to -> 1. execute `donateAsset(...)` *Giveth function*, which results in tx to -> 2. execute `donateAndCreateGiver(...)` *Bridge function*, which results in tx to -> 3. execute `transferFrom(...)` *ERC20 function*.
+
+In `Giveth.sol` as well as in `giveth-bridge.sol` are the events *messageSender* implemented. This is usefull to track, where we need to set the approval and where the failures are located.
+
+
+<<<
+==== 1. deploy Giveth.sol
+
+Expect fine behaiviour with no errors.
+
+IMPORTANT: Set the new Bridge in the constructor for Giveth.sol
+
+https://ropsten.etherscan.io/tx/0xb914517dce978df28151ba46aa2071500f787664f3f0fb9164f409a7173ecb51[Successfull deployed.]
+
+.Observables:
+	gas Used: `500,920`
+
+<<<
+==== 2. Test donate Ether on Giveth.sol
+
+Expect a successfull transaction which donates Ether to the Giveth-Bridge and creates one internal tx.
+
+BaseAddress tx to-> execute `donateETH()` on Giveth,which calls (and send the ETH of baseTX) via an internalTX to-> execute `donateAndCreateGiver(address,receiver)` on GivethBridge.
+
+Expected Events:
+
+.1. on Giveth:
+	Just one messageSend showing baseAddress.
+
+.2. on Bridge:
+	2 x messageSend showing givethAddress and 1 x seeThis showing bridgeAddress
+
+. `donateETH()` with send Value `0.0005 ETH`
+https://ropsten.etherscan.io/tx/0x70585984401abc8b6bfc129570251414d37fdf03a2d74ae220ddea95fce3f60d[Was not successfull], because the provided gas was too less (`50,000`).
+. https://ropsten.etherscan.io/tx/0x7195521014e26074d6ab98f17cb4b88aac408d99eab8fec63515e506b12c9db0[Success :)]
+. Observables:
+* gas used: `62,844`
+* InternalTX: 1 x call from Giveth to Bridge (https://ropsten.etherscan.io/tx/0x7195521014e26074d6ab98f17cb4b88aac408d99eab8fec63515e506b12c9db0#internal[See here.])
+* Events are matching the expected + the Origin ones. https://ropsten.etherscan.io/tx/0x7195521014e26074d6ab98f17cb4b88aac408d99eab8fec63515e506b12c9db0#eventlog[Check Events.]
+
+<<<
+==== 3. Test donate ERC20 on the Bridge
+
+The stack is the deepest on this test.
+
+BaseAddress tx to-> execute `donateAsset(...)` on Giveth,which calls via an internalTX to->  execute `donateAndCreateGiver(address,receiver,address,uint)` on GivethBridge, which calls an internal function, which then calls via an internalTX to-> execute `transferFrom(msg.sender,this,amount)` on the ERC20 contract of the token.
+
+Expected new implemented Events:
+
+.1. on Giveth:
+	Just one messageSend showing baseAddress.
+
+.2. on Bridge:
+	2 x messageSend showing givethAddress and 1 x seeThis showing bridgeAddress
+
+NOTE: If the donation is successfull we expect the following origin Events: 1. on Giveth,donated(...) 2. on Bridge, DonateAndCreateGiver(...) and 3. on ERC20 Token, Transfer(...)
+
+First tx without approval expected to fail. Since donating ETH via the Giveth to the Bridge was about twice as directly donating at the Bridge and the ERC20 transfer tx needs also gas, we provide `250,000` gas for now.
+
+. `donateAsset(WETH,1000000000000000)` from baseAddress.
+
+. https://ropsten.etherscan.io/tx/0x52154e86279dd4f5a4b02469ad886fa0a954f28f7897bec1e258691250a23c26[`Fail with error: Donations was not successfull`]
+. Observables:
+* gas used: `26,415`
+* InternalTX: call from Giveth to Bridge
+
+NOTE: no events since it failed at the very early stage.
+
+New try with more Gas, i.e. `500,000` results in exactly the same...(https://ropsten.etherscan.io/tx/0xd0dc2e54fa1ba9f7a7c3db4f0452e59aeb513139d8dd93de3d8941421983b137[See here.])
+
+https://ropsten.etherscan.io/tx/0x73a556af848a7ea47c20b96386f5df5e1efdf0695b30ad817b5394317d085fe9[See here with 5,000,000 gas.]
+
+Now lets approve the Bridge. https://ropsten.etherscan.io/tx/0x19bd5ef21530eabe8223b121e78343801e183c7aaddaa637e36e9026e0827a13#eventlog[Done.]
+
+https://ropsten.etherscan.io/tx/0x21ac936dbbc5957325affccbfcef72be81b4ef4dde0c2569f55de1951b5d3720[Still the same error.]
+
+Now lets approve also Giveth. https://ropsten.etherscan.io/tx/0xf9daece24f9a35ef191d82abcfa203ac4f5321173c7b6330273162e7070104df[Done.]
+
+https://ropsten.etherscan.io/tx/0x3ef3dced60f530b87f517c300a7ccfa40c04035fca0f246f7c088b9c46b50147[Still the same error.]
+
+Now we changed `abi.encodeWithSignature()` to `abi.encodePacked()`.
+
+https://ropsten.etherscan.io/tx/0x1694609f09205c4554dbe1ba64d6bb8c634e283486b2a936b0b41721bd5be3ab[deployed.]
+
+But also fails with nearly the same obsevables. (https://ropsten.etherscan.io/tx/0x79f7d313a45a8be68dd6a92a48af7672ac8e87d3bf62ab01140d99784609f28e[See here.])
+
+Now with `bytes8(keccak256(...))` https://ropsten.etherscan.io/tx/0x6a4628977347e34718759177510ad740667762c7ebba12746d34c016a9c7fac5[here.]
+
+https://ropsten.etherscan.io/tx/0xee6e321648ade3892ce8f82ad40507c0fd412327b1e51536f8e7d834039276f7[Also fails...]
+
+

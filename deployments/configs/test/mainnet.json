@@ -1,0 +1,97 @@
+{
+	"melonContracts": {
+		"priceSource": "DEPLOY",
+		"adapters": {
+			"kyberAdapter": "DEPLOY",
+			"ethfinexAdapter": "DEPLOY",
+			"matchingMarketAdapter": "DEPLOY",
+			"matchingMarketAccessor": "DEPLOY",
+			"zeroExAdapter": "DEPLOY",
+			"engineAdapter": "DEPLOY",
+			"givethBridgeAdapter": "DEPLOY"
+		},
+		"policies": {
+			"priceTolerance": "DEPLOY",
+			"userWhitelist": "DEPLOY"
+		},
+		"fees": {
+			"managementFee": "DEPLOY",
+			"performanceFee": "DEPLOY"
+		},
+		"factories": {
+			"accountingFactory": "DEPLOY",
+			"feeManagerFactory": "DEPLOY",
+			"participationFactory": "DEPLOY",
+			"policyManagerFactory": "DEPLOY",
+			"sharesFactory": "DEPLOY",
+			"tradingFactory": "DEPLOY",
+			"vaultFactory": "DEPLOY"
+		},
+		"engine": "DEPLOY",
+		"registry": "DEPLOY",
+		"version": "DEPLOY",
+		"ranking": "DEPLOY"
+	},
+	"thirdPartyContracts": {
+		"exchanges": {
+			"givethBridge": "0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7",
+			"kyber": {
+				"conversionRates": "0x798AbDA6Cc246D0EDbA912092A2a3dBd3d11191B",
+				"kyberNetwork": "0x9ae49C0d7F8F9EF4B864e004FE86Ac8294E20950",
+				"kyberNetworkProxy": "0x818E6FECD516Ecc3849DAf6845e3EC868087B755"
+			},
+			"matchingMarket": "0x39755357759cE0d7f32dC8dC45414CCa409AE24e",
+			"zeroEx": "0x080bf510fcbf18b91105470639e9561022937712",
+			"ethfinex": {
+				"exchange": "0xdcdb42c9a256690bd153a7b409751adfc8dd5851",
+				"wrapperRegistryEFX": "",
+				"wrapperPairs": [],
+				"erc20proxy": ""
+			}
+		},
+		"tokens": [
+			{
+				"address": "0xe41d2489571d322189246dafa5ebde1f4699f498",
+				"name": "ZeroX Protocol Token",
+				"symbol": "ZRX",
+				"decimals": 18,
+				"reserveMin": 533190906598901500000
+			},
+			{
+				"address": "0x4f3afec4e5a3f2a6a1a411def7d7dfe50ee057bf",
+				"name": "Digix Gold Token",
+				"symbol": "DGX",
+				"decimals": 9,
+				"reserveMin": 2844909745
+			},
+			{
+				"address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+				"name": "Eth Token",
+				"symbol": "WETH",
+				"decimals": 18,
+				"reserveMin": 1000000000000000000
+			},
+			{
+				"address": "0xec67005c4e498ec7f55e092bd1d35cbc47c91892",
+				"name": "Melon Token",
+				"symbol": "MLN",
+				"decimals": 18,
+				"reserveMin": 7519079664649047000
+			},
+			{
+				"address": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+				"name": "Dai",
+				"symbol": "DAI",
+				"decimals": 18,
+				"reserveMin": 123640475068590230000
+			},
+			{
+				"address": "0xdd974d5c2e2928dea5f71b9825b8b646686bd200",
+				"name": "Kyber Network",
+				"symbol": "KNC",
+				"decimals": 18,
+				"reserveMin": 930101522997154300000
+			}
+		]
+	}
+}

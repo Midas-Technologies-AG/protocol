@@ -144,7 +144,14 @@ export const defaultPrepareArgs: PrepareArgsFunction<any> = async (
   environment,
   params,
   contractAddress,
-) => Object.values(params || {}).map(v => v.toString());
+) =>
+  Object.values(params || {}).map(v => {
+    if (!Array.isArray(v)) {
+      return v.toString();
+    } else {
+      return v.map(x => x.toString());
+    }
+  });
 
 export const defaultPostProcess: PostProcessFunction<any, any> = async () =>
   true;
@@ -221,7 +228,6 @@ const transactionFactory: TransactionFactory = <Args, Result>(
       .map(JSON.stringify)
       .join(',')})`;
     log.info('Prepare transaction', txId);
-
     try {
       const contractInstance = getContract(
         environment,
@@ -232,8 +238,8 @@ const transactionFactory: TransactionFactory = <Args, Result>(
         !!contractInstance.methods[name],
         `Method ${name} does not exist on contract ${contract}`,
       );
-      const transaction = contractInstance.methods[name](...args);
 
+      const transaction = contractInstance.methods[name](...args);
       transaction.name = name;
       const prepared = await prepareTransaction(
         environment,

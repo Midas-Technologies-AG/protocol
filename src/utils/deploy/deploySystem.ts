@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 
-import { Exchanges, Contracts } from '~/Contracts';
-import { deployMatchingMarketAdapter } from '~/contracts/exchanges/transactions/deployMatchingMarketAdapter';
-import { deployMatchingMarketAccessor } from '~/contracts/exchanges/transactions/deployMatchingMarketAccessor';
+import { Exchanges /*, Contracts*/ } from '~/Contracts';
+import { deployMatchingMarketAdapter } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarketAdapter';
+import { deployMatchingMarketAccessor } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarketAccessor';
 import { deployEngine } from '~/contracts/engine/transactions/deployEngine';
 import { deploy as deployPriceTolerance } from '~/contracts/fund/policies/risk-management/transactions/deploy';
 import { deployRegistry } from '~/contracts/version/transactions/deployRegistry';
@@ -20,14 +20,14 @@ import { deploySharesFactory } from '~/contracts/fund/shares/transactions/deploy
 import { deployTradingFactory } from '~/contracts/fund/trading/transactions/deployTradingFactory';
 import { deployVaultFactory } from '~/contracts/fund/vault/transactions/deployVaultFactory';
 import { deployPolicyManagerFactory } from '~/contracts/fund/policies/transactions/deployPolicyManagerFactory';
-import { deploy0xAdapter } from '~/contracts/exchanges/transactions/deploy0xAdapter';
-import { deployEthfinexAdapter } from '~/contracts/exchanges/transactions/deployEthfinexAdapter';
+import { deploy0xAdapter } from '~/contracts/exchanges/transactions/deploy/deploy0xAdapter';
+import { deployEthfinexAdapter } from '~/contracts/exchanges/transactions/deploy/deployEthfinexAdapter';
 import {
   Environment,
   WithDeployment,
   Tracks,
 } from '../environment/Environment';
-import { deployKyberAdapter } from '~/contracts/exchanges/transactions/deployKyberAdapter';
+import { deployKyberAdapter } from '~/contracts/exchanges/transactions/deploy/deployKyberAdapter';
 import { ThirdPartyContracts } from './deployThirdParty';
 import { Address, createQuantity } from '@melonproject/token-math';
 import { setMlnToken } from '~/contracts/version/transactions/setMlnToken';
@@ -44,15 +44,16 @@ import { registerFees } from '~/contracts/version/transactions/registerFees';
 import { getRegistryInformation } from '~/contracts/version/calls/getRegistryInformation';
 import { deployKyberPriceFeed } from '~/contracts/prices/transactions/deployKyberPriceFeed';
 import { getLogCurried } from '../environment/getLogCurried';
-import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
+//import { updateKyber } from '~/contracts/prices/transactions/updateKyber';
 import { deployTestingPriceFeed } from '~/contracts/prices/transactions/deployTestingPriceFeed';
-import { getConvertedPrices } from '~/tests/utils/updateTestingPriceFeed';
-import { getContract } from '~/utils/solidity/getContract';
+//import { getConvertedPrices } from '~/tests/utils/updateTestingPriceFeed';
+//import { getContract } from '~/utils/solidity/getContract';
 import { setDecimals } from '~/contracts/prices/transactions/setDecimals';
 import { deployManagementFee } from '~/contracts/fund/fees/transactions/deployManagementFee';
 import { deployPerformanceFee } from '~/contracts/fund/fees/transactions/deployPerformanceFee';
 import { setEthfinexWrapperRegistry } from '~/contracts/version/transactions/setEthfinexWrapperRegistry';
-import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deployEngineAdapter';
+import { deployEngineAdapter } from '~/contracts/exchanges/transactions/deploy/deployEngineAdapter';
+import { deployGivethBridgeAdapter } from '~/contracts/exchanges/transactions/deploy/deployGivethBridgeAdapter';
 
 const pkg = require('~/../package.json');
 
@@ -78,6 +79,7 @@ export interface MelonContracts {
     matchingMarketAdapter: Address;
     matchingMarketAccessor: Address;
     ethfinexAdapter: Address;
+    givethBridgeAdapter: Address;
   };
   policies: {
     priceTolerance: Address;
@@ -106,7 +108,8 @@ export const deployAllContractsConfig = JSON.parse(`{
     "matchingMarketAdapter": "DEPLOY",
     "matchingMarketAccessor": "DEPLOY",
     "zeroExAdapter": "DEPLOY",
-    "engineAdapter": "DEPLOY"
+    "engineAdapter": "DEPLOY",
+    "givethBridgeAdapter": "DEPLOY"
   },
   "policies": {
     "priceTolerance": "DEPLOY",
@@ -227,6 +230,9 @@ export const deploySystem = async (
     maybeDeploy(['adapters', 'engineAdapter'], environment =>
       deployEngineAdapter(environment),
     ),
+    maybeDeploy(['adapters', 'givethBridgeAdapter'], environment =>
+      deployGivethBridgeAdapter(environment),
+    ),
     maybeDeploy(['policies', 'priceTolerance'], environment =>
       deployPriceTolerance(environment, 10),
     ),
@@ -337,12 +343,21 @@ export const deploySystem = async (
             address: melonContracts.engine,
           });
         }
-        getLog(environment).info('Setting MGM on registry');
-        await setMGM(environment, melonContracts.registry, {
-          address: control.MGM || environment.wallet.address,
-        });
         if (
-          R.pathOr('', ['ethfinexWrapperRegistry'], previousInfo).toLowerCase() !==
+          // only do this not on mainnet (since we don't have direct control of this on mainnet)
+          (await environment.eth.net.getId()) != 1
+        ) {
+          getLog(environment).info('Setting MGM on registry');
+          await setMGM(environment, melonContracts.registry, {
+            address: control.MGM || environment.wallet.address,
+          });
+        }
+        if (
+          R.pathOr(
+            '',
+            ['ethfinexWrapperRegistry'],
+            previousInfo,
+          ).toLowerCase() !==
           thirdPartyContracts.exchanges.ethfinex.wrapperRegistryEFX.toLowerCase()
         ) {
           getLog(environment).info('Setting ethfinex wrapper registry');
@@ -389,34 +404,37 @@ export const deploySystem = async (
         registry: environment.deployment.melonContracts.registry,
       }),
     ),
-    maybeDoSomething(true, async environment => {
-      // TODO: make this conditional
-      await setMGM(
-        environment,
-        environment.deployment.melonContracts.registry,
-        {
-          // used for setting initial amguPrice
-          address: environment.wallet.address,
-        },
-      );
-      const amguToken = await getAmguToken(
-        environment,
-        environment.deployment.melonContracts.version,
-      );
-      await setAmguPrice(
-        environment,
-        environment.deployment.melonContracts.engine,
-        createQuantity(amguToken, 0),
-      );
-      await setMGM(
-        environment,
-        environment.deployment.melonContracts.registry,
-        {
-          // used for setting initial amguPrice
-          address: control.MGM || environment.wallet.address,
-        },
-      );
-    }),
+    maybeDoSomething(
+      (await environment.eth.net.getId()) != 1,
+      async environment => {
+        // we only do this when MGM is directly under our control (e.g. not on mainnet)
+        await setMGM(
+          environment,
+          environment.deployment.melonContracts.registry,
+          {
+            // used for setting initial amguPrice
+            address: environment.wallet.address,
+          },
+        );
+        const amguToken = await getAmguToken(
+          environment,
+          environment.deployment.melonContracts.version,
+        );
+        await setAmguPrice(
+          environment,
+          environment.deployment.melonContracts.engine,
+          createQuantity(amguToken, 0),
+        );
+        await setMGM(
+          environment,
+          environment.deployment.melonContracts.registry,
+          {
+            // used for setting initial amguPrice
+            address: control.MGM || environment.wallet.address,
+          },
+        );
+      },
+    ),
   )(new Promise(resolve => resolve(environment)));
 
   const { melonContracts } = environmentWithDeployment.deployment;
@@ -465,6 +483,11 @@ export const deploySystem = async (
       exchange: melonContracts.engine,
       takesCustody: false,
     },
+    [Exchanges.GivethBridge]: {
+      adapter: melonContracts.adapters.givethBridgeAdapter,
+      exchange: thirdPartyContracts.exchanges.givethBridge,
+      takesCustody: false,
+    },
   };
 
   for (const [exchangeName, exchangeConfig] of R.toPairs(exchangeConfigs)) {
@@ -490,6 +513,7 @@ export const deploySystem = async (
         FunctionSignatures.takeOrder,
         FunctionSignatures.cancelOrder,
         FunctionSignatures.withdrawTokens,
+        FunctionSignatures.makeDonation,
       ],
       takesCustody: exchangeConfig.takesCustody,
     };
@@ -517,7 +541,7 @@ export const deploySystem = async (
     }
   }
 
-  if (environment.track === Tracks.KYBER_PRICE) {
+  /*  if (environment.track === Tracks.KYBER_PRICE) {
     await updateKyber(
       environmentWithDeployment,
       environmentWithDeployment.deployment.melonContracts.priceSource,
@@ -529,10 +553,12 @@ export const deploySystem = async (
       Contracts.TestingPriceFeed,
       environmentWithDeployment.deployment.melonContracts.priceSource,
     );
-    await testingPriceFeed.methods
-      .update(Object.keys(prices), Object.values(prices).map(e => e.toString()))
-      //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
-  }
+    await testingPriceFeed.methods.update(
+      Object.keys(prices),
+      Object.values(prices).map(e => e.toString()),
+    );
+    //.send({ from: environmentWithDeployment.wallet.address, gas: 8000000 });
+  }*/
 
   const track = environment.track;
   const network = await environment.eth.net.getId();

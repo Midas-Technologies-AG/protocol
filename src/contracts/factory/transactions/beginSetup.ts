@@ -10,8 +10,6 @@ import { managersToHubs } from '~/contracts/factory/calls/managersToHubs';
 import { Contracts } from '~/Contracts';
 import { stringToBytes32 } from '~/utils/helpers/stringToBytes32';
 
-// import ensure from '~/utils/guards/ensure';
-
 export interface ExchangeConfigs {
   [exchange: string]: {
     exchange: Address;
@@ -26,6 +24,7 @@ export interface FeeConfig {
 }
 
 interface BeginSetupArgs {
+  manager: Address;
   fundName: string;
   fees: FeeConfig[];
   exchangeConfigs: ExchangeConfigs;
@@ -43,7 +42,7 @@ const guard: GuardFunction<BeginSetupArgs> = async (
 
 const prepareArgs: PrepareArgsFunction<BeginSetupArgs> = async (
   _,
-  { fundName, fees, exchangeConfigs, quoteToken, defaultTokens },
+  { manager, fundName, fees, exchangeConfigs, quoteToken, defaultTokens },
 ) => {
   const values = Object.values(exchangeConfigs);
   const exchangeAddresses = values.map(e => e.exchange.toString());
@@ -56,6 +55,7 @@ const prepareArgs: PrepareArgsFunction<BeginSetupArgs> = async (
   const feePeriods = fees.map(f => `${f.feePeriod}`);
 
   const args = [
+    manager,
     stringToBytes32(fundName),
     feeAddresses,
     feeRates,
@@ -80,10 +80,28 @@ const postProcess: PostProcessFunction<
   );
 };
 
+interface Options {
+  amguPayable?: boolean;
+  incentive?: boolean;
+  skipGuards?: boolean;
+  skipGasEstimation?: boolean;
+  from?: string;
+  gas?: string;
+  gasPrice?: string;
+  value?: string;
+}
+
+const customOptions: Options = {
+  skipGasEstimation: true,
+  gas: '8000000',
+  gasPrice: '8000000000',
+};
+
 export const beginSetup = transactionFactory<BeginSetupArgs, BeginSetupResult>(
   'beginSetup',
   Contracts.FundFactory,
   guard,
   prepareArgs,
   postProcess,
+  customOptions,
 );

@@ -4,7 +4,7 @@ import {
   deployWeth,
   deployToken,
 } from '~/contracts/dependencies/token/transactions/deploy';
-import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deployMatchingMarket';
+import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarket';
 import { getContract } from '~/utils/solidity/getContract';
 import { deployAndGetContract } from '~/utils/solidity/deployAndGetContract';
 import { LogLevels } from '../environment/Environment';

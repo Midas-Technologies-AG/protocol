@@ -5,9 +5,9 @@ import { Contracts } from '~/Contracts';
 import { Environment } from '~/utils/environment/Environment';
 import { deployContract } from '~/utils/solidity/deployContract';
 import { deployErc20Proxy } from './deployErc20Proxy';
-import { addAuthorizedAddress } from '../third-party/0x/transactions/addAuthorizedAddress';
-import { registerAssetProxy } from '../third-party/0x/transactions/registerAssetProxy';
-import { changeZRXAsset } from '../third-party/0x/transactions/changeZRXAsset';
+import { addAuthorizedAddress } from '~/contracts//exchanges/third-party/0x/transactions/addAuthorizedAddress';
+import { registerAssetProxy } from '~/contracts//exchanges/third-party/0x/transactions/registerAssetProxy';
+import { changeZRXAsset } from '~/contracts//exchanges/third-party/0x/transactions/changeZRXAsset';
 // tslint:enable:max-line-length
 
 interface Deploy0xExchangeArgs {

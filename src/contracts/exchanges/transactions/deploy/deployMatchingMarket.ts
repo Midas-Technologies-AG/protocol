@@ -3,7 +3,7 @@ import { TokenInterface } from '@melonproject/token-math';
 import { Environment } from '~/utils/environment/Environment';
 import { deployContract } from '~/utils/solidity/deployContract';
 import { Contracts } from '~/Contracts';
-import { addTokenPairWhitelist } from './addTokenPairWhitelist';
+import { addTokenPairWhitelist } from '../addTokenPairWhitelist';
 
 export interface DeployMatchingMarketArgs {
   tokens: TokenInterface[];

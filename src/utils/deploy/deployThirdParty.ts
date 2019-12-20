@@ -7,24 +7,28 @@ import {
 } from '@melonproject/token-math';
 
 import { Environment } from '../environment/Environment';
-import { getContract } from '~/utils/solidity/getContract';
 import {
   deployToken,
   deployWeth,
 } from '~/contracts/dependencies/token/transactions/deploy';
+import { deposit } from '~/contracts/dependencies/token/transactions/deposit';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
-import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deployMatchingMarket';
+import { deployMatchingMarket } from '~/contracts/exchanges/transactions/deploy/deployMatchingMarket';
 import {
   deployKyberEnvironment,
   KyberEnvironment,
-} from '~/contracts/exchanges/transactions/deployKyberEnvironment';
-import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy0xExchange';
+} from '~/contracts/exchanges/transactions/deploy/deployKyberEnvironment';
+import { deploy0xExchange } from '~/contracts/exchanges/transactions/deploy/deploy0xExchange';
+import {
+  deployGivethBridge,
+  DeployGivethBridgeArgs,
+} from '~/contracts/exchanges/transactions/deploy/deployGivethBridge';
 import {
   deployEthfinex,
   EthfinexEnvironment,
-} from '~/contracts/exchanges/transactions/deployEthfinex';
+} from '~/contracts/exchanges/transactions/deploy/deployEthfinex';
 import { ensure } from '../guards/ensure';
-import { Contracts } from '~/Contracts';
+import { getChainName } from '~/utils/environment/chainName';
 import { deployBurnableToken } from '~/contracts/dependencies/token/transactions/deployBurnableToken';
 
 export interface ThirdPartyContracts {
@@ -33,6 +37,7 @@ export interface ThirdPartyContracts {
     matchingMarket: Address;
     zeroEx: Address;
     ethfinex: EthfinexEnvironment;
+    givethBridge: Address;
   };
   tokens: TokenInterface[];
 }
@@ -78,17 +83,20 @@ const deployThirdParty = async (
   );
 
   // Deposit WETH
-  const depositAmount = power(new BigInteger(10), new BigInteger(24));
-  await getContract(
+
+  const chainName = await getChainName(environment);
+  let depositAmount;
+  if (chainName == 'development') {
+    depositAmount = power(new BigInteger(10), new BigInteger(18)); // NB: for testnets...
+  } else {
+    depositAmount = power(new BigInteger(10), new BigInteger(18)); // NB: adjust as needed
+  }
+  await deposit(
     environment,
-    Contracts.Weth,
     deployedTokens.find(t => t.symbol === 'WETH').address,
-  )
-    .methods.deposit()
-    .send({
-      from: environment.wallet.address,
-      value: `${depositAmount}`,
-    });
+    undefined,
+    { value: `${depositAmount}` },
+  );
 
   const zrxToken = deployedTokens.find(t => t.symbol === 'ZRX');
 
@@ -99,6 +107,7 @@ const deployThirdParty = async (
   const kyber = await deployKyberEnvironment(environment, [
     deployedTokens.find(t => t.symbol === 'MLN'),
     deployedTokens.find(t => t.symbol === 'EUR'),
+    deployedTokens.find(t => t.symbol === 'WETH'),
   ]);
 
   const zeroEx = await deploy0xExchange(environment, { zrxToken });
@@ -107,12 +116,24 @@ const deployThirdParty = async (
     tokens: deployedTokens,
   });
 
+  const args: DeployGivethBridgeArgs = {
+    absoluteMinTimeLock: 90000,
+    escapeHatchCaller: '0x812ea1c4c193ffa12a3789405e3050a066fcbe25',
+    escapeHatchDestination: '0x812ea1c4c193ffa12a3789405e3050a066fcbe25',
+    maxSecurityGuardDelay: 432000,
+    securityGuard: '0x812ea1c4c193ffa12a3789405e3050a066fcbe25',
+    timeLock: 172800,
+  };
+
+  const givethBridge = await deployGivethBridge(environment, args);
+
   return {
     exchanges: {
       ethfinex,
       kyber,
       matchingMarket,
       zeroEx,
+      givethBridge,
     },
     tokens: deployedTokens.map(token => ({
       ...token,

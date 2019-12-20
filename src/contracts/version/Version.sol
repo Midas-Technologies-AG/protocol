@@ -19,16 +19,18 @@ contract Version is FundFactory, DSAuth, VersionInterface {
         address _registry,
         address _postDeployOwner
     )
-        FundFactory(
-            _accountingFactory,
-            _feeManagerFactory,
-            _participationFactory,
-            _sharesFactory,
-            _tradingFactory,
-            _vaultFactory,
-            _policyManagerFactory,
-            address(this)
-        )
+    
+    FundFactory(
+        _accountingFactory,
+        _feeManagerFactory,
+        _participationFactory,
+        _sharesFactory,
+        _tradingFactory,
+        _vaultFactory,
+        _policyManagerFactory,
+        address(this)
+    )
+
     {
         registry = _registry;
         setOwner(_postDeployOwner);

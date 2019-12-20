@@ -20,6 +20,13 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
         bool takesCustody;
     }
 
+    struct Donation {
+        Exchange exchange;
+        address spender;
+        address asset;
+        uint amount;        
+    }  
+
     enum UpdateType { make, take, cancel }
 
     struct Order {
@@ -43,6 +50,7 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
 
     Exchange[] public exchanges;
     Order[] public orders;
+    Donation[] public donations; //TODO: use it 
     mapping (address => bool) public adapterIsAdded;
     mapping (address => mapping(address => OpenMakeOrder)) public exchangesToOpenMakeOrders;
     mapping (address => uint) public openMakeOrdersAgainstAsset;
@@ -176,6 +184,44 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
             takerAssetData,
             signature
         );
+    }
+
+function donateOnExchange(
+        uint exchangeIndex,
+        string methodSignature,
+        address bridge,
+        uint64 receiverDAC,
+        address donationAsset,
+        uint donationQuantity
+    )
+        public
+        onlyInitialized
+    {
+        //registrychecks of Aaptermethod and Asset
+        bytes4 methodSelector = bytes4(keccak256(methodSignature));
+        require(
+            Registry(routes.registry).adapterMethodIsAllowed(
+                exchanges[exchangeIndex].adapter,
+                methodSelector
+            ),
+            "adapterMethodIsAllowed failed."
+        );
+        require(Registry(routes.registry).assetIsRegistered(
+            donationAsset), 'donationAsset not registered'
+        );
+        require(
+            exchanges[exchangeIndex].adapter.delegatecall(
+                abi.encodeWithSignature(
+                    methodSignature,
+                    bridge,
+                    receiverDAC,
+                    donationAsset,
+                    donationQuantity
+                )
+            ),
+            "Delegated call to exchange failed"
+        );
+        donations.push(Donation(exchanges[exchangeIndex], msg.sender, donationAsset, donationQuantity));
     }
 
     /// @dev Make sure this is called after orderUpdateHook in adapters
@@ -333,6 +379,10 @@ contract Trading is DSMath, TokenUser, Spoke, TradingInterface {
         return (order.makerAsset, order.takerAsset, order.makerQuantity, order.takerQuantity);
     }
 
+    function getDonationInfo () public view returns(Donation[] res) {
+        return donations;
+    }
+    
     function getZeroExOrderDetails(bytes32 orderId) public view returns (LibOrder.Order) {
         return orderIdToZeroExOrder[orderId];
     }

@@ -4,7 +4,7 @@ import { initTestEnvironment } from '~/tests/utils/initTestEnvironment';
 import {
   deployKyberEnvironment,
   KyberEnvironment,
-} from '~/contracts/exchanges/transactions/deployKyberEnvironment';
+} from '~/contracts/exchanges/transactions/deploy/deployKyberEnvironment';
 import { getContract } from '~/utils/solidity/getContract';
 import { getToken } from '~/contracts/dependencies/token/calls/getToken';
 import { deployToken } from '~/contracts/dependencies/token/transactions/deploy';
@@ -35,6 +35,7 @@ describe('kyber-price-feed', () => {
     shared.kyberDeploy = await deployKyberEnvironment(shared.env, [
       shared.tokens.mln,
       shared.tokens.eur,
+      shared.tokens.weth,
     ]);
     shared.mockRegistryAddress = await deployContract(
       shared.env,
@@ -83,7 +84,7 @@ describe('kyber-price-feed', () => {
     expect(toFixed(mlnPrice)).toBe('1.000000');
   });
 
-  it('Update mln price in reserve', async () => {
+  it('Update MLN and EUR prices in reserve', async () => {
     const prices = [
       {
         buy: createPrice(
@@ -126,6 +127,60 @@ describe('kyber-price-feed', () => {
 
     expect(toFixed(mlnPrice)).toBe('0.050000');
     expect(toFixed(eurPrice)).toBe('0.008000');
+  });
+
+  it('Crossed market condition provides midpoint price', async () => {
+    const prices = [
+      {
+        buy: createPrice(
+          createQuantity(shared.tokens.weth, 0.04),
+          createQuantity(shared.tokens.mln, 1),
+        ),
+        sell: createPrice(
+          createQuantity(shared.tokens.mln, 20),
+          createQuantity(shared.tokens.weth, 1),
+        ),
+      },
+    ];
+    await setBaseRate(shared.env, shared.kyberDeploy.conversionRates, {
+      prices,
+    });
+
+    await updateKyber(shared.env, shared.kyberPriceFeed);
+
+    const mlnPrice = await getPrice(
+      shared.env,
+      shared.kyberPriceFeed,
+      shared.tokens.mln,
+    );
+    expect(toFixed(mlnPrice)).toBe('0.045000');
+  });
+
+  it('Normal (positive) spread condition gives midpoint price', async () => {
+    const prices = [
+      {
+        buy: createPrice(
+          createQuantity(shared.tokens.weth, 0.05),
+          createQuantity(shared.tokens.mln, 1),
+        ),
+        sell: createPrice(
+          createQuantity(shared.tokens.mln, 25),
+          createQuantity(shared.tokens.weth, 1),
+        ),
+      },
+    ];
+    await setBaseRate(shared.env, shared.kyberDeploy.conversionRates, {
+      prices,
+    });
+
+    await updateKyber(shared.env, shared.kyberPriceFeed);
+
+    const mlnPrice = await getPrice(
+      shared.env,
+      shared.kyberPriceFeed,
+      shared.tokens.mln,
+    );
+    expect(toFixed(mlnPrice)).toBe('0.045000');
   });
 
   it('Update mln price without explicity passing buy-sell prices', async () => {
