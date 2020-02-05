@@ -36,7 +36,7 @@
     },
     "engine": "0x7CaEc96607c5c7190d63B5A650E7CE34472352f5",
     "registry": "0x1Bfd21f7db126a5966d2C09492676807a68859Ba",
-    "version": "0x0bc0b6F5F44a0BD0d55Ed1e093f7424075d048Da",
+    "version": "0x01Bde0b02740D6311e4a87CA112DeEEddb057EFB",
     "ranking": "0x4CEc8B644d306CAD99340D13A9fD4A91Fa6d5417"
   },
   "thirdPartyContracts": {
@@ -163,4 +163,3 @@
     }
   }
 }
-
